@@ -1,0 +1,302 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Liên hệ - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Liên hệ với Phòng Khám Đa Khoa An Phúc - Địa chỉ, số điện thoại hotline 1900 1234 và form gửi tin nhắn tư vấn trực tuyến.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo-link">
+        <img src="images/logo.png" alt="Phòng Khám Đa Khoa An Phúc">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Trang chủ</a>
+        <a href="dich-vu.html">Dịch vụ</a>
+        <a href="chuyen-khoa.html">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html" class="active">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <span class="phone-badge" style="cursor: default;"><i class="fas fa-phone-alt"></i> 1900 1234</span>
+        <a href="dat-lich-kham.html" class="btn-book-nav"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBPAGE HERO (FULL BANNER NẰM DƯỚI CHỮ) -->
+  <section class="subpage-hero full-banner-bg" id="pageHeroSection" style="background-image: url('images/contact-hero.png');">
+    <div class="subpage-hero-overlay"></div>
+    <div class="container hero-content-relative">
+      <div class="subpage-hero-content">
+        <div class="page-breadcrumb-wrap">
+          <div class="page-breadcrumb">
+            <a href="index.html">Trang chủ</a>
+            <span class="sep">&gt;</span>
+            <span class="current" id="pageHeroTag">Liên hệ</span>
+          </div>
+        </div>
+        <h1 id="pageHeroTitle">Liên hệ với chúng tôi</h1>
+        <p id="pageHeroDesc">Chúng tôi luôn sẵn sàng hỗ trợ, tư vấn và giải đáp mọi thắc mắc của bạn và gia đình.</p>
+        <a href="#contactSection" class="btn-primary-action" id="pageHeroBtn">Liên hệ ngay →</a>
+      </div>
+    </div>
+    <!-- Smooth curved bottom transition -->
+    <div class="subpage-hero-curve">
+      <svg viewBox="0 0 1440 40" fill="none" preserveAspectRatio="none">
+        <path d="M0,0 C380,45 1060,45 1440,0 L1440,40 L0,40 Z"></path>
+      </svg>
+    </div>
+  </section>
+
+  <!-- KHỐI LIÊN HỆ 3 CỘT (CHUẨN THEO FIGMA MOCKUP) -->
+  <section id="contactSection" class="contact-page-section">
+    <!-- Decorative Leaves Watermark (Bottom Left) -->
+    <div class="contact-leaf-decor leaf-bottom-left">
+      <svg viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M15 170 C15 110 75 60 165 60 C165 120 105 170 15 170 Z" fill="#bbf7d0" opacity="0.6"/>
+        <path d="M5 180 C15 120 65 70 130 70 C120 130 70 180 5 180 Z" fill="#86efac" opacity="0.45"/>
+        <path d="M50 180 C60 130 100 95 160 85 C150 145 100 180 50 180 Z" fill="#4ade80" opacity="0.3"/>
+      </svg>
+    </div>
+
+    <div class="container">
+      <div class="contact-3col-grid">
+        <!-- Cột 1: Thông tin liên hệ -->
+        <div class="contact-info-col">
+          <h3 class="contact-card-title">Thông tin liên hệ</h3>
+          
+          <div class="contact-info-entry">
+            <div class="entry-icon"><i class="fas fa-phone-alt"></i></div>
+            <div class="entry-text">
+              <strong id="contactPhoneText">1900 1234</strong>
+              <div id="contactWorkingHoursSubtext" style="color: #64748b; font-size: 0.88rem;">(8:00 – 20:00, tất cả các ngày)</div>
+            </div>
+          </div>
+
+          <div class="contact-info-entry">
+            <div class="entry-icon"><i class="fas fa-envelope"></i></div>
+            <div class="entry-text">
+              <strong id="contactEmailText">contact@anphuc.vn</strong>
+              <div style="color: #64748b; font-size: 0.88rem;">Hỗ trợ 24/7 qua email</div>
+            </div>
+          </div>
+
+          <div class="contact-info-entry">
+            <div class="entry-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="entry-text">
+              <strong id="contactAddressText">Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</strong>
+              <div style="color: #64748b; font-size: 0.88rem;">Trung tâm khám bệnh đa khoa</div>
+            </div>
+          </div>
+
+          <div class="social-follow-box">
+            <h4>Theo dõi chúng tôi</h4>
+            <div class="social-btns">
+              <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+              <a href="#" class="btn-zalo" title="Zalo">Zalo</a>
+              <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+            </div>
+          </div>
+
+          <!-- Slogan Badge chuẩn Figma với nét viết tay và gạch chân -->
+          <div class="contact-slogan-card">
+            <div class="slogan-badge-icon">
+              <svg width="44" height="44" viewBox="0 0 44 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M22 38C22 38 6 27.5 6 16C6 10.5 10.5 6 16 6C19.2 6 22 8 22 8C22 8 24.8 6 28 6C33.5 6 38 10.5 38 16C38 27.5 22 38 22 38Z" stroke="#104936" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M22 15V25M17 20H27" stroke="#104936" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="slogan-text-box">
+              <div class="slogan-line-1">Vì sức khỏe của bạn</div>
+              <div class="slogan-line-2">là sứ mệnh của chúng tôi</div>
+              <div class="slogan-underline">
+                <svg width="120" height="7" viewBox="0 0 120 7" fill="none">
+                  <path d="M2 4C35 1 85 6 118 3" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cột 2: Form gửi tin nhắn (Lưu vào SQL Server) -->
+        <div class="contact-form-box">
+          <h3 class="contact-card-title">Gửi tin nhắn cho chúng tôi</h3>
+          <form id="contactMessageForm">
+            <div class="form-2col">
+              <div class="contact-field">
+                <label for="cName"><i class="far fa-user"></i> Họ và tên *</label>
+                <input type="text" id="cName" placeholder="Nhập họ và tên" required>
+              </div>
+              <div class="contact-field">
+                <label for="cPhone"><i class="fas fa-phone-alt"></i> Số điện thoại *</label>
+                <input type="tel" id="cPhone" placeholder="Nhập số điện thoại" required>
+              </div>
+            </div>
+
+            <div class="contact-field">
+              <label for="cEmail"><i class="far fa-envelope"></i> Email liên hệ</label>
+              <input type="email" id="cEmail" placeholder="Nhập địa chỉ email của bạn">
+            </div>
+
+            <div class="contact-field">
+              <label for="cMessage"><i class="far fa-comment-dots"></i> Nội dung tin nhắn *</label>
+              <textarea id="cMessage" rows="4" placeholder="Nhập nội dung cần hỗ trợ, tư vấn sức khỏe..." required></textarea>
+            </div>
+
+            <div class="contact-field" style="margin-top: 10px; margin-bottom: 0;">
+              <button type="submit" class="btn-contact-submit">
+                <i class="fas fa-paper-plane"></i> Gửi liên hệ →
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Cột 3: Thời gian làm việc -->
+        <div class="contact-hours-card">
+          <div class="hours-icon"><i class="far fa-clock"></i></div>
+          <h3>Thời gian làm việc</h3>
+          <div class="days" id="contactHoursDays">Thứ 2 – Chủ nhật</div>
+          <div class="time" id="contactHoursTime">8:00 – 20:00</div>
+          
+          <div class="health-care-pill">
+            <i class="fas fa-heart"></i>
+            <h4>Vì sức khỏe của bạn</h4>
+            <p>An Phúc luôn đồng hành cùng bạn trên mọi hành trình chăm sóc sức khỏe.</p>
+          </div>
+
+          <!-- Decorative Leaves inside/behind Card 3 -->
+          <div class="contact-leaf-decor leaf-card-bottom">
+            <svg viewBox="0 0 190 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M160 140 C160 85 105 40 30 40 C30 95 85 140 160 140 Z" fill="#bbf7d0" opacity="0.65"/>
+              <path d="M180 150 C170 95 125 55 65 55 C75 110 120 150 180 150 Z" fill="#86efac" opacity="0.5"/>
+              <path d="M125 150 C115 105 75 75 20 65 C30 120 75 150 125 150 Z" fill="#4ade80" opacity="0.35"/>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CHUẨN XANH RỪNG #0D3628 -->
+      <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+            <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span>1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('contactMessageForm')?.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const form = this;
+      const btn = form.querySelector('button[type="submit"]');
+      const origText = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang gửi...';
+      }
+
+      const name = document.getElementById('cName').value.trim();
+      const phone = document.getElementById('cPhone').value.trim();
+      const email = document.getElementById('cEmail').value.trim();
+      const message = document.getElementById('cMessage').value.trim();
+
+      fetch('/api/contacts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, email, message })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (typeof showNotification === 'function') {
+          showNotification('Cảm ơn bạn đã gửi tin nhắn! Phòng khám An Phúc đã ghi nhận và sẽ phản hồi sớm nhất.');
+        }
+        form.reset();
+      })
+      .catch(() => {
+        if (typeof showNotification === 'function') {
+          showNotification('Cảm ơn bạn đã gửi tin nhắn! Chúng tôi sẽ liên hệ lại với bạn qua số điện thoại: ' + phone);
+        }
+        form.reset();
+      })
+      .finally(() => {
+        if (btn) {
+          btn.disabled = false;
+          btn.innerHTML = origText;
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>

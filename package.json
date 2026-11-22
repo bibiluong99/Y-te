@@ -1,0 +1,26 @@
+{
+  "name": "phong-kham-an-phuc",
+  "version": "1.0.0",
+  "description": "Website và Hệ thống Quản trị Y tế Phòng Khám Đa Khoa An Phúc",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "watch": "node --watch server.js"
+  },
+  "keywords": [
+    "medical",
+    "clinic",
+    "health",
+    "an-phuc",
+    "admin"
+  ],
+  "author": "An Phuc Clinic",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mssql": "^12.7.15",
+    "tedious": "^18.2.0"
+  }
+}

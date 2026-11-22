@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sản phẩm & Thiết bị Y tế - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Danh mục thiết bị y tế gia đình, máy đo huyết áp, que thử, khẩu trang và vitamin chính hãng.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .product-filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+      justify-content: center;
+    }
+    .filter-btn {
+      padding: 8px 18px;
+      border-radius: var(--radius-pill);
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #4b5563;
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+    }
+    @media (max-width: 768px) {
+      .product-filter-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 4px 20px 12px;
+        margin: 0 -20px 20px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .product-filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .filter-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 7px 16px;
+        font-size: 0.84rem;
+      }
+    }
+    .products-grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 22px;
+      margin-bottom: 60px;
+    }
+    .product-card {
+      background: #ffffff;
+      border: 1.5px solid #edf2ee;
+      border-radius: 18px;
+      overflow: hidden;
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+    }
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(15, 81, 50, 0.08);
+      border-color: var(--primary);
+    }
+    .product-thumb {
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      background: #f9fbf9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-thumb img {
+      max-height: 100%;
+      width: 100%;
+      object-fit: cover;
+    }
+    .product-category-tag {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(255,255,255,0.92);
+      color: var(--primary);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .product-info {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .product-info h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #111827;
+      line-height: 1.4;
+      margin-bottom: 8px;
+      flex: 1;
+    }
+    .product-desc {
+      font-size: 0.8rem;
+      color: #6b7280;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .product-price-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid #f1f5f2;
+    }
+    .product-price {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .btn-buy {
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      background: var(--primary-light);
+      color: var(--primary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-buy:hover {
+      background: var(--primary);
+      color: #ffffff;
+    }
+    @media (max-width: 1024px) {
+      .products-grid-4 { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 640px) {
+      .products-grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="An Phúc" style="height: 38px; width: auto;">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Trang chủ</a>
+        <a href="dich-vu.html">Dịch vụ</a>
+        <a href="chuyen-khoa.html">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <a href="tel:19001234" class="phone-link"><i class="fas fa-phone-alt"></i> 1900 1234</a>
+        <a href="dat-lich-kham.html" class="btn-header-booking"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBPAGE HERO -->
+  <section class="subpage-hero">
+    <div class="container">
+      <div class="subpage-hero-content">
+        <div class="page-breadcrumb-wrap">
+          <div class="page-breadcrumb">
+            <a href="index.html">Trang chủ</a>
+            <span class="sep">&gt;</span>
+            <span class="current">Sản phẩm Y tế</span>
+          </div>
+        </div>
+        <h1>Sản phẩm & Thiết bị<br>Y tế chính hãng</h1>
+        <p>Cung cấp trang thiết bị y tế gia đình, máy đo huyết áp, máy SpO2, gói khám và vật tư y tế đạt chuẩn Bộ Y Tế.</p>
+        <a href="#productCatalog" class="btn-primary-action">Khám phá sản phẩm →</a>
+      </div>
+      <div class="subpage-hero-image">
+        <img src="images/booking-hero.png" alt="Sản phẩm Y tế An Phúc" style="border-radius: 20px;">
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG SẢN PHẨM (LOAD TỪ SQLITE) -->
+  <section id="productCatalog" class="services-page-section">
+    <div class="container">
+      <h2 class="section-center-heading">Danh mục sản phẩm & Thiết bị</h2>
+
+      <!-- Bộ lọc danh mục -->
+      <div class="product-filter-bar">
+        <button class="filter-btn active" onclick="filterCategory('all', this)">Tất cả (<span id="countTotal">20</span>)</button>
+        <button class="filter-btn" onclick="filterCategory('Thiết bị y tế gia đình', this)">Thiết bị y tế</button>
+        <button class="filter-btn" onclick="filterCategory('Gói khám tổng quát', this)">Gói khám sức khỏe</button>
+        <button class="filter-btn" onclick="filterCategory('Xét nghiệm chuyên sâu', this)">Gói xét nghiệm</button>
+        <button class="filter-btn" onclick="filterCategory('Vật tư y tế tiêu hao', this)">Vật tư y tế</button>
+        <button class="filter-btn" onclick="filterCategory('Dược phẩm & Vitamin', this)">Dược phẩm & Vitamin</button>
+      </div>
+
+      <!-- Lưới sản phẩm nạp động từ SQL Server -->
+      <div id="productsGrid" class="products-grid-4">
+        <!-- Đang tải dữ liệu từ SQL Server qua /api/products... -->
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+      <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+            <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span>1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT LOAD SẢN PHẨM TỪ SQLITE -->
+  <script>
+    let allProducts = [];
+
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchProducts();
+    });
+
+    async function fetchProducts() {
+      const grid = document.getElementById('productsGrid');
+      grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #6b7280;"><i class="fas fa-spinner fa-spin fa-2x"></i><p style="margin-top:10px;">Đang tải danh mục sản phẩm từ SQL Server database...</p></div>';
+
+      try {
+        const res = await fetch('/api/products');
+        allProducts = await res.json();
+        document.getElementById('countTotal').textContent = allProducts.length;
+        renderProducts(allProducts);
+      } catch (err) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #ef4444;"><p>Lỗi kết nối cơ sở dữ liệu SQL Server.</p></div>';
+      }
+    }
+
+    function renderProducts(items) {
+      const grid = document.getElementById('productsGrid');
+      if (items.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align:center; padding: 40px; color: #6b7280;"><p>Chưa có sản phẩm nào trong danh mục này.</p></div>';
+        return;
+      }
+
+      grid.innerHTML = items.map(p => `
+        <div class="product-card">
+          <div class="product-thumb">
+            <span class="product-category-tag">${p.category || 'Y tế'}</span>
+            <img src="${p.image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300'}" alt="${p.name}">
+          </div>
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p class="product-desc">${p.description || ''}</p>
+            <div class="product-price-row">
+              <span class="product-price">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(p.price || 0)}</span>
+              <button class="btn-buy" onclick="if (window.showNotification) { showNotification('Đã thêm [' + '${p.name.replace(/'/g, \"\")}' + '] vào danh sách tư vấn!'); }">
+                <i class="fas fa-cart-plus"></i> Mua ngay
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCategory(cat, btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      if (cat === 'all') {
+        renderProducts(allProducts);
+      } else {
+        const filtered = allProducts.filter(p => p.category === cat);
+        renderProducts(filtered);
+      }
+    }
+  </script>
+  <script src="js/main.js"></script>
+</body>
+</html>

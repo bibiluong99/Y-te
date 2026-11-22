@@ -1,0 +1,300 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đội ngũ bác sĩ - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Đội ngũ bác sĩ chuyên môn cao tại Phòng Khám An Phúc.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .doctors-grid-3 {
+      margin-bottom: 30px !important;
+    }
+    .doctor-avatar-circle {
+      width: 105px !important;
+      height: 105px !important;
+      border: 3px solid #eaf5ee !important;
+      background: #f8faf9 !important;
+    }
+    .doctor-avatar-circle img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      image-rendering: auto !important;
+    }
+    /* Banner Chất lượng tạo nên uy tín chuẩn Hình 2 */
+    .quality-banner-card {
+      margin-top: 55px !important;
+      background: #eaf5f0 url('images/quality-banner-bg.png') no-repeat center center !important;
+      background-size: cover !important;
+      border: 1px solid #d4ebe0 !important;
+      border-radius: 20px !important;
+      padding: 16px 36px !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      gap: 20px !important;
+      box-shadow: 0 4px 18px rgba(16, 73, 54, 0.04) !important;
+      position: relative !important;
+      overflow: hidden !important;
+    }
+    .quality-banner-left {
+      display: flex !important;
+      align-items: center !important;
+      gap: 18px !important;
+      z-index: 2 !important;
+    }
+    .quality-icon-shield {
+      width: 46px !important;
+      height: 46px !important;
+      border-radius: 12px !important;
+      background: #005a3c !important;
+      color: #ffffff !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 1.35rem !important;
+      flex-shrink: 0 !important;
+      box-shadow: 0 4px 10px rgba(0, 90, 60, 0.22) !important;
+    }
+    .quality-banner-text h3 {
+      font-size: 1.25rem !important;
+      font-weight: 800 !important;
+      color: #111827 !important;
+      margin-bottom: 3px !important;
+      letter-spacing: -0.2px !important;
+    }
+    .quality-banner-text p {
+      font-size: 0.92rem !important;
+      color: #4b5563 !important;
+      margin: 0 !important;
+    }
+    .quality-banner-doc-img { display: none !important;
+      height: 65px !important;
+      display: flex !important;
+      align-items: flex-end !important;
+      margin: -10px 10px -10px auto !important;
+      z-index: 1 !important;
+    }
+    .quality-banner-doc-img img {
+      height: 100% !important;
+      object-fit: contain !important;
+      mix-blend-mode: multiply !important;
+    }
+    .btn-quality-pill {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      background: #ffffff !important;
+      color: #005a3c !important;
+      font-weight: 700 !important;
+      font-size: 0.92rem !important;
+      padding: 10px 24px !important;
+      border-radius: 9999px !important;
+      text-decoration: none !important;
+      border: 1px solid rgba(0, 0, 0, 0.06) !important;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05) !important;
+      transition: all 0.25s ease !important;
+      white-space: nowrap !important;
+      flex-shrink: 0 !important;
+      z-index: 2 !important;
+    }
+    .btn-quality-pill:hover {
+      background: #f0fdf4 !important;
+      color: #0c5035 !important;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.09) !important;
+      transform: translateY(-2px) !important;
+    }
+    @media (max-width: 900px) {
+      .quality-banner-card {
+        flex-direction: column !important;
+        text-align: center !important;
+        padding: 24px 20px !important;
+        gap: 16px !important;
+      }
+      .quality-banner-left {
+        flex-direction: column !important;
+        text-align: center !important;
+      }
+      .quality-banner-doc-img {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="An Phúc" style="height: 38px; width: auto;">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Trang chủ</a>
+        <a href="dich-vu.html">Dịch vụ</a>
+        <a href="chuyen-khoa.html">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html" class="active">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <a href="tel:19001234" class="phone-link"><i class="fas fa-phone-alt"></i> 1900 1234</a>
+        <a href="dat-lich-kham.html" class="btn-header-booking"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBPAGE HERO (FULL BANNER NẰM DƯỚI CHỮ) -->
+  <section class="subpage-hero full-banner-bg" id="pageHeroSection" style="background-image: url('images/doctors-hero.png');">
+    <div class="subpage-hero-overlay"></div>
+    <div class="container hero-content-relative">
+      <div class="subpage-hero-content">
+        <div class="page-breadcrumb-wrap">
+          <div class="page-breadcrumb">
+            <a href="index.html">Trang chủ</a>
+            <span class="sep">&gt;</span>
+            <span class="current" id="pageHeroTag">Đội ngũ bác sĩ</span>
+          </div>
+        </div>
+        <h1 id="pageHeroTitle">Đội ngũ bác sĩ<br>chuyên môn cao</h1>
+        <p id="pageHeroDesc">Tận tâm – Chuyên nghiệp – Đồng hành cùng bạn trên mọi hành trình sức khỏe.</p>
+        <a href="dat-lich-kham.html" class="btn-primary-action" id="pageHeroBtn">Đặt lịch khám ngay →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ĐỘI NGŨ BÁC SĨ -->
+  <section class="doctors-page-section">
+    <div class="container">
+      <div class="doctors-header-intro">
+        <h2>Đội ngũ bác sĩ của An Phúc</h2>
+        <p>Với đội ngũ bác sĩ giàu kinh nghiệm, chúng tôi cam kết mang đến dịch vụ y tế chất lượng nhất.</p>
+      </div>
+
+      <div class="doctors-grid-3">
+      </div>
+
+      <!-- Banner CTA Chất lượng tạo nên uy tín chuẩn Hình 2 -->
+      <div class="quality-banner-card">
+        <div class="quality-banner-left">
+          <div class="quality-icon-shield">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <div class="quality-banner-text">
+            <h3>Chất lượng tạo nên uy tín</h3>
+            <p>An Phúc luôn nỗ lực mang đến dịch vụ y tế tốt nhất.</p>
+          </div>
+        </div>
+        
+        <a href="dich-vu.html" class="btn-quality-pill">Tìm hiểu thêm →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+      <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+            <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span>1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Tự động đồng bộ danh sách Bác sĩ từ cơ sở dữ liệu SQL Server (Quản trị Admin)
+    document.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const res = await fetch('/api/doctors?t=' + Date.now());
+        if (res.ok) {
+          const docs = await res.json();
+          const grid = document.querySelector('.doctors-grid-3');
+          if (grid) {
+            const activeDocs = Array.isArray(docs) ? docs.filter(d => d.status !== 'inactive') : [];
+            if (activeDocs.length === 0) {
+              grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748b; font-size: 1.05rem;"><i class="fas fa-user-md" style="font-size: 2.4rem; display: block; margin-bottom: 14px; opacity: 0.35;"></i>Hiện chưa có bác sĩ nào được công bố.</div>';
+            } else {
+              grid.innerHTML = activeDocs.map(d => `
+                <div class="doctor-profile-card">
+                  <div class="doctor-avatar-circle">
+                    <img src="${d.avatar || 'images/doc-1.png'}" alt="${d.name}" onerror="this.src='images/doc-1.png'">
+                  </div>
+                  <h3>${d.name}</h3>
+                  <div class="specialty-name">${d.department || ''}</div>
+                  <div class="exp-text">${d.experience || ''}</div>
+                </div>
+              `).join('');
+            }
+          }
+        }
+      } catch (e) {
+        console.warn('Lấy danh sách bác sĩ từ API:', e);
+      }
+    });
+  </script>
+
+
+</body>
+</html>

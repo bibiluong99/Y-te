@@ -1,0 +1,693 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đặt lịch khám - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Đặt lịch khám nhanh chóng tại Phòng Khám An Phúc.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="An Phúc" style="height: 38px; width: auto;">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Trang chủ</a>
+        <a href="dich-vu.html">Dịch vụ</a>
+        <a href="chuyen-khoa.html">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <a href="tel:19001234" class="phone-link"><i class="fas fa-phone-alt"></i> 1900 1234</a>
+        <a href="dat-lich-kham.html" class="btn-header-booking"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBPAGE HERO (FULL BANNER NẰM DƯỚI CHỮ) -->
+  <section class="subpage-hero full-banner-bg" id="pageHeroSection" style="background-image: url('images/booking-hero.png');">
+    <div class="subpage-hero-overlay"></div>
+    <div class="container hero-content-relative">
+      <div class="subpage-hero-content">
+        <div class="page-breadcrumb-wrap">
+          <div class="page-breadcrumb">
+            <a href="index.html">Trang chủ</a>
+            <span class="sep">&gt;</span>
+            <span class="current" id="pageHeroTag">Đặt lịch khám</span>
+          </div>
+        </div>
+        <h1 id="pageHeroTitle">Đặt lịch khám<br>nhanh chóng</h1>
+        <p id="pageHeroDesc">Chỉ với vài thao tác đơn giản, bạn đã có thể chủ động đặt lịch khám tại Phòng khám An Phúc.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM ĐẶT LỊCH KHÁM (LƯU VÀO SQLITE) -->
+  <!-- ===================== KHỐI ĐẶT LỊCH KHÁM (BODY CHUẨN HÌNH) ===================== -->
+  <section class="booking-page-section-h2">
+    <div class="container">
+      <div class="booking-h2-card">
+        
+        <!-- Cột trái: Thông tin đặt lịch -->
+        <div class="booking-h2-info-col">
+          <h3 class="booking-section-title"><span class="title-bar"></span>Thông tin đặt lịch</h3>
+
+          <!-- Mục 1: Thời gian làm việc -->
+          <div class="booking-h2-info-item">
+            <div class="booking-h2-info-icon">
+              <i class="far fa-clock"></i>
+            </div>
+            <div class="booking-h2-info-text">
+              <h4>Thời gian làm việc</h4>
+              <p id="bookingWorkingHoursText">Thứ 2 – Chủ nhật, 8:00 – 20:00</p>
+            </div>
+          </div>
+
+          <!-- Mục 2: Hotline hỗ trợ -->
+          <div class="booking-h2-info-item">
+            <div class="booking-h2-info-icon">
+              <i class="fas fa-phone-alt"></i>
+            </div>
+            <div class="booking-h2-info-text">
+              <h4>Hotline hỗ trợ</h4>
+              <p class="phone-highlight" id="bookingHotlineText">1900 1234</p>
+            </div>
+          </div>
+
+          <!-- Mục 3: Địa chỉ -->
+          <div class="booking-h2-info-item">
+            <div class="booking-h2-info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div class="booking-h2-info-text">
+              <h4>Địa chỉ</h4>
+              <p id="bookingAddressText">Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</p>
+            </div>
+          </div>
+
+          <!-- Slogan trang trí ở góc dưới thẻ thông tin -->
+          <div class="booking-info-slogan-wrap">
+            <div class="slogan-icon">
+              <svg width="44" height="44" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 41.5C24 41.5 6 30 6 18C6 11.5 11 7 17 7C20.5 7 23.5 9 24 10C24.5 9 27.5 7 31 7C37 7 42 11.5 42 18C42 30 24 41.5 24 41.5Z" stroke="#104936" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <path d="M24 16V26M19 21H29" stroke="#104936" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="slogan-text">
+              <span class="slogan-line-1">Vì sức khỏe của bạn</span>
+              <span class="slogan-line-2">là sứ mệnh của chúng tôi</span>
+              <svg class="slogan-underline" width="130" height="7" viewBox="0 0 130 7" fill="none">
+                <path d="M2 5C38 1 92 6 128 3" stroke="#22c55e" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Cột phải: Form đặt lịch theo đúng giao diện -->
+        <div class="booking-h2-form-col">
+          <h3 class="booking-section-title"><span class="title-bar"></span>Đặt lịch khám ngay</h3>
+
+          <form id="appointmentForm" class="booking-h2-form-grid" onsubmit="handleDirectBookingSubmit(event)">
+            <!-- 1. Họ và tên bệnh nhân * (Full width) -->
+            <div class="booking-h2-field-wrap booking-h2-field-full">
+              <i class="far fa-user field-icon-left"></i>
+              <input type="text" id="patientName" class="booking-h2-input" placeholder="Họ và tên bệnh nhân *" required>
+            </div>
+
+            <!-- 2. Số điện thoại * (Hàng 2 - Cột 1) -->
+            <div class="booking-h2-field-wrap">
+              <i class="fas fa-phone-alt field-icon-left"></i>
+              <input type="tel" id="patientPhone" class="booking-h2-input" placeholder="Số điện thoại *" required>
+            </div>
+
+            <!-- 3. Email liên hệ (Hàng 2 - Cột 2) -->
+            <div class="booking-h2-field-wrap">
+              <i class="far fa-envelope field-icon-left"></i>
+              <input type="email" id="patientEmail" class="booking-h2-input" placeholder="Email liên hệ">
+            </div>
+
+            <!-- 4. Loại lịch hẹn * (Hàng 3 - Cột 1) -->
+            <div class="booking-h2-field-wrap">
+              <i class="fas fa-hospital field-icon-left"></i>
+              <select id="appointmentType" class="booking-h2-input" required>
+                <option value="" disabled selected hidden>Loại lịch hẹn *</option>
+                <option value="Khám mới">Khám mới</option>
+                <option value="Tái khám">Tái khám</option>
+                <option value="Khám theo yêu cầu">Khám theo yêu cầu</option>
+                <option value="Tư vấn sức khỏe">Tư vấn sức khỏe</option>
+              </select>
+              <i class="fas fa-chevron-down field-icon-right"></i>
+            </div>
+
+            <!-- 5. Có BHYT không? * (Hàng 3 - Cột 2) -->
+            <div class="booking-h2-field-wrap">
+              <i class="far fa-id-card field-icon-left"></i>
+              <select id="hasInsurance" class="booking-h2-input" required>
+                <option value="" disabled selected hidden>Có BHYT không? *</option>
+                <option value="Có BHYT">Có BHYT</option>
+                <option value="Không có BHYT">Không có BHYT</option>
+              </select>
+              <i class="fas fa-chevron-down field-icon-right"></i>
+            </div>
+
+            <!-- 6. Chọn chuyên khoa * (Hàng 4 - Cột 1) -->
+            <div class="booking-h2-field-wrap">
+              <i class="fas fa-stethoscope field-icon-left"></i>
+              <select id="patientSpecialty" class="booking-h2-input" required>
+                <option value="" disabled selected hidden>Chọn chuyên khoa *</option>
+                <option value="Khám nội tổng quát">Khám nội tổng quát</option>
+                <option value="Nhi khoa">Nhi khoa</option>
+                <option value="Sản phụ khoa">Sản phụ khoa</option>
+                <option value="Tim mạch">Tim mạch</option>
+                <option value="Hô hấp">Hô hấp</option>
+                <option value="Tiêu hóa">Tiêu hóa</option>
+                <option value="Tiêm chủng">Tiêm chủng</option>
+                <option value="Da liễu">Da liễu</option>
+                <option value="Cơ xương khớp">Cơ xương khớp</option>
+              </select>
+              <i class="fas fa-chevron-down field-icon-right"></i>
+            </div>
+
+            <!-- 7. Chọn bác sĩ * (Hàng 4 - Cột 2) -->
+            <div class="booking-h2-field-wrap">
+              <i class="far fa-user field-icon-left"></i>
+              <select id="patientDoctor" class="booking-h2-input" required>
+                <option value="">Chọn bác sĩ *</option>
+              </select>
+              <i class="fas fa-chevron-down field-icon-right"></i>
+            </div>
+
+            <!-- 8. Date (Hàng 5 - Cột 1) -->
+            <div class="booking-h2-field-wrap">
+              <i class="far fa-calendar-alt field-icon-left"></i>
+              <input type="text" id="patientDate" class="booking-h2-input" placeholder="Chọn ngày khám *" onfocus="(this.type='date')" onblur="if(!this.value){this.type='text'}" required>
+              <i class="far fa-calendar field-icon-right date-custom-icon" style="cursor: pointer;"></i>
+            </div>
+
+            <!-- 9. Chọn khung giờ * (Hàng 5 - Cột 2) -->
+            <div class="booking-h2-field-wrap">
+              <i class="far fa-clock field-icon-left"></i>
+              <select id="patientTime" class="booking-h2-input" required>
+                <option value="" disabled selected hidden>Chọn khung giờ *</option>
+                <option value="08:00 - 09:00">08:00 - 09:00</option>
+                <option value="09:00 - 10:00">09:00 - 10:00</option>
+                <option value="10:00 - 11:00">10:00 - 11:00</option>
+                <option value="11:00 - 12:00">11:00 - 12:00</option>
+                <option value="13:30 - 14:30">13:30 - 14:30</option>
+                <option value="14:30 - 15:30">14:30 - 15:30</option>
+                <option value="15:30 - 16:30">15:30 - 16:30</option>
+                <option value="16:30 - 17:30">16:30 - 17:30</option>
+                <option value="17:30 - 19:30">17:30 - 19:30</option>
+              </select>
+              <i class="fas fa-chevron-down field-icon-right"></i>
+            </div>
+
+            <!-- 10. Nút bấm Đặt lịch hẹn ngay (Full width) -->
+            <div class="booking-h2-field-full" style="margin-top: 4px;">
+              <button type="submit" class="btn-h2-book-submit">
+                <i class="far fa-calendar-check" style="font-size: 1.15rem; margin-right: 6px;"></i> Đặt lịch hẹn ngay →
+              </button>
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- MODAL THÔNG BÁO ĐẶT LỊCH THÀNH CÔNG (CHÍNH GIỮA MÀN HÌNH) -->
+  <div id="bookingSuccessModal" class="booking-success-modal-overlay" style="display:none;">
+    <div class="booking-success-modal-card">
+      <button type="button" class="btn-close-success-modal" onclick="closeBookingSuccessModal()">&times;</button>
+      
+      <div class="success-modal-header">
+        <div class="success-modal-icon">
+          <i class="fas fa-check"></i>
+        </div>
+        <h3>Đặt lịch thành công!</h3>
+        <p>Phòng khám Đa khoa An Phúc đã ghi nhận lịch hẹn của Quý khách.</p>
+      </div>
+
+      <div class="success-info-table">
+        <div class="success-info-row">
+          <span class="info-label"><i class="far fa-user"></i> Họ và tên:</span>
+          <span class="info-value" id="successPatientName">-</span>
+        </div>
+        <div class="success-info-row">
+          <span class="info-label"><i class="fas fa-phone-alt"></i> Số điện thoại:</span>
+          <span class="info-value" id="successPatientPhone">-</span>
+        </div>
+        <div class="success-info-row">
+          <span class="info-label"><i class="far fa-calendar-alt"></i> Ngày khám:</span>
+          <span class="info-value" id="successDate">-</span>
+        </div>
+        <div class="success-info-row">
+          <span class="info-label"><i class="far fa-clock"></i> Thời gian khám:</span>
+          <span class="info-value" id="successTime">-</span>
+        </div>
+        <div class="success-info-row">
+          <span class="info-label"><i class="fas fa-stethoscope"></i> Chuyên khoa:</span>
+          <span class="info-value" id="successSpecialty">-</span>
+        </div>
+        <div class="success-info-row">
+          <span class="info-label"><i class="fas fa-user-md"></i> Bác sĩ:</span>
+          <span class="info-value" id="successDoctor">-</span>
+        </div>
+        <div class="success-info-row">
+          <span class="info-label"><i class="fas fa-clipboard-list"></i> Loại khám:</span>
+          <span class="info-value" id="successAppointmentType">-</span>
+        </div>
+      </div>
+
+      <div class="success-modal-actions">
+        <button type="button" class="btn-confirm-success" onclick="closeBookingSuccessModal()">
+          Xác nhận & Đóng
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+      <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+            <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span>1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let activeBookingSlots = [
+      '08:00 - 09:00',
+      '09:00 - 10:00',
+      '10:00 - 11:00',
+      '11:00 - 12:00',
+      '13:30 - 14:30',
+      '14:30 - 15:30',
+      '15:30 - 16:30',
+      '16:30 - 17:30',
+      '17:30 - 18:30',
+      '18:30 - 19:30'
+    ];
+
+    // Kiểm tra xem một khung giờ đã qua so với thời gian hiện tại chưa
+    function isTimeSlotPast(slotTimeStr, selectedDateStr) {
+      if (!selectedDateStr) return false;
+
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${year}-${month}-${day}`;
+
+      if (selectedDateStr < todayStr) return true;
+      if (selectedDateStr > todayStr) return false;
+
+      // Với ngày hôm nay: kiểm tra giờ bắt đầu của khung giờ
+      const match = slotTimeStr.match(/(\d{1,2}):(\d{2})/);
+      if (!match) return false;
+
+      const startHour = parseInt(match[1], 10);
+      const startMinute = parseInt(match[2], 10);
+      const slotMinutes = startHour * 60 + startMinute;
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      return slotMinutes <= currentMinutes;
+    }
+
+    // Cập nhật danh sách option của dropdown thời gian: disable các giờ đã qua
+    function updatePatientTimeDropdown() {
+      const dateInput = document.getElementById('patientDate');
+      const selectEl = document.getElementById('patientTime');
+      if (!selectEl) return;
+
+      const selectedDate = dateInput ? dateInput.value : '';
+      const currentVal = selectEl.value;
+      let hasValidVal = false;
+
+      let html = '<option value="" disabled selected hidden>Chọn khung giờ *</option>';
+
+      activeBookingSlots.forEach(slot => {
+        const timeStr = typeof slot === 'string' ? slot : slot.time;
+        if (!timeStr) return;
+        const isPast = isTimeSlotPast(timeStr, selectedDate);
+
+        if (isPast) {
+          html += `<option value="${timeStr}" disabled style="color: #94a3b8; background-color: #f8fafc; font-style: normal;">${timeStr}</option>`;
+        } else {
+          const isSelected = (currentVal === timeStr);
+          if (isSelected) hasValidVal = true;
+          html += `<option value="${timeStr}" ${isSelected ? 'selected' : ''}>${timeStr}</option>`;
+        }
+      });
+
+      selectEl.innerHTML = html;
+      if (!hasValidVal) {
+        selectEl.value = '';
+      }
+    }
+
+    // Thiết lập ngày tối thiểu là ngày hôm nay và lắng nghe thay đổi
+    document.addEventListener('DOMContentLoaded', function() {
+      const dateInput = document.getElementById('patientDate');
+      const timeSelect = document.getElementById('patientTime');
+      const dateIcon = document.querySelector('.date-custom-icon');
+
+      if (dateInput) {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const todayStr = `${year}-${month}-${day}`;
+        dateInput.setAttribute('min', todayStr);
+
+        dateInput.addEventListener('change', function() {
+          if (this.value) {
+            this.type = 'date';
+          }
+          updatePatientTimeDropdown();
+        });
+        dateInput.addEventListener('input', updatePatientTimeDropdown);
+      }
+
+      if (dateIcon) {
+        dateIcon.addEventListener('click', function() {
+          if (dateInput) {
+            dateInput.type = 'date';
+            dateInput.focus();
+            if (typeof dateInput.showPicker === 'function') {
+              try { dateInput.showPicker(); } catch (_) {}
+            }
+          }
+        });
+      }
+
+      if (timeSelect) {
+        timeSelect.addEventListener('focus', updatePatientTimeDropdown);
+        timeSelect.addEventListener('click', updatePatientTimeDropdown);
+      }
+      updatePatientTimeDropdown();
+    });
+
+    // Định dạng ngày yyyy-mm-dd sang dd/mm/yyyy
+    function formatDisplayDate(dateStr) {
+      if (!dateStr) return '';
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        return `${parts[2]}/${parts[1]}/${parts[0]}`;
+      }
+      return dateStr;
+    }
+
+    // Hiển thị modal thông báo đặt lịch thành công chính giữa màn hình
+    function showBookingSuccessModal(data) {
+      document.getElementById('successPatientName').textContent = data.name || '-';
+      document.getElementById('successPatientPhone').textContent = data.phone || '-';
+      document.getElementById('successDate').textContent = data.date || '-';
+      document.getElementById('successTime').textContent = data.time || '-';
+      document.getElementById('successSpecialty').textContent = data.specialty || '-';
+      document.getElementById('successDoctor').textContent = data.doctor || 'Theo sắp xếp của phòng khám';
+      document.getElementById('successAppointmentType').textContent = data.type || 'Khám mới';
+
+      const modal = document.getElementById('bookingSuccessModal');
+      if (modal) modal.style.display = 'flex';
+    }
+
+    // Đóng modal thành công
+    function closeBookingSuccessModal() {
+      const modal = document.getElementById('bookingSuccessModal');
+      if (modal) modal.style.display = 'none';
+    }
+
+    // Đóng khi click ngoài modal
+    document.addEventListener('click', function(e) {
+      const modal = document.getElementById('bookingSuccessModal');
+      if (modal && e.target === modal) closeBookingSuccessModal();
+    });
+
+    // Gửi đặt lịch hẹn trực tiếp (Hình 2 Figma - Đầy đủ 9 trường)
+    async function handleDirectBookingSubmit(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.stopImmediatePropagation) e.stopImmediatePropagation();
+      
+      const name = document.getElementById('patientName').value.trim();
+      const phone = document.getElementById('patientPhone').value.trim();
+      const email = document.getElementById('patientEmail') ? document.getElementById('patientEmail').value.trim() : '';
+      const appointmentType = document.getElementById('appointmentType') ? document.getElementById('appointmentType').value : 'Khám mới';
+      const hasInsurance = document.getElementById('hasInsurance') ? document.getElementById('hasInsurance').value : 'Không có BHYT';
+      const specialty = document.getElementById('patientSpecialty').value;
+      const doctor = document.getElementById('patientDoctor') ? document.getElementById('patientDoctor').value : '';
+      const date = document.getElementById('patientDate').value;
+      const time = document.getElementById('patientTime').value;
+
+      if (!name || !phone) {
+        if (window.showNotification) showNotification('Vui lòng nhập họ tên và số điện thoại liên hệ!', 'error');
+        return;
+      }
+
+      if (!specialty) {
+        if (window.showNotification) showNotification('Vui lòng chọn chuyên khoa khám!', 'error');
+        return;
+      }
+
+      if (!doctor) {
+        if (window.showNotification) showNotification('Vui lòng chọn bác sĩ khám!', 'error');
+        return;
+      }
+
+      if (!date || !date.trim()) {
+        if (window.showNotification) showNotification('Vui lòng chọn ngày khám!', 'error');
+        const dEl = document.getElementById('patientDate');
+        if (dEl) {
+          dEl.type = 'date';
+          dEl.focus();
+          if (typeof dEl.showPicker === 'function') {
+            try { dEl.showPicker(); } catch (_) {}
+          }
+        }
+        return;
+      }
+
+      if (!time) {
+        if (window.showNotification) showNotification('Vui lòng chọn khung giờ khám!', 'error');
+        return;
+      }
+
+      if (isTimeSlotPast(time, date)) {
+        if (window.showNotification) showNotification('Khung giờ bạn chọn đã qua so với thời gian hiện tại! Vui lòng chọn khung giờ khác.', 'error');
+        updatePatientTimeDropdown();
+        return;
+      }
+
+      // Rule: Kiểm tra nếu bác sĩ tại khung giờ và ngày đó đã có lịch hẹn
+      if (doctor && doctor.trim() && doctor !== 'Theo sắp xếp của phòng khám' && !doctor.toLowerCase().includes('tuỳ chọn')) {
+        try {
+          const checkRes = await fetch(`/api/appointments/check-busy?doctor=${encodeURIComponent(doctor)}&date=${encodeURIComponent(date)}&time=${encodeURIComponent(time)}`);
+          const checkData = await checkRes.json();
+          if (checkData && checkData.busy) {
+            if (window.showNotification) showNotification(`Bác sĩ ${doctor} đã có lịch hẹn vào khung giờ ${time} ngày ${formatDisplayDate(date)}. Vui lòng đổi bác sĩ khác!`, 'error');
+            return;
+          }
+        } catch (err) {
+          console.warn('Lỗi kiểm tra lịch bác sĩ:', err);
+        }
+      }
+
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalBtnText = submitBtn ? submitBtn.innerHTML : '';
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Đang xử lý...';
+      }
+
+      const bookingInfo = {
+        name: name,
+        phone: phone,
+        date: formatDisplayDate(date),
+        time: time,
+        specialty: specialty,
+        doctor: doctor || 'Theo sắp xếp của phòng khám',
+        type: appointmentType || 'Khám mới'
+      };
+
+      const payload = {
+        patient_name: name,
+        phone: phone,
+        email: email,
+        appointment_type: appointmentType || 'Khám mới',
+        has_insurance: hasInsurance || 'Không có BHYT',
+        specialty: specialty,
+        doctor: doctor || '',
+        appointment_date: date,
+        appointment_time: time,
+        notes: ''
+      };
+
+      fetch('/api/appointments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+        if (data.error || !data.success) {
+          if (window.showNotification) showNotification(data.message || `Bác sĩ ${doctor} đã có lịch hẹn vào khung giờ này. Vui lòng chọn bác sĩ khác!`, 'error');
+          return;
+        }
+        // Bỏ hoàn toàn thông báo đen (alert), mở modal thành công chính giữa màn hình
+        showBookingSuccessModal(bookingInfo);
+        const apptForm = document.getElementById('appointmentForm');
+        if (apptForm) apptForm.reset();
+        const pDate = document.getElementById('patientDate');
+        if (pDate) {
+          pDate.type = 'text';
+          pDate.value = '';
+        }
+        if (typeof window.resetBookingDoctorDropdowns === 'function') {
+          window.resetBookingDoctorDropdowns();
+        }
+        updatePatientTimeDropdown();
+      })
+      .catch((err) => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+        if (window.showNotification) showNotification('Có lỗi xảy ra khi gửi thông tin đặt lịch. Vui lòng thử lại!', 'error');
+      })
+      .finally(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnText;
+        }
+      });
+    }
+
+    // Tải cấu hình thời gian làm việc & khung giờ khám động từ SQL Server / Database
+    async function loadDynamicScheduleConfig() {
+      try {
+        const res = await fetch(`/api/settings?t=${Date.now()}`);
+        const settings = await res.json();
+        if (!settings) return;
+
+        // Cập nhật text Thời gian làm việc
+        if (settings.working_hours_text) {
+          const whEl = document.getElementById('bookingWorkingHoursText');
+          if (whEl) whEl.textContent = settings.working_hours_text;
+        }
+
+        // Cập nhật Hotline
+        const currentPhone = settings.phone || settings.hotline;
+        if (currentPhone) {
+          const hlEl = document.getElementById('bookingHotlineText');
+          if (hlEl) hlEl.textContent = currentPhone;
+        }
+
+        // Cập nhật Địa chỉ
+        if (settings.address) {
+          const addrEl = document.getElementById('bookingAddressText');
+          if (addrEl) addrEl.textContent = settings.address;
+        }
+
+        // Cập nhật các khung giờ vào dropdown #patientTime
+        if (settings.working_hours_slots) {
+          let slots = settings.working_hours_slots;
+          if (typeof slots === 'string') {
+            try { slots = JSON.parse(slots); } catch (e) { slots = null; }
+          }
+          if (Array.isArray(slots)) {
+            const activeSlots = slots.filter(s => s && s.active !== false);
+            if (activeSlots.length > 0) {
+              activeBookingSlots = activeSlots;
+              updatePatientTimeDropdown();
+            }
+          }
+        }
+      } catch (err) {
+        console.warn('Lỗi tải cấu hình thời gian khám:', err);
+      }
+    }
+
+    // Tự động tải cấu hình khi mở trang
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', loadDynamicScheduleConfig);
+    } else {
+      loadDynamicScheduleConfig();
+    }
+  </script>
+  <script src="js/main.js?v=20261122_v2"></script>
+
+</body>
+</html>

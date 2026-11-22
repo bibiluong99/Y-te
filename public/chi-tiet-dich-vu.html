@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Khám tổng quát - Chi tiết dịch vụ - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Dịch vụ khám tổng quát tại Phòng khám Đa khoa An Phúc. Chăm sóc sức khỏe toàn diện, phát hiện sớm nguy cơ bệnh lý, bảo vệ sức khỏe lâu dài.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css?v=20261120_v5">
+  <style>
+    /* Di chuyển thẻ Gói khám tổng quát lên cùng hàng với Giới thiệu dịch vụ */
+    .service-top-2col-layout {
+      align-items: start !important;
+    }
+    .package-pricing-card {
+      margin-top: 0 !important;
+      align-self: start !important;
+      position: relative !important;
+      top: 0 !important;
+    }
+    /* Bỏ 2 đường gạch đứt nét quanh thời gian gói khám */
+    .package-meta {
+      border: none !important;
+      border-top: none !important;
+      border-bottom: none !important;
+      padding: 6px 0 16px !important;
+      margin-bottom: 16px !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================== HEADER ===================== -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo-link">
+        <img src="images/logo.png" alt="Phòng Khám Đa Khoa An Phúc" class="site-header-logo" id="siteHeaderLogo">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html" class="nav-link">Trang chủ</a>
+        <a href="dich-vu.html" class="nav-link active">Dịch vụ</a>
+        <a href="chuyen-khoa.html" class="nav-link">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html" class="nav-link">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html" class="nav-link">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <a href="tel:19001234" class="phone-link" id="headerPhoneLink"><i class="fas fa-phone-alt"></i> 1900 1234</a>
+        <a href="dat-lich-kham.html" class="btn-header-booking"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== HERO BANNER (HIỂN THỊ FULL NHƯ BANNER TRANG CHỦ) ===================== -->
+  <section class="hero full-banner-bg" id="serviceDetailHero"
+    style="background-image: url('images/service-hero.png'); min-height: 440px;">
+    <div class="hero-overlay-gradient"></div>
+    <div class="container hero-content-relative">
+      <div class="hero-content" style="max-width: 580px;">
+        <div class="page-breadcrumb-wrap" style="margin-bottom: 14px;">
+          <div class="page-breadcrumb" style="display: flex; align-items: center; gap: 8px; font-size: 0.9rem;">
+            <a href="index.html" style="color: #64748b; text-decoration: none;"><i class="fas fa-home"></i> Trang chủ</a>
+            <span class="sep" style="color: #cbd5e1;">&gt;</span>
+            <a href="dich-vu.html" style="color: #64748b; text-decoration: none;">Dịch vụ</a>
+            <span class="sep" style="color: #cbd5e1;">&gt;</span>
+            <span class="current" id="serviceBreadcrumbCurrent" style="color: #104936; font-weight: 700;">Khám tổng quát</span>
+          </div>
+        </div>
+        <h1 class="hero-title" id="serviceHeroTitle" style="font-size: clamp(2rem, 3.8vw, 3rem); font-weight: 800; color: #104936; line-height: 1.25; margin-bottom: 14px;">Khám tổng quát</h1>
+        <p class="hero-desc" id="serviceHeroDesc" style="font-size: 1.05rem; line-height: 1.6; color: #475569; margin-bottom: 24px;">
+          Chăm sóc sức khỏe toàn diện, phát hiện sớm nguy cơ bệnh lý, bảo vệ sức khỏe lâu dài.
+        </p>
+        <div class="hero-actions" style="display: flex; gap: 14px; flex-wrap: wrap;">
+          <a href="dat-lich-kham.html" class="btn-hero-book" id="serviceHeroBtn" style="display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; border-radius: 9999px; background: #104936; color: #ffffff; font-weight: 700; text-decoration: none; box-shadow: 0 4px 14px rgba(16, 73, 54, 0.25);">
+            <i class="far fa-calendar-alt"></i> Đặt lịch khám ngay →
+          </a>
+          <a href="#gioi-thieu" class="btn-hero-more" style="display: inline-flex; align-items: center; gap: 8px; padding: 13px 24px; border-radius: 9999px; background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 600; text-decoration: none;">
+            <i class="fas fa-play-circle" style="font-size: 1.15rem; color: #104936;"></i> Tìm hiểu thêm
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== MAIN CONTENT ===================== -->
+  <main class="service-main-section" id="gioi-thieu">
+    <div class="container">
+      
+      <!-- HÀNG 1: 2 CỘT (NỘI DUNG CHI TIẾT + THẺ GIÁ / ĐẶT LỊCH GÓI KHÁM) -->
+      <div class="service-top-2col-layout">
+        
+        <!-- CỘT TRÁI: GIỚI THIỆU & HẠNG MỤC KIỂM TRA -->
+        <div class="service-content-col">
+          
+          <!-- 1. Giới thiệu dịch vụ -->
+          <section class="service-intro-block" id="serviceIntroSection">
+            <h2 class="service-section-heading">Giới thiệu dịch vụ</h2>
+            <div class="service-intro-text" id="serviceIntroText">
+            </div>
+          </section>
+
+          <!-- 2. Hạng mục kiểm tra -->
+          <section class="service-items-block" id="serviceItemsSection">
+            <h2 class="service-section-heading">Hạng mục kiểm tra</h2>
+            <div class="service-items-subtitle" id="serviceChecklistSubtitle">
+              <i class="fas fa-stethoscope"></i> <span id="serviceChecklistTitle">Gói khám bao gồm:</span>
+            </div>
+            
+            <div class="service-checklist" id="serviceChecklistGrid">
+            </div>
+          </section>
+
+        </div>
+
+        <!-- CỘT PHẢI: THẺ BÁO GIÁ & ĐẶT LỊCH GÓI KHÁM (CHUẨN THEO FIGMA) -->
+        <aside class="package-pricing-card">
+          <div class="package-header">
+            <div class="package-header-text">
+              <h3 id="pkgCardTitle">Gói khám tổng quát</h3>
+            </div>
+          </div>
+
+          <div class="package-price" id="pkgCardPrice">1.200.000 VNĐ</div>
+
+          <div class="package-meta" id="pkgCardMeta">
+            <div class="package-meta-item">
+              <i class="far fa-clock"></i>
+              <span id="pkgCardDuration"></span>
+            </div>
+          </div>
+
+          <a href="dat-lich-kham.html" class="btn-package-book">
+            Đặt lịch khám ngay <i class="fas fa-arrow-right"></i>
+          </a>
+        </aside>
+
+      </div>
+
+      <!-- HÀNG 2: LỢI ÍCH KHI KIỂM TRA SỨC KHỎE (5 ẢNH THẺ NGANG) -->
+      <section class="service-benefits-section">
+        <h2 class="service-section-heading">Lợi ích khi kiểm tra sức khỏe</h2>
+        <div class="benefit-photo-grid">
+          
+          <!-- Card 1 -->
+          <div class="benefit-photo-card">
+            <div class="benefit-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400&auto=format&fit=crop&q=80" 
+                   alt="Phát hiện sớm bệnh lý" 
+                   onerror="this.onerror=null; this.src='images/spec-tim-mach.png';">
+            </div>
+            <div class="benefit-photo-body">
+              <h4>Phát hiện sớm bệnh lý</h4>
+            </div>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="benefit-photo-card">
+            <div class="benefit-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400&auto=format&fit=crop&q=80" 
+                   alt="Chủ động phòng ngừa bệnh tật" 
+                   onerror="this.onerror=null; this.src='images/doc-1.png';">
+            </div>
+            <div class="benefit-photo-body">
+              <h4>Chủ động phòng ngừa bệnh tật</h4>
+            </div>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="benefit-photo-card">
+            <div class="benefit-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400&auto=format&fit=crop&q=80" 
+                   alt="Theo dõi sức khỏe định kỳ" 
+                   onerror="this.onerror=null; this.src='images/dept-maternity.png';">
+            </div>
+            <div class="benefit-photo-body">
+              <h4>Theo dõi sức khỏe định kỳ</h4>
+            </div>
+          </div>
+
+          <!-- Card 4 -->
+          <div class="benefit-photo-card">
+            <div class="benefit-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1516307365426-bea591f05011?w=400&auto=format&fit=crop&q=80" 
+                   alt="Tăng cường sức khỏe, nâng cao chất lượng cuộc sống" 
+                   onerror="this.onerror=null; this.src='images/quality-banner-bg.png';">
+            </div>
+            <div class="benefit-photo-body">
+              <h4>Tăng cường sức khỏe, nâng cao chất lượng cuộc sống</h4>
+            </div>
+          </div>
+
+          <!-- Card 5 -->
+          <div class="benefit-photo-card">
+            <div class="benefit-photo-thumb">
+              <img src="https://images.unsplash.com/photo-1579684453423-f84349ef60b0?w=400&auto=format&fit=crop&q=80" 
+                   alt="Tiết kiệm chi phí điều trị" 
+                   onerror="this.onerror=null; this.src='images/spec-noi-tong-quat.png';">
+            </div>
+            <div class="benefit-photo-body">
+              <h4>Tiết kiệm chi phí điều trị</h4>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- HÀNG 3: VÌ SAO CHỌN AN PHÚ + CTA BÁC SĨ (CHUẨN FIGMA) -->
+      <section class="service-why-cta-row">
+        
+        <!-- Khối bên trái: Vì sao chọn An Phúc? -->
+        <div class="why-anphuc-card">
+          <div>
+            <div class="why-anphuc-title">
+              <i class="fas fa-shield-alt"></i> Vì sao chọn An Phúc?
+            </div>
+            <div class="why-anphuc-sub">
+              <i class="fas fa-map-marker-alt"></i> Chọn An Phúc là chọn sự an tâm cho sức khỏe của bạn
+            </div>
+          </div>
+
+          <div class="why-features-grid">
+            <div class="why-feat-item">
+              <div class="why-feat-icon"><i class="fas fa-user-md"></i></div>
+              <span>Đội ngũ bác sĩ chuyên môn cao</span>
+            </div>
+            <div class="why-feat-item">
+              <div class="why-feat-icon"><i class="fas fa-desktop"></i></div>
+              <span>Trang thiết bị hiện đại</span>
+            </div>
+            <div class="why-feat-item">
+              <div class="why-feat-icon"><i class="fas fa-hand-holding-heart"></i></div>
+              <span>Dịch vụ tận tâm chuyên nghiệp</span>
+            </div>
+            <div class="why-feat-item">
+              <div class="why-feat-icon"><i class="fas fa-map-marked-alt"></i></div>
+              <span>Vị trí thuận tiện dễ dàng di chuyển</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Khối bên phải: Đặt lịch khám ngay hôm nay banner xanh -->
+        <div class="cta-doc-banner">
+          <img src="images/doc-2.png" alt="Bác sĩ An Phúc" class="cta-doc-img" onerror="this.onerror=null; this.src='images/doc-1.png';">
+          <div class="cta-doc-content">
+            <h3>Đặt lịch khám ngay hôm nay</h3>
+            <p>Vì sức khỏe của bạn và gia đình!</p>
+            <a href="dat-lich-kham.html" class="btn-cta-white">
+              <i class="far fa-calendar-check"></i> Đặt lịch khám ngay <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- HÀNG 4: DỊCH VỤ KHÁC (4 THẺ NGANG) -->
+      <section class="other-services-section">
+        <div class="other-services-top-bar">
+          <h2 class="service-section-heading" style="margin-bottom: 0;">Dịch vụ khác</h2>
+          <a href="dich-vu.html" class="btn-view-all-services">
+            Xem tất cả dịch vụ <i class="fas fa-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="other-services-grid-4" id="otherServicesGrid">
+          <!-- Render động từ API /api/services -->
+        </div>
+      </section>
+
+      <!-- Decorative Leaf Watermark (Bottom Right) -->
+      <div class="contact-leaf-decor leaf-card-bottom" style="bottom: 0; right: 0; position: absolute; pointer-events: none; z-index: 1;">
+        <svg viewBox="0 0 190 160" fill="none" xmlns="http://www.w3.org/2000/svg" style="width: 180px; height: 150px;">
+          <path d="M160 140 C160 85 105 40 30 40 C30 95 85 140 160 140 Z" fill="#bbf7d0" opacity="0.65"/>
+          <path d="M180 150 C170 95 125 55 65 55 C75 110 120 150 180 150 Z" fill="#86efac" opacity="0.5"/>
+          <path d="M125 150 C115 105 75 75 20 65 C30 120 75 150 125 150 Z" fill="#4ade80" opacity="0.35"/>
+        </svg>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc" id="siteFooterLogo">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span id="footerHotlineText">1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="YouTube"><i class="fab fa-youtube"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT ĐỒNG BỘ CẤU HÌNH LOGO VÀ DỮ LIỆU TỰ ĐỘNG -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/settings?t=' + Date.now())
+        .then(res => res.json())
+        .then(settings => {
+          if (!settings) return;
+          if (settings.header_logo) {
+            const hLogo = document.getElementById('siteHeaderLogo');
+            if (hLogo) hLogo.src = settings.header_logo;
+          }
+          if (settings.footer_logo) {
+            const fLogo = document.getElementById('siteFooterLogo');
+            if (fLogo) fLogo.src = settings.footer_logo;
+          }
+          if (settings.hotline) {
+            const hl = document.getElementById('headerPhoneLink');
+            if (hl) hl.innerHTML = `<i class="fas fa-phone-alt"></i> ${settings.hotline}`;
+            const fHl = document.getElementById('footerHotlineText');
+            if (fHl) fHl.textContent = settings.hotline;
+          }
+        })
+        .catch(err => console.warn('Lỗi tải settings:', err));
+
+      // Tự động tải thông tin chi tiết dịch vụ theo ?id= hoặc ?slug=
+      loadServiceDetail();
+    });
+
+    async function loadServiceDetail() {
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const paramId = urlParams.get('id');
+        const paramSlug = urlParams.get('slug');
+
+        let allServices = [];
+        try {
+          const res = await fetch('/api/services?t=' + Date.now());
+          if (res.ok) allServices = await res.json();
+        } catch (e) {
+          console.warn('Lỗi tải danh sách services:', e);
+        }
+
+        let service = null;
+        if (paramId && Array.isArray(allServices) && allServices.length > 0) {
+          service = allServices.find(s => s.id == paramId);
+        }
+        if (!service && paramId) {
+          try {
+            const res = await fetch(`/api/services/${paramId}?t=` + Date.now());
+            if (res.ok) service = await res.json();
+          } catch (e) {}
+        }
+
+        if (!service && Array.isArray(allServices) && allServices.length > 0) {
+          if (paramSlug) {
+            service = allServices.find(s => {
+              const sSlug = (s.slug || s.name || '').toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/đ/g, 'd').replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+              return sSlug.includes(paramSlug.toLowerCase()) || paramSlug.toLowerCase().includes(sSlug);
+            });
+          }
+          if (!service) service = allServices[0];
+        }
+
+        if (!service) return;
+
+        // 1. Tiêu đề trang và Breadcrumb
+        document.title = `${service.name} - Phòng Khám Đa Khoa An Phúc`;
+        const breadcrumbEl = document.getElementById('serviceBreadcrumbCurrent');
+        if (breadcrumbEl) breadcrumbEl.textContent = service.name;
+
+        // 2. Hero Section (Hiển thị Banner Full width như trang chủ)
+        const heroTitle = document.getElementById('serviceHeroTitle');
+        if (heroTitle) heroTitle.textContent = service.name;
+        const heroDesc = document.getElementById('serviceHeroDesc');
+        if (heroDesc) heroDesc.textContent = service.description || '';
+
+        const heroSection = document.getElementById('serviceDetailHero');
+        if (heroSection) {
+          const bannerImg = service.banner || (service.icon && (service.icon.includes('/') || service.icon.includes('.')) ? service.icon : '');
+          if (bannerImg) {
+            heroSection.style.backgroundImage = `url('${bannerImg}')`;
+          } else {
+            heroSection.style.backgroundImage = `url('images/service-hero.png')`;
+          }
+        }
+
+        // 3. Giới thiệu dịch vụ (Hỗ trợ cả HTML/CSS lẫn văn bản thông thường, ẩn nếu trống)
+        const introSection = document.getElementById('serviceIntroSection') || document.querySelector('.service-intro-block');
+        const introContainer = document.getElementById('serviceIntroText');
+        if (service.intro && service.intro.trim()) {
+          if (introSection) introSection.style.display = '';
+          if (introContainer) {
+            if (/<(?:p|div|span|ul|ol|li|table|h[1-6]|style|strong|em|b|i|br|img)\b/i.test(service.intro)) {
+              introContainer.innerHTML = service.intro;
+            } else {
+              const paragraphs = service.intro.split(/\n\s*\n/).filter(p => p.trim());
+              if (paragraphs.length > 0) {
+                introContainer.innerHTML = paragraphs.map(p => `<p>${p.trim().replace(/\n/g, '<br>')}</p>`).join('');
+              } else {
+                introContainer.innerHTML = `<p>${service.intro.trim().replace(/\n/g, '<br>')}</p>`;
+              }
+            }
+          }
+        } else {
+          if (introSection) introSection.style.display = 'none';
+          if (introContainer) introContainer.innerHTML = '';
+        }
+
+        // 4. Hạng mục kiểm tra (Hỗ trợ cả khối HTML/CSS tùy biến hoặc danh sách dòng, ẩn nếu trống)
+        const checklistSection = document.getElementById('serviceItemsSection') || document.querySelector('.service-items-block');
+        const grid = document.getElementById('serviceChecklistGrid');
+        if (service.checklist && service.checklist.trim()) {
+          if (checklistSection) checklistSection.style.display = '';
+          const checklistTitle = document.getElementById('serviceChecklistTitle');
+          if (checklistTitle) checklistTitle.textContent = `Gói ${service.name.toLowerCase()} bao gồm:`;
+          if (grid) {
+            if (/<(?:div|ul|ol|table|style)\b/i.test(service.checklist)) {
+              grid.innerHTML = service.checklist;
+            } else {
+              const items = service.checklist.split('\n').map(x => x.trim()).filter(Boolean);
+              if (items.length > 0) {
+                grid.innerHTML = items.map(item => `
+                  <div class="check-item">
+                    <i class="fas fa-check-circle"></i>
+                    <span>${item}</span>
+                  </div>
+                `).join('');
+              } else {
+                grid.innerHTML = '';
+              }
+            }
+          }
+        } else {
+          if (checklistSection) checklistSection.style.display = 'none';
+          if (grid) grid.innerHTML = '';
+        }
+
+        // 5. Thẻ báo giá bên phải
+        const pkgTitle = document.getElementById('pkgCardTitle');
+        if (pkgTitle) pkgTitle.textContent = `Gói ${service.name.toLowerCase()}`;
+
+        const pkgPrice = document.getElementById('pkgCardPrice');
+        if (pkgPrice) {
+          if (service.price && service.price > 0) {
+            pkgPrice.textContent = Number(service.price).toLocaleString('vi-VN') + ' VNĐ';
+          } else {
+            pkgPrice.textContent = 'Liên hệ';
+          }
+        }
+
+        // Thời gian thực hiện gói khám (Ẩn nếu không nhập)
+        const pkgDuration = document.getElementById('pkgCardDuration');
+        const pkgMeta = document.getElementById('pkgCardMeta') || (pkgDuration ? pkgDuration.closest('.package-meta') : null);
+        if (service.duration && service.duration.trim()) {
+          if (pkgMeta) pkgMeta.style.display = '';
+          if (pkgDuration) {
+            pkgDuration.textContent = 'Thời gian: ' + service.duration.trim();
+          }
+        } else {
+          if (pkgMeta) pkgMeta.style.display = 'none';
+          if (pkgDuration) pkgDuration.textContent = '';
+        }
+
+        // 6. Hiển thị danh sách "Dịch vụ khác" (loại trừ dịch vụ đang xem)
+        renderOtherServices(allServices, service.id);
+      } catch (err) {
+        console.warn('Lỗi hiển thị chi tiết dịch vụ:', err);
+      }
+    }
+
+    // Render danh sách Dịch vụ khác
+    function renderOtherServices(allServices, currentId) {
+      const container = document.getElementById('otherServicesGrid');
+      const section = container ? container.closest('.other-services-section') : null;
+      if (!container) return;
+
+      const otherServices = Array.isArray(allServices) ? allServices.filter(s => s.id != currentId).slice(0, 4) : [];
+      if (otherServices.length === 0) {
+        if (section) section.style.display = 'none';
+        container.innerHTML = '';
+        return;
+      }
+
+      if (section) section.style.display = '';
+
+      const defaultImages = {
+        1: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&auto=format&fit=crop&q=80',
+        2: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=500&auto=format&fit=crop&q=80',
+        3: 'https://images.unsplash.com/photo-1632053002928-196ff3156cfc?w=500&auto=format&fit=crop&q=80',
+        4: 'https://images.unsplash.com/photo-1579154204601-01588f351e67?w=500&auto=format&fit=crop&q=80',
+        5: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?w=500&auto=format&fit=crop&q=80',
+        6: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&auto=format&fit=crop&q=80'
+      };
+
+      container.innerHTML = otherServices.map(s => {
+        const imgUrl = s.banner || (s.icon && (s.icon.includes('/') || s.icon.includes('.')) ? s.icon : '') || s.image || defaultImages[s.id] || defaultImages[1];
+        const priceText = s.price && s.price > 0 ? Number(s.price).toLocaleString('vi-VN') + ' VNĐ' : 'Liên hệ';
+        const descText = s.description || 'Dịch vụ y tế chuyên nghiệp tại Phòng khám An Phúc';
+
+        return `
+          <a href="chi-tiet-dich-vu.html?id=${s.id}" class="other-service-card-v2" style="text-decoration: none; color: inherit; display: flex; flex-direction: column;">
+            <div class="other-service-thumb-v2">
+              <img src="${imgUrl}" alt="${s.name}" onerror="this.onerror=null; this.src='images/quality-banner-bg.png';">
+            </div>
+            <div class="other-service-body-v2">
+              <div>
+                <div class="other-service-title">${s.name}</div>
+                <div class="other-service-desc" style="font-size: 0.85rem; color: #64748b; line-height: 1.45; margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 2.5em;">${descText}</div>
+                <div class="other-service-divider"></div>
+                <div class="other-service-price">${priceText}</div>
+              </div>
+              <button type="button" class="btn-other-service-book" onclick="event.preventDefault(); event.stopPropagation(); window.location.href='dat-lich-kham.html?service=' + encodeURIComponent('${s.name}')">
+                Đặt lịch hẹn <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </a>
+        `;
+      }).join('');
+    }
+  </script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

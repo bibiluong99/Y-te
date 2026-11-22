@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dịch vụ y tế - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Dịch vụ y tế chuyên nghiệp tại Phòng Khám An Phúc.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo">
+        <img src="images/logo.png" alt="An Phúc" style="height: 38px; width: auto;">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Trang chủ</a>
+        <a href="dich-vu.html" class="active">Dịch vụ</a>
+        <a href="chuyen-khoa.html">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <a href="tel:19001234" class="phone-link"><i class="fas fa-phone-alt"></i> 1900 1234</a>
+        <a href="dat-lich-kham.html" class="btn-header-booking"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBPAGE HERO (FULL BANNER NẰM DƯỚI CHỮ) -->
+  <section class="subpage-hero full-banner-bg" id="pageHeroSection" style="background-image: url('images/service-hero.png');">
+    <div class="subpage-hero-overlay"></div>
+    <div class="container hero-content-relative">
+      <div class="subpage-hero-content">
+        <div class="page-breadcrumb-wrap">
+          <div class="page-breadcrumb">
+            <a href="index.html">Trang chủ</a>
+            <span class="sep">&gt;</span>
+            <span class="current" id="pageHeroTag">Dịch vụ</span>
+          </div>
+        </div>
+        <h1 id="pageHeroTitle">Dịch vụ y tế<br>chuyên nghiệp</h1>
+        <p id="pageHeroDesc">Chăm sóc sức khỏe toàn diện với đội ngũ bác sĩ giỏi và trang thiết bị hiện đại.</p>
+        <a href="dat-lich-kham.html" class="btn-primary-action" id="pageHeroBtn">Đặt lịch khám ngay →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DANH SÁCH DỊCH VỤ TỰ ĐỘNG LOAD TỪ SQLITE -->
+  <section class="services-page-section">
+    <div class="container">
+      <h2 class="section-center-heading">Danh sách dịch vụ</h2>
+      
+      <!-- Lưới dịch vụ đồng bộ từ SQL Server -->
+      <div id="servicesGrid" class="services-page-grid">
+      </div>
+
+      <!-- Banner CTA -->
+      <div class="cta-green-banner">
+        <div class="cta-banner-left">
+          <div class="cta-banner-icon"><i class="fas fa-shield-alt"></i></div>
+          <div class="cta-banner-text">
+            <h3>Vì sức khỏe của bạn và gia đình</h3>
+            <p>An Phúc luôn đồng hành cùng bạn trên hành trình chăm sóc sức khỏe.</p>
+          </div>
+        </div>
+        <a href="dat-lich-kham.html" class="btn-primary-action">Đặt lịch khám ngay →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+      <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+            <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span>1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- SCRIPT KẾT NỐI REALTIME VỚI SQLITE DATABASE -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch('/api/services')
+        .then(res => res.json())
+        .then(data => {
+          const grid = document.getElementById('servicesGrid');
+          if (!data || data.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748b; font-size: 1.05rem;"><i class="fas fa-stethoscope" style="font-size: 2.4rem; display: block; margin-bottom: 14px; opacity: 0.35;"></i>Hiện chưa có dịch vụ nào được công bố.</div>';
+            return;
+          }
+
+          grid.innerHTML = data.map(s => {
+            const bannerImg = s.banner || (s.icon && (s.icon.includes('/') || s.icon.includes('.')) ? s.icon : '');
+            if (bannerImg) {
+              return `
+              <a href="chi-tiet-dich-vu.html?id=${s.id}" class="service-box-card has-thumb" style="text-decoration: none; color: inherit;">
+                <div class="service-box-thumb">
+                  <img src="${bannerImg}" alt="${s.name}" onerror="this.onerror=null; this.src='images/service-hero.png';">
+                </div>
+                <div class="service-box-body">
+                  <h3>${s.name}</h3>
+                  <p>${s.description || 'Chăm sóc sức khỏe tận tâm'}</p>
+                  ${s.price > 0 ? `<div style="margin-top:14px; font-weight:700; color:var(--primary); font-size:0.95rem;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(s.price)}</div>` : ''}
+                </div>
+              </a>
+              `;
+            } else {
+              return `
+              <a href="chi-tiet-dich-vu.html?id=${s.id}" class="service-box-card" style="text-decoration: none; color: inherit; display: block;">
+                <div class="service-icon"><i class="${s.icon || 'fas fa-stethoscope'}"></i></div>
+                <h3>${s.name}</h3>
+                <p>${s.description || 'Chăm sóc sức khỏe tận tâm'}</p>
+                ${s.price > 0 ? `<div style="margin-top:12px; font-weight:700; color:var(--primary); font-size:0.9rem;">${new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(s.price)}</div>` : ''}
+              </a>
+              `;
+            }
+          }).join('');
+        })
+        .catch(err => {
+          console.log('Sử dụng dữ liệu tĩnh mặc định');
+        });
+    });
+  </script>
+  <script src="js/main.js"></script>
+
+</body>
+</html>

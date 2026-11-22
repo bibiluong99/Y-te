@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tin tức & Kiến thức y tế - Phòng Khám Đa Khoa An Phúc</title>
+  <meta name="description" content="Cập nhật thông tin y tế, cẩm nang sức khỏe bổ ích từ Phòng Khám An Phúc.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* Tiêu đề có 2 gạch ngang trái phải */
+    .section-title-lined {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      font-size: 2rem;
+      font-weight: 800;
+      color: #111827;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 24px;
+      letter-spacing: -0.3px;
+    }
+    .section-title-lined::before,
+    .section-title-lined::after {
+      content: "";
+      display: inline-block;
+      width: 55px;
+      height: 2.5px;
+      background-color: var(--primary, #0c5035);
+      border-radius: 4px;
+    }
+    @media (max-width: 576px) {
+      .section-title-lined {
+        font-size: 1.6rem;
+        gap: 12px;
+      }
+      .section-title-lined::before,
+      .section-title-lined::after {
+        width: 32px;
+      }
+    }
+    /* Bộ lọc danh mục tin tức */
+    .news-filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 35px;
+      justify-content: center;
+      align-items: center;
+    }
+    .news-filter-bar .filter-btn {
+      padding: 8px 20px;
+      border-radius: 9999px;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #4b5563;
+      font-size: 0.92rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      white-space: nowrap;
+    }
+    .news-filter-bar .filter-btn:hover {
+      background: #f0fdf4;
+      color: var(--primary, #0c5035);
+      border-color: var(--primary, #0c5035);
+    }
+    .news-filter-bar .filter-btn.active {
+      background: var(--primary, #0c5035);
+      color: #ffffff;
+      border-color: var(--primary, #0c5035);
+      box-shadow: 0 4px 12px rgba(12, 80, 53, 0.25);
+    }
+    @media (max-width: 768px) {
+      .section-title-lined {
+        margin-bottom: 16px;
+      }
+      .news-filter-bar {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        gap: 8px;
+        padding: 4px 20px 12px;
+        margin: 0 -20px 22px;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+      }
+      .news-filter-bar::-webkit-scrollbar {
+        display: none;
+      }
+      .news-filter-bar .filter-btn {
+        flex-shrink: 0;
+        white-space: nowrap;
+        padding: 8px 16px;
+        font-size: 0.85rem;
+      }
+    }
+    .news-cat-pill {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--primary, #0c5035);
+      background: #e8f5e9;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      margin-bottom: 8px;
+      width: fit-content;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="container">
+      <a href="index.html" class="logo-link">
+        <img src="images/logo.png" alt="Phòng Khám Đa Khoa An Phúc">
+      </a>
+      <nav class="nav" id="mainNav">
+        <a href="index.html">Trang chủ</a>
+        <a href="dich-vu.html">Dịch vụ</a>
+        <a href="chuyen-khoa.html">Chuyên khoa</a>
+        <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+        <a href="lien-he.html">Liên hệ</a>
+      </nav>
+      <div class="header-right">
+        <span class="phone-badge" style="cursor: default;"><i class="fas fa-phone-alt"></i> 1900 1234</span>
+        <a href="dat-lich-kham.html" class="btn-book-nav"><i class="far fa-calendar-check"></i> Đặt lịch</a>
+      </div>
+      <div class="mobile-toggle" aria-label="Menu" role="button" tabindex="0">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </header>
+
+  <!-- SUBPAGE HERO (FULL BANNER NẰM DƯỚI CHỮ) -->
+  <section class="subpage-hero full-banner-bg" id="pageHeroSection" style="background-image: url('images/news-hero.png');">
+    <div class="subpage-hero-overlay"></div>
+    <div class="container hero-content-relative">
+      <div class="subpage-hero-content">
+        <div class="page-breadcrumb-wrap">
+          <div class="page-breadcrumb">
+            <a href="index.html">Trang chủ</a>
+            <span class="sep">&gt;</span>
+            <span class="current" id="pageHeroTag">Tin tức</span>
+          </div>
+        </div>
+        <h1 id="pageHeroTitle">Tin tức &<br>Kiến thức sức khỏe</h1>
+        <p id="pageHeroDesc">Cập nhật những thông tin y khoa bổ ích, cẩm nang chăm sóc sức khỏe thường thức cho cả gia đình.</p>
+        <a href="#featuredNews" class="btn-primary-action" id="pageHeroBtn">Khám phá ngay →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- DANH SÁCH BÀI VIẾT TIN TỨC CHUẨN GRID 3 CỘT -->
+  <section id="featuredNews" class="services-page-section">
+    <div class="container">
+      <!-- TIÊU ĐỀ CÓ 2 GẠCH NGANG TRÁI PHẢI -->
+      <h2 class="section-title-lined">Tin tức</h2>
+
+      <!-- BỘ LỌC THEO DANH MỤC -->
+      <div class="news-filter-bar" id="newsFilterBar">
+        <button class="filter-btn active" onclick="filterNews('all', this)">Tất cả</button>
+        <button class="filter-btn" onclick="filterNews('Dinh dưỡng sức khỏe', this)">Dinh dưỡng sức khỏe</button>
+        <button class="filter-btn" onclick="filterNews('Kiến thức y khoa', this)">Kiến thức y khoa</button>
+        <button class="filter-btn" onclick="filterNews('Bệnh học thường gặp', this)">Bệnh học thường gặp</button>
+      </div>
+
+      <div class="news-grid-3" id="newsGridContainer">
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CHUẨN XANH RỪNG #0D3628 -->
+      <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container">
+            <div class="footer-4col-grid">
+        <!-- Cột 1: Logo & Slogan -->
+        <div class="footer-col-1">
+          <div class="footer-brand-logo">
+            <img src="images/logo-white.png" alt="Phòng Khám Đa Khoa An Phúc">
+          </div>
+          <div class="footer-handwriting-slogan">Vì một cuộc sống khỏe mạnh hơn</div>
+        </div>
+
+        <!-- Cột 2: Thông tin liên hệ & Icon Mạng xã hội -->
+        <div class="footer-col-2">
+          <div class="footer-col-title">Thông tin liên hệ</div>
+          <div class="footer-info-lines">
+            <div class="footer-info-line">
+              <i class="fas fa-phone-alt"></i>
+              <span>1900 1234</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-envelope"></i>
+              <span>contact@anphuc.vn</span>
+            </div>
+            <div class="footer-info-line">
+              <i class="fas fa-map-marker-alt"></i>
+              <span>Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM</span>
+            </div>
+          </div>
+          <div class="footer-social-row" style="margin-top: 14px;">
+            <a href="#" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+            <a href="#" title="Zalo"><i class="fas fa-comment-dots"></i></a>
+            <a href="#" title="Instagram"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+
+        <!-- Cột 3: Về chúng tôi -->
+        <div class="footer-col-3">
+          <div class="footer-col-title">Về chúng tôi</div>
+          <div class="footer-links-col">
+            <a href="chuyen-khoa.html">Chuyên khoa</a>
+            <a href="doi-ngu-bac-si.html">Đội ngũ bác sĩ</a>
+            <a href="tin-tuc.html">Tin tức</a>
+          </div>
+        </div>
+
+        <!-- Cột 4: Liên kết nhanh -->
+        <div class="footer-col-4">
+          <div class="footer-col-title">Liên kết nhanh</div>
+          <div class="footer-links-col">
+            <a href="dat-lich-kham.html">Đặt lịch khám</a>
+            <a href="dich-vu.html">Dịch vụ y tế</a>
+            <a href="lien-he.html">Liên hệ</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Copyright Bottom -->
+      <div class="footer-copyright-bottom" style="text-align: center; justify-content: center; display: flex;">
+        <div>© 2025 Phòng khám An Phúc. All rights reserved.</div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    let allNews = [];
+    let currentCategory = 'all';
+
+    function renderNewsList(items) {
+      const container = document.getElementById('newsGridContainer');
+      if (!container) return;
+
+      if (!items || items.length === 0) {
+        container.innerHTML = `
+          <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #6b7280;">
+            <i class="far fa-newspaper" style="font-size: 2.6rem; margin-bottom: 14px; color: #9ca3af; display: block; opacity: 0.4;"></i>
+            <p style="font-size: 1.1rem; font-weight: 500;">Hiện chưa có bài viết tin tức nào được công bố.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = items.map(item => `
+        <article class="news-item-card" data-category="${item.category || ''}">
+          <div class="news-item-thumb">
+            <img src="${item.image || 'images/news-1.png'}" alt="${item.title || ''}">
+            <span class="news-date-badge">${item.created_at || 'Mới cập nhật'}</span>
+          </div>
+          <div class="news-item-content">
+            ${item.category ? `<span class="news-cat-pill">${item.category}</span>` : ''}
+            <h3>${item.title || ''}</h3>
+            <p>${item.summary || (item.content ? item.content.replace(/<[^>]*>/g, '').substring(0, 130) + '...' : '')}</p>
+            <a href="chi-tiet-tin-tuc.html?id=${item.id}" class="news-read-more">Đọc thêm →</a>
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function buildCategoryFilters(items) {
+      const filterBar = document.getElementById('newsFilterBar');
+      if (!filterBar) return;
+
+      const categories = Array.from(new Set(items.map(i => (i.category || '').trim()).filter(Boolean)));
+
+      let html = `<button class="filter-btn ${currentCategory === 'all' ? 'active' : ''}" onclick="filterNews('all', this)">Tất cả (${items.length})</button>`;
+      categories.forEach(cat => {
+        const count = items.filter(i => (i.category || '').trim() === cat).length;
+        html += `<button class="filter-btn ${currentCategory === cat ? 'active' : ''}" onclick="filterNews('${cat.replace(/'/g, "\\'")}', this)">${cat} (${count})</button>`;
+      });
+
+      filterBar.innerHTML = html;
+    }
+
+    function filterNews(category, btn) {
+      currentCategory = category;
+      document.querySelectorAll('#newsFilterBar .filter-btn').forEach(b => b.classList.remove('active'));
+      if (btn) {
+        btn.classList.add('active');
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch(e) {}
+      }
+
+      if (category === 'all') {
+        renderNewsList(allNews);
+      } else {
+        const filtered = allNews.filter(i => (i.category || '').trim() === category);
+        renderNewsList(filtered);
+      }
+    }
+
+    // Đồng bộ danh sách bài viết thời gian thực từ SQL Server
+    document.addEventListener('DOMContentLoaded', () => {
+      fetch(`/api/news?t=${Date.now()}`, { cache: 'no-store' })
+        .then(res => res.json())
+        .then(newsList => {
+          allNews = Array.isArray(newsList) ? newsList : [];
+          buildCategoryFilters(allNews);
+          renderNewsList(allNews);
+        })
+        .catch(err => console.warn('Lỗi tải tin tức:', err));
+    });
+  </script>
+
+</body>
+</html>

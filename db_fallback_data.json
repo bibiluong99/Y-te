@@ -1,0 +1,685 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password": "admin123",
+      "fullname": "Quản Trị Viên An Phúc",
+      "email": "admin@anphuc.vn",
+      "role": "Super Admin"
+    }
+  ],
+  "products": [
+    {
+      "id": 1,
+      "name": "Máy đo huyết áp bắp tay tự động Omron HEM-7120",
+      "category": "Thiết bị y tế gia đình",
+      "price": 820000,
+      "stock": 45,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop",
+      "description": "Máy đo huyết áp Omron công nghệ Intellisense tự động bơm hơi vòng bít tới mức lý tưởng, cho kết quả chính xác, nhanh chóng và thoải mái nhất."
+    },
+    {
+      "id": 2,
+      "name": "Nhiệt kế hồng ngoại đo trán Microlife NC200",
+      "category": "Thiết bị y tế gia đình",
+      "price": 950000,
+      "stock": 60,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=300&h=300&fit=crop",
+      "description": "Đo nhiệt độ không tiếp xúc trong vòng 1 giây, cảm biến hồng ngoại siêu nhạy, cảnh báo sốt thông minh bằng đèn LED đổi màu."
+    },
+    {
+      "id": 3,
+      "name": "Máy đo nồng độ oxy trong máu SpO2 Contec CMS50D",
+      "category": "Thiết bị y tế gia đình",
+      "price": 420000,
+      "stock": 120,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1583912267550-d974311a9a6e?w=300&h=300&fit=crop",
+      "description": "Thiết bị kẹp ngón tay đo nồng độ bão hòa oxy máu SpO2 và nhịp tim tức thời, màn hình OLED xoay 4 hướng rõ nét."
+    },
+    {
+      "id": 4,
+      "name": "Máy đo đường huyết Accu-Chek Instant (Tặng 25 que thử)",
+      "category": "Thiết bị y tế gia đình",
+      "price": 1150000,
+      "stock": 35,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1631549916768-4119b2e5f926?w=300&h=300&fit=crop",
+      "description": "Máy đo tiểu đường xuất xứ Roche Đức, cho kết quả chỉ sau 4 giây với lượng máu cực nhỏ 0.6 microlit."
+    },
+    {
+      "id": 5,
+      "name": "Máy xông mũi họng khí dung Omron NE-C28",
+      "category": "Thiết bị y tế gia đình",
+      "price": 1280000,
+      "stock": 28,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?w=300&h=300&fit=crop",
+      "description": "Hỗ trợ điều trị viêm xoang, viêm mũi dị ứng, viêm họng và hen suyễn ở cả người lớn và trẻ nhỏ với hạt thuốc siêu mịn."
+    },
+    {
+      "id": 6,
+      "name": "Gói khám sức khỏe tổng quát VIP Toàn diện (Nam & Nữ)",
+      "category": "Gói khám tổng quát",
+      "price": 3500000,
+      "stock": 999,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1516549655169-df83a0774514?w=300&h=300&fit=crop",
+      "description": "Bao gồm khám đa chuyên khoa, 28 chỉ số xét nghiệm huyết học và sinh hóa máu, siêu âm màu 4D, nội soi tiêu hóa, chụp X-quang tim phổi."
+    },
+    {
+      "id": 7,
+      "name": "Gói tầm soát sớm tim mạch và đột quỵ não chuyên sâu",
+      "category": "Gói khám tổng quát",
+      "price": 2800000,
+      "stock": 999,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1559757175-5700dde675bc?w=300&h=300&fit=crop",
+      "description": "Siêu âm Doppler động mạch cảnh, đo điện tâm đồ gắng sức, chụp MRI não mạch máu và xét nghiệm chỉ điểm tổn thương mạch vành."
+    },
+    {
+      "id": 8,
+      "name": "Gói khám tiền hôn nhân & Sức khỏe sinh sản cao cấp",
+      "category": "Gói khám tổng quát",
+      "price": 2400000,
+      "stock": 999,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?w=300&h=300&fit=crop",
+      "description": "Sàng lọc bệnh di truyền, xét nghiệm nội tiết tố sinh sản, siêu âm tử cung - buồng trứng / tinh dịch đồ, xét nghiệm miễn dịch."
+    },
+    {
+      "id": 9,
+      "name": "Gói tầm soát ung thư sớm toàn diện 10 cơ quan",
+      "category": "Xét nghiệm chuyên sâu",
+      "price": 4900000,
+      "stock": 999,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=300&h=300&fit=crop",
+      "description": "Định lượng dấu ấn ung thư CEA, CA 19-9, CA 125, AFP, PSA kết hợp nội soi NBI hiện đại phóng đại phát hiện tổn thương vi mô."
+    },
+    {
+      "id": 10,
+      "name": "Gói khám và sàng lọc tiểu đường & mỡ máu",
+      "category": "Xét nghiệm chuyên sâu",
+      "price": 1100000,
+      "stock": 999,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=300&h=300&fit=crop",
+      "description": "Kiểm tra định lượng đường huyết lúc đói Glucose, chỉ số HbA1c, định lượng Lipid máu toàn phần (Cholesterol, Triglycerid, HDL, LDL)."
+    },
+    {
+      "id": 11,
+      "name": "Khẩu trang y tế 4 lớp kháng khuẩn chuẩn phòng mổ (Hộp 50 cái)",
+      "category": "Vật tư y tế tiêu hao",
+      "price": 65000,
+      "stock": 450,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584634731339-252c581abfc5?w=300&h=300&fit=crop",
+      "description": "Lớp vải lọc kháng khuẩn Meltblown lọc bụi mịn PM2.5 và vi khuẩn đạt hiệu suất > 99%, dây đeo êm ái không đau tai."
+    },
+    {
+      "id": 12,
+      "name": "Cồn y tế 70 độ sát khuẩn sát trùng da Vĩnh Phúc (Chai 500ml)",
+      "category": "Vật tư y tế tiêu hao",
+      "price": 28000,
+      "stock": 600,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584515933487-779824d29309?w=300&h=300&fit=crop",
+      "description": "Sát khuẩn vết thương ngoài da, rửa tay phòng dịch, vệ sinh tiệt trùng dụng cụ y tế đạt chuẩn Dược điển Việt Nam."
+    },
+    {
+      "id": 13,
+      "name": "Băng cuộn y tế vô trùng tự dính đàn hồi (Hộp 10 cuộn)",
+      "category": "Vật tư y tế tiêu hao",
+      "price": 120000,
+      "stock": 200,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=300&h=300&fit=crop",
+      "description": "Băng thun tự dính co giãn thông thoáng khí, không dính vào lông hay da, cố định vết thương hoặc khớp khi chấn thương vận động."
+    },
+    {
+      "id": 14,
+      "name": "Dung dịch nước muối sinh lý NaCl 0.9% tiệt trùng (Lốc 10 chai 500ml)",
+      "category": "Vật tư y tế tiêu hao",
+      "price": 75000,
+      "stock": 350,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?w=300&h=300&fit=crop",
+      "description": "Dùng súc họng, rửa mũi xoang, rửa sạch bụi bẩn niêm mạc mắt và sát khuẩn vết trầy xước an toàn cho mọi lứa tuổi."
+    },
+    {
+      "id": 15,
+      "name": "Hộp sơ cứu y tế gia đình chuẩn thông tư Bộ Y Tế (Loại A)",
+      "category": "Thiết bị y tế gia đình",
+      "price": 380000,
+      "stock": 70,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop",
+      "description": "Đầy đủ 25 món dụng cụ sơ cấp cứu: bông, băng, gạc tiệt trùng, kéo, nẹp cố định, băng dán cá nhân, cồn sát khuẩn, hướng dẫn cấp cứu."
+    },
+    {
+      "id": 16,
+      "name": "Viên sủi tăng sức đề kháng Vitamin C 1000mg + Kẽm Berocca",
+      "category": "Dược phẩm & Vitamin",
+      "price": 135000,
+      "stock": 180,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584017911766-d451b3d0e843?w=300&h=300&fit=crop",
+      "description": "Bổ sung hỗn hợp vitamin nhóm B, Vitamin C và Kẽm giúp phục hồi thể lực, giảm mệt mỏi, nâng cao hệ miễn dịch."
+    },
+    {
+      "id": 17,
+      "name": "Dầu cá Omega 3 Salmon Oil Blackmores 1000mg (Hộp 400 viên)",
+      "category": "Dược phẩm & Vitamin",
+      "price": 540000,
+      "stock": 90,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1577401239170-897942555fb3?w=300&h=300&fit=crop",
+      "description": "Cung cấp DHA và EPA tự nhiên từ cá hồi sạch, hỗ trợ tuần hoàn tim mạch, thị lực sáng khỏe và tăng cường chức năng não bộ."
+    },
+    {
+      "id": 18,
+      "name": "Men vi sinh hỗ trợ tiêu hóa BioGaia Protectis Drops cho bé",
+      "category": "Dược phẩm & Vitamin",
+      "price": 395000,
+      "stock": 85,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1550572017-edd951aa8f72?w=300&h=300&fit=crop",
+      "description": "Men vi sinh thuần chủng Lactobacillus reuteri Protectis từ sữa mẹ, giảm nôn trớ, táo bón và khóc dạ đề ở trẻ sơ sinh."
+    },
+    {
+      "id": 19,
+      "name": "Gói xét nghiệm dị ứng 60 dị nguyên hô hấp & thức ăn",
+      "category": "Xét nghiệm chuyên sâu",
+      "price": 1850000,
+      "stock": 999,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=300&h=300&fit=crop",
+      "description": "Phân tích kháng thể IgE đặc hiệu với 60 loại dị nguyên phổ biến như phấn hoa, lông thú cưng, hải sản, nấm mốc, sữa."
+    },
+    {
+      "id": 20,
+      "name": "Bộ theo dõi đường huyết liên tục không cần chọc tay FreeStyle Libre",
+      "category": "Thiết bị y tế gia đình",
+      "price": 2150000,
+      "stock": 25,
+      "status": "active",
+      "image": "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300&h=300&fit=crop",
+      "description": "Cảm biến dán sau bắp tay đo liên tục 14 ngày, quét qua điện thoại thông minh để xem biểu đồ dao động đường huyết 24/7."
+    }
+  ],
+  "news": [
+    {
+      "title": "5 thói quen giúp tăng cường sức đề kháng mùa lạnh",
+      "category": "Kiến thức y khoa",
+      "author": "BS. Nguyễn Văn Minh",
+      "created_at": "20/05/2025",
+      "summary": "Uống đủ nước, tập thể dục nhẹ, ngủ đủ giấc là các thói quen hàng đầu giúp hệ thống miễn dịch hoạt động hiệu quả.",
+      "content": "Để bảo vệ sức khỏe khi thời tiết giao mùa, mỗi người cần duy trì chế độ sinh hoạt điều độ, bổ sung đầy đủ vitamin C, giữ ấm cơ thể và hạn chế tiếp xúc nơi đông người.\n\nĐặc biệt, việc tiêm phòng cúm hàng năm là biện pháp chủ động và hữu hiệu nhất để phòng ngừa các biến chứng nguy hiểm đường hô hấp đối với người cao tuổi và trẻ nhỏ.",
+      "image": "images/news-1.png",
+      "status": "published",
+      "id": 1
+    },
+    {
+      "title": "Dấu hiệu cảnh báo bệnh lý tim mạch sớm bạn không nên bỏ qua",
+      "category": "Bệnh học thường gặp",
+      "author": "BS. Lê Hoàng Anh",
+      "created_at": "15/05/2025",
+      "summary": "Đau thắt ngực, khó thở khi gắng sức, hồi hộp tim đập nhanh cần được thăm khám kịp thời.",
+      "content": "Bệnh lý tim mạch thường diễn tiến âm thầm. Việc tầm soát định kỳ ít nhất 6 tháng một lần giúp phát hiện nguy cơ xơ vữa động mạch từ giai đoạn sớm.\n\nKhi xuất hiện các triệu chứng như nặng ngực trái, hồi hộp, hoa mắt chóng mặt khi thay đổi tư thế, bạn nên đến cơ sở y tế gần nhất để đo điện tim và làm siêu âm tim chuyên sâu.",
+      "image": "images/news-hero.png",
+      "status": "published",
+      "id": 2
+    },
+    {
+      "title": "Chế độ dinh dưỡng hợp lý cho cả gia đình trong thời điểm giao mùa",
+      "category": "Dinh dưỡng sức khỏe",
+      "author": "BS. Phạm Thị Mai",
+      "created_at": "10/05/2025",
+      "summary": "Cân đối đầy đủ 4 nhóm chất: đường bột, đạm, chất béo, vitamin và khoáng chất.",
+      "content": "Bữa ăn gia đình cần tăng cường rau xanh thẫm, các loại hạt dinh dưỡng và cá hồi giàu Omega-3 để cải thiện thị lực và hệ tim mạch.\n\nUống đủ 2 lít nước mỗi ngày và hạn chế đồ ngọt, nước có gas là chìa khóa vàng giúp duy trì cân nặng lý tưởng và chỉ số đường huyết ổn định.",
+      "image": "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=600&h=400&fit=crop",
+      "status": "published",
+      "id": 3
+    },
+    {
+      "title": "Lợi ích của việc tập thể dục mỗi ngày đối với sức khỏe xương khớp",
+      "category": "Kiến thức y khoa",
+      "author": "BS. Đặng Văn Hùng",
+      "created_at": "05/05/2025",
+      "summary": "Duy trì 30 phút vận động mỗi ngày giúp tăng mật độ xương và giảm đau mỏi vai gáy rõ rệt.",
+      "content": "Các bài tập nhẹ nhàng như đi bộ nhanh, bơi lội hoặc yoga kích thích tái tạo dịch khớp, ngăn ngừa thoái hóa sớm.\n\nĐối với nhân viên văn phòng ngồi lâu, việc đứng dậy vận động nhẹ sau mỗi 45 phút làm việc giúp giải tỏa áp lực lên đĩa đệm cột sống cổ và thắt lưng.",
+      "image": "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=600&h=400&fit=crop",
+      "status": "published",
+      "id": 4
+    },
+    {
+      "title": "Tầm quan trọng của khám sức khỏe định kỳ ở độ tuổi 30+",
+      "category": "Kiến thức y khoa",
+      "author": "BS. Vũ Thị Ngọc",
+      "created_at": "01/05/2025",
+      "summary": "Chủ động kiểm tra các chỉ số mỡ máu, chức năng gan thận giúp phòng tránh biến chứng chuyển hóa.",
+      "content": "Người trên 30 tuổi thường chịu áp lực công việc và chế độ ăn thiếu cân bằng, là nguyên nhân hàng đầu dẫn đến gan nhiễm mỡ và gout.\n\nKhám sức khỏe tổng quát định kỳ giúp phát hiện sớm các dấu hiệu rối loạn chuyển hóa để kịp thời điều chỉnh lối sống trước khi bệnh tiến triển mãn tính.",
+      "image": "https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop",
+      "status": "published",
+      "id": 5
+    },
+    {
+      "title": "Dinh dưỡng cho trẻ em: Những vi chất quan trọng không thể thiếu",
+      "category": "Dinh dưỡng sức khỏe",
+      "author": "BS. Trần Thị Lan",
+      "created_at": "28/04/2025",
+      "summary": "Bổ sung Kẽm, Sắt, Canxi và Vitamin D3K2 giúp bé phát triển toàn diện chiều cao và trí tuệ.",
+      "content": "Chuyên gia khuyến cáo không nên lạm dụng kháng sinh mà hãy chú trọng tăng cường đề kháng tự nhiên cho trẻ qua dinh dưỡng cân đối và tiêm phòng vắc xin đúng lịch.",
+      "image": "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&h=400&fit=crop",
+      "status": "published",
+      "id": 6
+    }
+  ],
+  "appointments": [
+    {
+      "id": 1,
+      "patient_name": "Nguyễn Thị Hoa",
+      "phone": "0912345678",
+      "specialty": "Nội tổng quát",
+      "doctor": "BS. Nguyễn Văn Minh",
+      "appointment_date": "2026-11-20",
+      "appointment_time": "08:00 - 09:00",
+      "notes": "Khám sức khỏe tổng quát định kỳ",
+      "status": "confirmed",
+      "email": "nguyenthihoa@gmail.com",
+      "created_at": "20/11/2026"
+    },
+    {
+      "id": 2,
+      "patient_name": "Trần Văn Bình",
+      "phone": "0987654321",
+      "specialty": "Tim mạch",
+      "doctor": "BS. Lê Hoàng Anh",
+      "appointment_date": "2026-11-21",
+      "appointment_time": "09:00 - 10:00",
+      "notes": "Có tiền sử tăng huyết áp",
+      "status": "pending",
+      "email": "tranvanbinh@gmail.com",
+      "created_at": "21/11/2026"
+    },
+    {
+      "id": 3,
+      "patient_name": "Lê Hoàng Yến",
+      "phone": "0903334455",
+      "specialty": "Nhi khoa",
+      "doctor": "BS. Trần Thị Lan",
+      "appointment_date": "2026-11-22",
+      "appointment_time": "14:00 - 15:00",
+      "notes": "Tư vấn tiêm chủng cho bé 6 tháng",
+      "status": "pending",
+      "email": "lehoangyen@gmail.com",
+      "created_at": "22/11/2026"
+    }
+  ],
+  "contacts": [
+    {
+      "id": 1,
+      "name": "Trần Minh Đức",
+      "phone": "0933112233",
+      "email": "duc.tran@gmail.com",
+      "message": "Phòng khám có áp dụng bảo hiểm y tế hoặc bảo hiểm tư nhân không ạ?",
+      "status": "new",
+      "created_at": "18/11/2026"
+    },
+    {
+      "id": 2,
+      "name": "Lê Mỹ Dung",
+      "phone": "0908889900",
+      "email": "dung.le@yahoo.com",
+      "message": "Tôi muốn đặt lịch tiêm vắc xin cúm mùa cho cả gia đình 4 người.",
+      "status": "new",
+      "created_at": "18/11/2026"
+    }
+  ],
+  "departments": [
+    {
+      "name": "Khám nội tổng quát",
+      "code": "NOI_TONG_QUAT",
+      "icon": "fas fa-stethoscope",
+      "image": "images/spec-noi-tong-quat.png",
+      "head_doctor": "BS. CKII. Nguyễn Văn Minh",
+      "description": "Kiểm tra sức khỏe toàn diện, chẩn đoán và điều trị các bệnh lý nội khoa mãn tính cho mọi lứa tuổi.",
+      "status": "active",
+      "sort_order": 1,
+      "id": 1
+    },
+    {
+      "name": "Nhi khoa",
+      "code": "NHI_KHOA",
+      "icon": "fas fa-child",
+      "image": "images/spec-nhi-khoa.png",
+      "head_doctor": "BS. Trần Thị Lan",
+      "description": "Chăm sóc sức khỏe toàn diện, theo dõi phát triển thể chất và dinh dưỡng cho trẻ từ sơ sinh đến 15 tuổi.",
+      "status": "active",
+      "sort_order": 2,
+      "id": 2
+    },
+    {
+      "name": "Sản phụ khoa",
+      "code": "SAN_PHU_KHOA",
+      "icon": "fas fa-baby",
+      "image": "images/spec-san-phu-khoa.png",
+      "head_doctor": "BS. CKI. Phạm Thị Mai",
+      "description": "Khám thai định kỳ, theo dõi sức khỏe mẹ và bé, tầm soát ung thư phụ khoa sớm bằng kỹ thuật hiện đại.",
+      "status": "active",
+      "sort_order": 3,
+      "id": 3
+    },
+    {
+      "name": "Tim mạch",
+      "code": "TIM_MACH",
+      "icon": "fas fa-heartbeat",
+      "image": "images/spec-tim-mach.png",
+      "head_doctor": "PGS. TS. BS. Trần Quốc Bảo",
+      "description": "Tầm soát, chẩn đoán và điều trị tăng huyết áp, rối loạn nhịp tim và bệnh mạch vành.",
+      "status": "active",
+      "sort_order": 4,
+      "id": 4
+    },
+    {
+      "name": "Hô hấp",
+      "code": "HO_HAP",
+      "icon": "fas fa-lungs",
+      "image": "images/spec-ho-hap.png",
+      "head_doctor": "BS. Đặng Văn Hùng",
+      "description": "Thăm khám và điều trị viêm phế quản, hen suyễn, COPD và các bệnh lý hô hấp thường gặp.",
+      "status": "active",
+      "sort_order": 5,
+      "id": 5
+    },
+    {
+      "name": "Tiêu hóa",
+      "code": "TIEU_HOA",
+      "icon": "fas fa-stomach",
+      "image": "images/spec-tieu-hoa.png",
+      "head_doctor": "ThS. BS. Lê Hoàng Anh",
+      "description": "Nội soi tiêu hóa không đau, điều trị viêm loét dạ dày, trào ngược thực quản và bệnh lý đại tràng.",
+      "status": "active",
+      "sort_order": 6,
+      "id": 6
+    },
+    {
+      "name": "Tiêm chủng",
+      "code": "TIEM_CHUNG",
+      "icon": "fas fa-syringe",
+      "image": "images/spec-tiem-chung.png",
+      "head_doctor": "BS. Trần Thị Lan",
+      "description": "Cung cấp đầy đủ các loại vắc xin chính hãng nhập khẩu, bảo quản chuẩn GSP cho trẻ em và người lớn.",
+      "status": "active",
+      "sort_order": 7,
+      "id": 7
+    },
+    {
+      "name": "Da liễu",
+      "code": "DA_LIEU",
+      "icon": "fas fa-allergies",
+      "image": "images/spec-da-lieu.png",
+      "head_doctor": "BS. Vũ Thị Ngọc",
+      "description": "Khám và điều trị các bệnh viêm da cơ địa, dị ứng, mụn trứng cá và chăm sóc da thẩm mỹ chuyên sâu.",
+      "status": "active",
+      "sort_order": 8,
+      "id": 8
+    },
+    {
+      "name": "Cơ xương khớp",
+      "code": "CO_XUONG_KHOP",
+      "icon": "fas fa-bone",
+      "image": "images/spec-co-xuong-khop.png",
+      "head_doctor": "ThS. BS. Lê Hoàng Anh",
+      "description": "Chẩn đoán thoái hóa khớp, thoát vị đĩa đệm, loãng xương và điều trị phục hồi chức năng vận động.",
+      "status": "active",
+      "sort_order": 9,
+      "id": 9
+    }
+  ],
+  "banners": [
+    {
+      "id": 1,
+      "page_key": "specialty",
+      "page_name": "Chuyên khoa",
+      "tagline": "Dịch vụ > Chuyên khoa",
+      "title": "Chuyên khoa<br>đa dạng & chuyên sâu",
+      "subtitle": "Được thăm khám và điều trị bởi đội ngũ bác sĩ chuyên khoa hàng đầu, với quy trình chuyên nghiệp, nhanh chóng và tận tâm.",
+      "image_url": "images/chuyen-khoa-hero-doctors.png",
+      "btn_text": "Đặt lịch khám ngay →",
+      "btn_link": "dat-lich-kham.html"
+    }
+  ],
+  "doctors": [
+    {
+      "name": "BS. CKII. Nguyễn Văn Minh",
+      "degree": "BS. CKII",
+      "department": "Chuyên khoa Nhi",
+      "experience": "Hơn 15 năm kinh nghiệm",
+      "avatar": "images/doc-1.png",
+      "description": "Chuyên gia nội khoa tổng quát với hơn 15 năm kinh nghiệm chẩn đoán và điều trị bệnh mãn tính.",
+      "status": "active",
+      "sort_order": 1,
+      "id": 1
+    },
+    {
+      "name": "BS. Trần Thị Lan",
+      "degree": "Bác sĩ Chuyên khoa",
+      "department": "Chuyên khoa Nhi",
+      "experience": "Hơn 12 năm kinh nghiệm",
+      "avatar": "images/doc-2.png",
+      "description": "Bác sĩ chuyên khoa Nhi tận tâm, giàu kinh nghiệm chăm sóc sức khỏe và dinh dưỡng trẻ em.",
+      "status": "active",
+      "sort_order": 2,
+      "id": 2
+    },
+    {
+      "name": "ThS. BS. Lê Hoàng Anh",
+      "degree": "ThS. BS",
+      "department": "Chuyên khoa Ngoại",
+      "experience": "Hơn 14 năm kinh nghiệm",
+      "avatar": "images/doc-3.png",
+      "description": "Thạc sĩ Bác sĩ ngoại khoa có nhiều năm kinh nghiệm phẫu thuật và điều trị phục hồi chức năng.",
+      "status": "active",
+      "sort_order": 3,
+      "id": 3
+    },
+    {
+      "name": "BS. CKI. Phạm Thị Mai",
+      "degree": "BS. CKI",
+      "department": "Chuyên khoa Sản",
+      "experience": "Hơn 13 năm kinh nghiệm",
+      "avatar": "images/doc-4.png",
+      "description": "Bác sĩ Chuyên khoa I Sản phụ khoa, theo dõi thai kỳ an toàn và khám phụ khoa định kỳ.",
+      "status": "active",
+      "sort_order": 4,
+      "id": 4
+    },
+    {
+      "name": "BS. Đặng Văn Hùng",
+      "degree": "Bác sĩ Chuyên khoa",
+      "department": "Chuyên khoa Tai Mũi Họng",
+      "experience": "Hơn 10 năm kinh nghiệm",
+      "avatar": "images/doc-5.png",
+      "description": "Bác sĩ điều trị các bệnh lý viêm xoang, viêm họng hạt, nội soi tai mũi họng công nghệ cao.",
+      "status": "active",
+      "sort_order": 5,
+      "id": 5
+    },
+    {
+      "name": "BS. Vũ Thị Ngọc",
+      "degree": "Bác sĩ Chuyên khoa",
+      "department": "Chuyên khoa Da liễu",
+      "experience": "Hơn 11 năm kinh nghiệm",
+      "avatar": "images/doc-6.png",
+      "description": "Bác sĩ chuyên khoa Da liễu và thẩm mỹ da, trị mụn, nám, dị ứng và phục hồi da.",
+      "status": "active",
+      "sort_order": 6,
+      "id": 6
+    }
+  ],
+  "settings": [
+    {
+      "id": 1,
+      "key": "working_hours_slots",
+      "value": "[{\"id\":1,\"time\":\"08:00 - 09:00\",\"period\":\"Sáng\",\"active\":true},{\"id\":2,\"time\":\"09:00 - 10:00\",\"period\":\"Sáng\",\"active\":true},{\"id\":3,\"time\":\"10:00 - 11:00\",\"period\":\"Sáng\",\"active\":true},{\"id\":4,\"time\":\"11:00 - 12:00\",\"period\":\"Sáng\",\"active\":true},{\"id\":5,\"time\":\"13:30 - 14:30\",\"period\":\"Chiều\",\"active\":true},{\"id\":6,\"time\":\"14:30 - 15:30\",\"period\":\"Chiều\",\"active\":true},{\"id\":7,\"time\":\"15:30 - 16:30\",\"period\":\"Chiều\",\"active\":true},{\"id\":8,\"time\":\"16:30 - 17:30\",\"period\":\"Chiều\",\"active\":true},{\"id\":9,\"time\":\"17:30 - 18:30\",\"period\":\"Tối\",\"active\":true},{\"id\":10,\"time\":\"18:30 - 19:30\",\"period\":\"Tối\",\"active\":true}]",
+      "updated_at": "2026-11-20T08:27:36.853Z"
+    },
+    {
+      "id": 2,
+      "key": "header_logo",
+      "value": "images/logo.png",
+      "updated_at": "2026-11-20T08:28:05.893Z"
+    },
+    {
+      "id": 3,
+      "key": "footer_logo",
+      "value": "images/logo-white.png",
+      "updated_at": "2026-11-20T08:28:05.896Z"
+    },
+    {
+      "id": 4,
+      "key": "site_title",
+      "value": "Phòng Khám Đa Khoa An Phúc 1",
+      "updated_at": "2026-11-20T13:55:45.230Z"
+    },
+    {
+      "id": 5,
+      "key": "hotline",
+      "value": "0764333999",
+      "updated_at": "2026-11-20T13:55:45.232Z"
+    },
+    {
+      "id": 6,
+      "key": "email",
+      "value": "contact1@anphuc.vn",
+      "updated_at": "2026-11-20T13:55:45.233Z"
+    },
+    {
+      "id": 7,
+      "key": "address",
+      "value": "Số 123 Nguyễn Văn Cừ, Quận 1, TP.HCM1",
+      "updated_at": "2026-11-20T13:55:45.234Z"
+    },
+    {
+      "id": 8,
+      "key": "working_hours_text",
+      "value": "Thứ 2 – Chủ nhật, 8:00 – 17:35",
+      "updated_at": "2026-11-20T13:55:45.234Z"
+    },
+    {
+      "id": 9,
+      "key": "phone",
+      "value": "0764333999",
+      "updated_at": "2026-11-20T13:55:45.233Z"
+    },
+    {
+      "id": 10,
+      "key": "facebook_url",
+      "value": "https://facebook.com/phongkhamanphuc",
+      "updated_at": "2026-11-20T13:55:45.235Z"
+    },
+    {
+      "id": 11,
+      "key": "zalo_url",
+      "value": "https://zalo.me/19001234",
+      "updated_at": "2026-11-20T13:55:45.235Z"
+    },
+    {
+      "id": 12,
+      "key": "instagram_url",
+      "value": "https://instagram.com/phongkhamanphuc",
+      "updated_at": "2026-11-20T13:55:45.236Z"
+    },
+    {
+      "id": 13,
+      "key": "youtube_url",
+      "value": "",
+      "updated_at": "2026-11-20T13:55:45.237Z"
+    }
+  ],
+  "services": [
+    {
+      "name": "Khám tổng quát",
+      "category": "Khám bệnh",
+      "icon": "fas fa-stethoscope",
+      "price": 300000,
+      "duration": "60 – 90 phút",
+      "description": "Kiểm tra sức khỏe toàn diện với đầy đủ các chỉ số cơ bản, phát hiện sớm các nguy cơ tiềm ẩn.",
+      "intro": "Khám tổng quát là bước kiểm tra sức khỏe cơ bản nhưng vô cùng quan trọng, giúp bạn nắm bắt tình trạng sức khỏe hiện tại, phát hiện sớm các bệnh lý tiềm ẩn và có hướng phòng ngừa kịp thời.\n\nTại Phòng khám đa khoa An Phúc, gói khám tổng quát được thiết kế khoa học với quy trình nhanh chóng, đội ngũ bác sĩ giàu kinh nghiệm và trang thiết bị hiện đại, mang đến trải nghiệm chăm sóc sức khỏe an toàn, tiện lợi và hiệu quả.",
+      "checklist": "Khám lâm sàng tổng quát\nSiêu âm ổ bụng\nXét nghiệm máu cơ bản\nĐo điện tim (ECG)\nXét nghiệm nước tiểu\nKiểm tra chức năng gan, thận\nChụp X-quang ngực\nTư vấn sức khỏe sau khám",
+      "banner": "images/service-hero.png",
+      "status": "active",
+      "id": 1
+    },
+    {
+      "name": "Khám chuyên khoa",
+      "category": "Khám bệnh",
+      "icon": "fas fa-heartbeat",
+      "price": 350000,
+      "duration": "30 – 45 phút",
+      "description": "Tư vấn và điều trị chuyên sâu các bệnh lý Nội khoa, Nhi khoa, Ngoại khoa, Sản phụ khoa.",
+      "intro": "Khám chuyên khoa tại Phòng khám đa khoa An Phúc quy tụ các bác sĩ chuyên khoa đầu ngành các khoa Nội, Ngoại, Nhi, Sản phụ khoa, Tai Mũi Họng, Mắt và Da liễu.\n\nNgười bệnh được thăm khám kỹ lưỡng, chẩn đoán chính xác bằng các thiết bị nội soi và chẩn đoán chuyên sâu, từ đó xây dựng phác đồ điều trị cá thể hóa tối ưu nhất.",
+      "checklist": "Khám và tư vấn chuyên sâu cùng bác sĩ chuyên khoa\nĐo các chỉ số sinh hiệu và thể lực\nNội soi chẩn đoán chuyên khoa (nếu có chỉ định)\nChỉ định cận lâm sàng cần thiết\nKê đơn và hướng dẫn phác đồ điều trị\nHẹn tái khám và theo dõi định kỳ",
+      "banner": "images/chuyen-khoa-hero-doctors.png",
+      "status": "active",
+      "id": 2
+    },
+    {
+      "name": "Tiêm chủng",
+      "category": "Tiêm chủng",
+      "icon": "fas fa-syringe",
+      "price": 250000,
+      "duration": "15 – 30 phút",
+      "description": "Vắc xin an toàn, chất lượng cao nhập khẩu chính hãng cho trẻ em và người lớn.",
+      "intro": "Dịch vụ tiêm chủng trọn gói cho trẻ em và người lớn với các loại vắc xin chính hãng chất lượng cao, bảo quản theo tiêu chuẩn GSP quốc tế nghiêm ngặt.\n\nQuy trình tiêm chủng an toàn, khám sàng lọc trước tiêm và theo dõi chặt chẽ sau tiêm bởi đội ngũ bác sĩ, điều dưỡng lành nghề, tận tâm.",
+      "checklist": "Khám sàng lọc và tư vấn trước tiêm chủng\nKiểm tra đối chiếu thông tin vắc xin cùng khách hàng\nThực hiện tiêm chủng chuẩn vô khuẩn\nTheo dõi phản ứng sau tiêm tại chỗ 30 phút\nKiểm tra lại sức khỏe trước khi ra về\nCấp sổ tiêm chủng điện tử và nhắc lịch tiêm",
+      "banner": "images/spec-tiem-chung.png",
+      "status": "active",
+      "id": 3
+    },
+    {
+      "name": "Xét nghiệm",
+      "category": "Xét nghiệm",
+      "icon": "fas fa-vial",
+      "price": 400000,
+      "duration": "30 – 60 phút",
+      "description": "Chính xác, nhanh chóng với hệ thống máy sinh hóa và huyết học tự động hiện đại.",
+      "intro": "Trung tâm xét nghiệm An Phúc trang bị máy xét nghiệm tự động thế hệ mới, đạt tiêu chuẩn kiểm chuẩn chất lượng cao, đảm bảo kết quả chính xác và nhanh chóng nhất.\n\nĐầy đủ các xét nghiệm từ cơ bản đến chuyên sâu: huyết học, sinh hóa, miễn dịch, vi sinh, phân tích nước tiểu và tầm soát dấu ấn ung thư sớm.",
+      "checklist": "Lấy mẫu xét nghiệm chuẩn y khoa nhẹ nhàng\nXét nghiệm công thức máu toàn phần (24 thông số)\nXét nghiệm sinh hóa máu (đường huyết, mỡ máu, men gan)\nĐánh giá chức năng thận (Ure, Creatinine)\nXét nghiệm nước tiểu 10 thông số tự động\nTrả kết quả tận nơi hoặc tra cứu online bảo mật",
+      "banner": "images/quality-banner-bg.png",
+      "status": "active",
+      "id": 4
+    },
+    {
+      "name": "Chẩn đoán hình ảnh",
+      "category": "Chẩn đoán",
+      "icon": "fas fa-x-ray",
+      "price": 500000,
+      "duration": "20 – 40 phút",
+      "description": "Siêu âm màu 4D, X-quang kỹ thuật số, nội soi tiêu hóa không đau chuẩn xác.",
+      "intro": "Khoa Chẩn đoán hình ảnh Phòng khám đa khoa An Phúc ứng dụng các thiết bị y tế hiện đại hàng đầu: hệ thống Siêu âm màu Doppler 4D, máy chụp X-quang kỹ thuật số liều tia thấp và nội soi không đau.\n\nĐội ngũ bác sĩ giàu kinh nghiệm chẩn đoán hình ảnh trực tiếp thực hiện và hội chẩn, giúp phát hiện sớm các tổn thương bệnh lý nội tạng.",
+      "checklist": "Siêu âm Doppler màu 4D tổng quát ổ bụng\nSiêu âm tuyến giáp và vùng cổ\nChụp X-quang kỹ thuật số ngực thẳng liều thấp\nChụp X-quang xương khớp theo chỉ định\nNội soi tiêu hóa ống mềm không đau (nếu chỉ định)\nBác sĩ chuyên khoa đọc và hội chẩn kết quả chi tiết",
+      "banner": "images/booking-hero.png",
+      "status": "active",
+      "id": 5
+    },
+    {
+      "name": "Điều trị nội trú",
+      "category": "Khám bệnh",
+      "icon": "fas fa-procedures",
+      "price": 800000,
+      "duration": "Theo chỉ định bác sĩ",
+      "description": "Chăm sóc tận tâm trong không gian phòng bệnh tiện nghi, sạch sẽ, chuẩn y khoa.",
+      "intro": "Khu lưu trú và theo dõi điều trị An Phúc cung cấp dịch vụ chăm sóc toàn diện 24/7 với hệ thống phòng bệnh khang trang, sạch sẽ, vô trùng tuyệt đối.\n\nBệnh nhân được bác sĩ chuyên khoa thăm khám hàng ngày, điều dưỡng túc trực chăm sóc tận tình, mang lại cảm giác an tâm như ở nhà.",
+      "checklist": "Phòng bệnh tiêu chuẩn tiện nghi khép kín\nBác sĩ chuyên khoa thăm khám và hội chẩn hàng ngày\nĐiều dưỡng chăm sóc và hỗ trợ y tế 24/24\nChế độ dinh dưỡng điều trị riêng biệt theo bệnh lý\nTheo dõi sát sao chỉ số sinh tồn và diễn tiến bệnh\nHỗ trợ thủ tục bảo hiểm y tế nhanh gọn",
+      "banner": "images/hero-banner-full-doctor.png",
+      "status": "active",
+      "id": 6
+    }
+  ]
+}
