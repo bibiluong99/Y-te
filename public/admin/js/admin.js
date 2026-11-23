@@ -2743,6 +2743,23 @@ function changeDoctorPage(page) {
   renderDoctorsTable(currentDoctorsData);
 }
 
+function getStandardDocDepartment(deptStr) {
+  if (!deptStr) return 'Khám nội tổng quát';
+  const clean = String(deptStr).trim();
+  if (Array.isArray(departmentsData) && departmentsData.length > 0) {
+    const directMatch = departmentsData.find(d => d && d.name && d.name.trim() === clean);
+    if (directMatch) return directMatch.name;
+
+    const cleanLower = clean.toLowerCase().replace(/^(chuyên\s*khoa|khoa)\s*/i, '').trim();
+    const fuzzyMatch = departmentsData.find(d => {
+      const dName = (d.name || '').toLowerCase().replace(/^(chuyên\s*khoa|khoa)\s*/i, '').trim();
+      return dName === cleanLower || (cleanLower === 'nội' && dName.includes('nội')) || (cleanLower === 'sản' && dName.includes('sản')) || (cleanLower === 'ngoại' && dName.includes('khớp')) || dName.includes(cleanLower) || cleanLower.includes(dName);
+    });
+    if (fuzzyMatch) return fuzzyMatch.name;
+  }
+  return clean.replace(/^(chuyên\s*khoa|khoa)\s*/i, '').trim() || clean;
+}
+
 function renderDoctorsTable(items) {
   currentDoctorsData = items || [];
   const tbody = document.getElementById('doctorsTableBody');
@@ -2783,7 +2800,7 @@ function renderDoctorsTable(items) {
       </td>
       <td>
         <span class="badge badge-medical" style="background:#e8f5e9; color:#1b5e20; font-weight:600; font-size:0.83rem; padding: 5px 10px;">
-          ${escapeHtml(d.department || 'Đa khoa')}
+          ${escapeHtml(getStandardDocDepartment(d.department))}
         </span>
       </td>
       <td><span style="font-weight: 500; color: #334155;">${escapeHtml(d.degree || '-')}</span></td>
