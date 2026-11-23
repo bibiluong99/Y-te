@@ -279,67 +279,8 @@
       "id": 6
     }
   ],
-  "appointments": [
-    {
-      "id": 1,
-      "patient_name": "Nguyễn Thị Hoa",
-      "phone": "0912345678",
-      "specialty": "Nội tổng quát",
-      "doctor": "BS. Nguyễn Văn Minh",
-      "appointment_date": "2026-11-20",
-      "appointment_time": "08:00 - 09:00",
-      "notes": "Khám sức khỏe tổng quát định kỳ",
-      "status": "confirmed",
-      "email": "nguyenthihoa@gmail.com",
-      "created_at": "20/11/2026"
-    },
-    {
-      "id": 2,
-      "patient_name": "Trần Văn Bình",
-      "phone": "0987654321",
-      "specialty": "Tim mạch",
-      "doctor": "BS. Lê Hoàng Anh",
-      "appointment_date": "2026-11-21",
-      "appointment_time": "09:00 - 10:00",
-      "notes": "Có tiền sử tăng huyết áp",
-      "status": "pending",
-      "email": "tranvanbinh@gmail.com",
-      "created_at": "21/11/2026"
-    },
-    {
-      "id": 3,
-      "patient_name": "Lê Hoàng Yến",
-      "phone": "0903334455",
-      "specialty": "Nhi khoa",
-      "doctor": "BS. Trần Thị Lan",
-      "appointment_date": "2026-11-22",
-      "appointment_time": "14:00 - 15:00",
-      "notes": "Tư vấn tiêm chủng cho bé 6 tháng",
-      "status": "pending",
-      "email": "lehoangyen@gmail.com",
-      "created_at": "22/11/2026"
-    }
-  ],
-  "contacts": [
-    {
-      "id": 1,
-      "name": "Trần Minh Đức",
-      "phone": "0933112233",
-      "email": "duc.tran@gmail.com",
-      "message": "Phòng khám có áp dụng bảo hiểm y tế hoặc bảo hiểm tư nhân không ạ?",
-      "status": "new",
-      "created_at": "18/11/2026"
-    },
-    {
-      "id": 2,
-      "name": "Lê Mỹ Dung",
-      "phone": "0908889900",
-      "email": "dung.le@yahoo.com",
-      "message": "Tôi muốn đặt lịch tiêm vắc xin cúm mùa cho cả gia đình 4 người.",
-      "status": "new",
-      "created_at": "18/11/2026"
-    }
-  ],
+  "appointments": [],
+  "contacts": [],
   "departments": [
     {
       "name": "Khám nội tổng quát",
