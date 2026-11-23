@@ -141,17 +141,19 @@ router.post('/upload', async (req, res) => {
     const timestamp = Date.now();
     const finalFileName = `banner_${safePageKey}_${timestamp}_${cleanOrigName}`;
 
-    // Tạo thư mục nếu chưa có
-    const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-
-    if (!fs.existsSync(uploadDirPublic)) {
-      fs.mkdirSync(uploadDirPublic, { recursive: true });
+    let relativeUrl;
+    try {
+      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
+      if (!fs.existsSync(uploadDirPublic)) {
+        fs.mkdirSync(uploadDirPublic, { recursive: true });
+      }
+      const publicPath = path.join(uploadDirPublic, finalFileName);
+      fs.writeFileSync(publicPath, buffer);
+      relativeUrl = `images/uploads/${finalFileName}`;
+    } catch (fsErr) {
+      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
+      relativeUrl = fileData;
     }
-
-    const publicPath = path.join(uploadDirPublic, finalFileName);
-    fs.writeFileSync(publicPath, buffer);
-
-    const relativeUrl = `images/uploads/${finalFileName}`;
 
     res.json({
       success: true,

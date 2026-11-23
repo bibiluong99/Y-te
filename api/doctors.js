@@ -34,13 +34,18 @@ function saveBase64Avatar(fileData, fileName) {
   const baseName = cleanOrigName.endsWith(ext) ? cleanOrigName : `${cleanOrigName}${ext}`;
   const finalFileName = `doc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${baseName}`;
 
-  const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-  if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
+  try {
+    const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
+    if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
 
-  const publicPath = path.join(uploadDirPublic, finalFileName);
-  fs.writeFileSync(publicPath, buffer);
+    const publicPath = path.join(uploadDirPublic, finalFileName);
+    fs.writeFileSync(publicPath, buffer);
 
-  return `images/uploads/${finalFileName}`;
+    return `images/uploads/${finalFileName}`;
+  } catch (fsErr) {
+    console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
+    return fileData;
+  }
 }
 
 // Danh sách 6 bác sĩ ban đầu

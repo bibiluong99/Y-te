@@ -287,13 +287,19 @@ router.post('/upload-image', async (req, res) => {
     const cleanOrigName = (fileName || 'dept.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
     const finalFileName = `dept_${Date.now()}_${cleanOrigName}`;
 
-    const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-    if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
+    let relativeUrl;
+    try {
+      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
+      if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
 
-    const publicPath = path.join(uploadDirPublic, finalFileName);
-    fs.writeFileSync(publicPath, buffer);
+      const publicPath = path.join(uploadDirPublic, finalFileName);
+      fs.writeFileSync(publicPath, buffer);
 
-    const relativeUrl = `images/uploads/${finalFileName}`;
+      relativeUrl = `images/uploads/${finalFileName}`;
+    } catch (fsErr) {
+      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
+      relativeUrl = fileData;
+    }
     res.json({ success: true, imageUrl: relativeUrl });
   } catch (err) {
     res.status(500).json({ error: err.message });

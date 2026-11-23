@@ -109,17 +109,19 @@ router.post('/upload-logo', async (req, res) => {
     const cleanOrigName = (fileName || 'logo.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
     const finalFileName = `logo_${logoType}_${Date.now()}_${cleanOrigName}`;
 
-    // Thư mục uploads
-    const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-
-    if (!fs.existsSync(uploadDirPublic)) {
-      fs.mkdirSync(uploadDirPublic, { recursive: true });
+    let relativeUrl;
+    try {
+      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
+      if (!fs.existsSync(uploadDirPublic)) {
+        fs.mkdirSync(uploadDirPublic, { recursive: true });
+      }
+      const publicPath = path.join(uploadDirPublic, finalFileName);
+      fs.writeFileSync(publicPath, buffer);
+      relativeUrl = `images/uploads/${finalFileName}`;
+    } catch (fsErr) {
+      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
+      relativeUrl = fileData;
     }
-
-    const publicPath = path.join(uploadDirPublic, finalFileName);
-    fs.writeFileSync(publicPath, buffer);
-
-    const relativeUrl = `images/uploads/${finalFileName}`;
 
     // Cập nhật vào SQLite
     await db.run(
