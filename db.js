@@ -29,7 +29,7 @@ try {
 const FALLBACK_PATH = path.join(__dirname, 'db_fallback_data.json');
 
 // Chuỗi kết nối Cloud PostgreSQL (Neon.tech)
-const PG_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_gb5wvuVI3mjh@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require';
+const PG_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_wlXSR8aoEQN5@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require';
 
 // Cấu hình Microsoft SQL Server (Hệ thống nội bộ SQLEXPRESS)
 const mssqlConfig = {
