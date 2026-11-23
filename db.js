@@ -131,6 +131,14 @@ function transformSql(rawSql) {
 async function initDatabase() {
   loadFallbackData();
 
+  // Khi triển khai trên Vercel hoặc môi trường Serverless mà không có SQL Server remote
+  if (process.env.VERCEL && (!process.env.DB_SERVER || process.env.DB_SERVER === 'localhost')) {
+    console.log('⚡ Môi trường Vercel: Kích hoạt chế độ JSON Fallback siêu tốc');
+    useMssql = false;
+    useFallback = true;
+    return;
+  }
+
   // Thử kết nối Microsoft SQL Server
   try {
     mssqlPool = await sql.connect(mssqlConfig);
