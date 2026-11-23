@@ -1444,46 +1444,7 @@ function openDepartmentModal(d = null) {
   modal.classList.add('show');
 }
 
-function handleDepartmentImageUpload(input) {
-  if (!input.files || !input.files[0]) return;
-  const file = input.files[0];
-  const formData = new FormData();
-  formData.append('image', file);
 
-  fetch(`${API_BASE}/upload`, {
-    method: 'POST',
-    body: formData
-  })
-    .then(res => res.json())
-    .then(data => {
-      if (data.url) {
-        document.getElementById('dImage').value = data.url;
-        const prevBox = document.getElementById('dImagePreviewBox');
-        const prevImg = document.getElementById('dImagePreview');
-        if (prevBox && prevImg) {
-          prevImg.src = data.url;
-          prevBox.style.display = 'block';
-        }
-        showToast('Đã tải ảnh lên thành công', 'success');
-      } else {
-        showToast('Lỗi khi tải ảnh: ' + (data.error || 'Không rõ'), 'error');
-      }
-    })
-    .catch(err => {
-      // Fallback sang reader base64 nếu endpoint upload chưa sẵn sàng
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        document.getElementById('dImage').value = e.target.result;
-        const prevBox = document.getElementById('dImagePreviewBox');
-        const prevImg = document.getElementById('dImagePreview');
-        if (prevBox && prevImg) {
-          prevImg.src = e.target.result;
-          prevBox.style.display = 'block';
-        }
-      };
-      reader.readAsDataURL(file);
-    });
-}
 
 function closeDepartmentModal() {
   document.getElementById('departmentModal').classList.remove('show');
