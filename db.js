@@ -19,8 +19,17 @@ if (!Promise.withResolvers) {
 const fs = require('fs');
 const path = require('path');
 const sql = require('mssql');
+let PgPool = null;
+try {
+  PgPool = require('pg').Pool;
+} catch (e) {
+  console.warn('Gói pg chưa được nạp:', e.message);
+}
 
 const FALLBACK_PATH = path.join(__dirname, 'db_fallback_data.json');
+
+// Chuỗi kết nối Cloud PostgreSQL (Neon.tech)
+const PG_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_gb5wvuVI3mjh@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require';
 
 // Cấu hình Microsoft SQL Server (Hệ thống nội bộ SQLEXPRESS)
 const mssqlConfig = {
@@ -41,6 +50,8 @@ const mssqlConfig = {
   }
 };
 
+let pgPool = null;
+let usePg = false;
 let mssqlPool = null;
 let useMssql = false;
 let useFallback = false;
@@ -131,31 +142,60 @@ function transformSql(rawSql) {
 async function initDatabase() {
   loadFallbackData();
 
-  // Khi triển khai trên Vercel hoặc môi trường Serverless mà không có SQL Server remote
-  if (process.env.VERCEL && (!process.env.DB_SERVER || process.env.DB_SERVER === 'localhost')) {
-    console.log('⚡ Môi trường Vercel: Kích hoạt chế độ JSON Fallback siêu tốc');
-    useMssql = false;
-    useFallback = true;
-    return;
+  // 1. Thử kết nối Cloud PostgreSQL (Neon) ưu tiên hàng đầu (khi có PG_URL)
+  if (PgPool && PG_URL) {
+    try {
+      pgPool = new PgPool({
+        connectionString: PG_URL,
+        ssl: { rejectUnauthorized: false },
+        connectionTimeoutMillis: 10000,
+        max: 10
+      });
+      await pgPool.query('SELECT 1');
+      usePg = true;
+      console.log('✅ Đã kết nối thành công tới Cloud PostgreSQL (Neon)! Dữ liệu sẽ được lưu vĩnh viễn trên Live.');
+      return;
+    } catch (pgErr) {
+      console.warn('⚠️ Chưa thể kết nối Cloud PostgreSQL, chuyển sang SQL Server:', pgErr.message);
+      usePg = false;
+    }
   }
 
-  // Thử kết nối Microsoft SQL Server
-  try {
-    mssqlPool = await sql.connect(mssqlConfig);
-    useMssql = true;
-    console.log(`✅ Đã kết nối thành công tới Microsoft SQL Server: ${mssqlConfig.database} (${mssqlConfig.options.instanceName})`);
-    return;
-  } catch (mssqlErr) {
-    console.warn('⚠️ Chưa thể kết nối tới Microsoft SQL Server, chuyển sang chế độ JSON fallback:', mssqlErr.message);
-    useMssql = false;
-    useFallback = true;
+  // 2. Thử kết nối Microsoft SQL Server nếu không phải Vercel
+  if (!process.env.VERCEL) {
+    try {
+      mssqlPool = await sql.connect(mssqlConfig);
+      useMssql = true;
+      console.log(`✅ Đã kết nối thành công tới Microsoft SQL Server: ${mssqlConfig.database} (${mssqlConfig.options.instanceName})`);
+      return;
+    } catch (mssqlErr) {
+      console.warn('⚠️ Chưa thể kết nối tới Microsoft SQL Server, chuyển sang chế độ JSON fallback:', mssqlErr.message);
+      useMssql = false;
+    }
   }
+
+  // 3. Fallback sang JSON Store
+  console.log('⚡ Sử dụng chế độ JSON Fallback dự phòng');
+  useFallback = true;
 }
 
 // Query helper thống nhất
 const db = {
   all: async (sqlQuery, params = []) => {
     await initPromise;
+    if (usePg && pgPool) {
+      try {
+        let paramIdx = 1;
+        let query = sqlQuery.trim().replace(/\?/g, () => `$${paramIdx++}`);
+        query = query.replace(/\[key\]/gi, 'key');
+        const result = await pgPool.query(query, params);
+        return result.rows || [];
+      } catch (err) {
+        console.error('Lỗi truy vấn PostgreSQL (all):', err.message, 'SQL:', sqlQuery);
+        throw err;
+      }
+    }
+
     if (useMssql && mssqlPool) {
       try {
         let transformed = transformSql(sqlQuery);
@@ -187,6 +227,16 @@ const db = {
 
   get: async (sqlQuery, params = []) => {
     await initPromise;
+    if (usePg && pgPool) {
+      try {
+        const rows = await db.all(sqlQuery, params);
+        return rows && rows.length > 0 ? rows[0] : null;
+      } catch (err) {
+        console.error('Lỗi truy vấn PostgreSQL (get):', err.message, 'SQL:', sqlQuery);
+        throw err;
+      }
+    }
+
     if (useMssql && mssqlPool) {
       const rows = await db.all(sqlQuery, params);
       return rows && rows.length > 0 ? rows[0] : null;
@@ -211,6 +261,41 @@ const db = {
 
   run: async (sqlQuery, params = []) => {
     await initPromise;
+    if (usePg && pgPool) {
+      try {
+        let query = sqlQuery.trim();
+
+        // Xử lý UPSERT bảng settings
+        if (query.includes('ON CONFLICT(key)')) {
+          let paramIdx = 1;
+          query = query.replace(/\?/g, () => `$${paramIdx++}`);
+          query = query.replace(/CURRENT_TIMESTAMP/gi, 'NOW()');
+        } else {
+          let paramIdx = 1;
+          query = query.replace(/\?/g, () => `$${paramIdx++}`);
+
+          const isInsert = /^\s*INSERT\s+INTO\s+/i.test(query);
+          if (isInsert && !/RETURNING/i.test(query)) {
+            query += ' RETURNING id';
+          }
+
+          query = query.replace(/\bAUTOINCREMENT\b/gi, '');
+          query = query.replace(/\[key\]/gi, 'key');
+          query = query.replace(/CURRENT_TIMESTAMP/gi, 'NOW()');
+        }
+
+        const result = await pgPool.query(query, params);
+        const lastID = result.rows && result.rows[0] && result.rows[0].id ? result.rows[0].id : 0;
+        return {
+          lastID,
+          changes: result.rowCount || 1
+        };
+      } catch (err) {
+        console.error('Lỗi thực thi PostgreSQL (run):', err.message, 'SQL:', sqlQuery);
+        throw err;
+      }
+    }
+
     if (useMssql && mssqlPool) {
       try {
         let transformed = transformSql(sqlQuery);
@@ -332,7 +417,8 @@ const db = {
   getStore: () => memoryStore,
   saveStore: () => saveFallbackData(),
   isUsingFallback: () => useFallback,
-  isSqlServer: () => useMssql
+  isSqlServer: () => useMssql,
+  isPostgres: () => usePg
 };
 
 // Khởi chạy kết nối
