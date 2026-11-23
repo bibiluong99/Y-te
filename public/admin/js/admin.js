@@ -2082,6 +2082,15 @@ function switchBannerTab(pageKey) {
 }
 window.switchBannerTab = switchBannerTab;
 
+function formatDisplayImagePath(url, fileName = '') {
+  if (!url) return 'Chưa chọn ảnh';
+  if (typeof url === 'string' && url.startsWith('data:image/')) {
+    const sizeKb = Math.round(url.length * 0.75 / 1024);
+    return fileName ? `[Ảnh Base64: ${fileName} (${sizeKb} KB)]` : `[Ảnh Base64 (${sizeKb} KB)]`;
+  }
+  return url;
+}
+
 function selectBannerPage(pageKey) {
   currentBannerPage = pageKey;
   const b = bannersData[pageKey] || {
@@ -2106,7 +2115,8 @@ function selectBannerPage(pageKey) {
 
   const displayEl = document.getElementById('displayImageUrlText');
   if (displayEl) {
-    displayEl.textContent = b.image_url || 'Chưa chọn ảnh';
+    displayEl.textContent = formatDisplayImagePath(b.image_url);
+    displayEl.title = b.image_url && b.image_url.startsWith('data:image/') ? 'Ảnh Base64' : (b.image_url || 'Chưa chọn ảnh');
   }
 
   const statusMsg = document.getElementById('uploadStatusMessage');
@@ -2208,7 +2218,10 @@ function uploadBannerFile(file) {
         if (data.success && data.imageUrl) {
           document.getElementById('bImageUrl').value = data.imageUrl;
           const displayEl = document.getElementById('displayImageUrlText');
-          if (displayEl) displayEl.textContent = data.imageUrl;
+          if (displayEl) {
+            displayEl.textContent = formatDisplayImagePath(data.imageUrl, file.name);
+            displayEl.title = file.name;
+          }
 
           updateBannerLivePreview();
 
@@ -2263,11 +2276,17 @@ function updateBannerLivePreview() {
   const imageUrl = document.getElementById('bImageUrl').value || 'images/hero-banner-full-doctor.png';
   const btnText = document.getElementById('bBtnText').value || 'Nút bấm →';
 
-  previewBox.style.backgroundImage = `url('${imageUrl}')`;
+  previewBox.style.backgroundImage = `url("${imageUrl}")`;
   document.getElementById('prevTagline').textContent = tagline;
   document.getElementById('prevTitle').innerHTML = title;
   document.getElementById('prevSubtitle').textContent = subtitle;
   document.getElementById('prevBtn').textContent = btnText;
+
+  const thumb = document.getElementById('bannerThumbImg');
+  if (thumb && imageUrl) {
+    thumb.src = imageUrl;
+    thumb.style.display = 'inline-block';
+  }
 }
 
 async function handleSaveBanner(e) {
@@ -2416,14 +2435,14 @@ async function loadSettings() {
       const headerPreview = document.getElementById('headerLogoPreview');
       if (headerPreview) headerPreview.src = settings.header_logo;
       const headerPath = document.getElementById('headerLogoPathText');
-      if (headerPath) headerPath.textContent = settings.header_logo;
+      if (headerPath) headerPath.textContent = formatDisplayImagePath(settings.header_logo, 'Header');
     }
 
     if (settings.footer_logo) {
       const footerPreview = document.getElementById('footerLogoPreview');
       if (footerPreview) footerPreview.src = settings.footer_logo;
       const footerPath = document.getElementById('footerLogoPathText');
-      if (footerPath) footerPath.textContent = settings.footer_logo;
+      if (footerPath) footerPath.textContent = formatDisplayImagePath(settings.footer_logo, 'Footer');
     }
 
     // Đồng bộ các trường Cấu hình công ty
@@ -2603,12 +2622,12 @@ function uploadLogoFile(file, type) {
             const preview = document.getElementById('footerLogoPreview');
             if (preview) preview.src = data.imageUrl;
             const pathText = document.getElementById('footerLogoPathText');
-            if (pathText) pathText.textContent = data.imageUrl;
+            if (pathText) pathText.textContent = formatDisplayImagePath(data.imageUrl, file.name);
           } else {
             const preview = document.getElementById('headerLogoPreview');
             if (preview) preview.src = data.imageUrl;
             const pathText = document.getElementById('headerLogoPathText');
-            if (pathText) pathText.textContent = data.imageUrl;
+            if (pathText) pathText.textContent = formatDisplayImagePath(data.imageUrl, file.name);
           }
 
           if (statusEl) {

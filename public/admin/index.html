@@ -910,9 +910,13 @@
                   <!-- Đường dẫn ảnh hiện tại (ẩn hoặc hỗ trợ preset) -->
                   <div
                     style="margin-top: 12px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                    <div style="font-size: 0.86rem; color: #475569;">
-                      Ảnh hiện tại: <code id="displayImageUrlText"
-                        style="background: #f1f5f9; padding: 3px 8px; border-radius: 6px; color: #0369a1; font-weight: 600;">images/hero-banner-full-doctor.png</code>
+                    <div style="font-size: 0.86rem; color: #475569; display: flex; align-items: center; gap: 8px; max-width: 100%;">
+                      Ảnh hiện tại: 
+                      <code id="displayImageUrlText"
+                        style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; color: #0369a1; font-weight: 600; max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; display: inline-block; vertical-align: middle;">images/hero-banner-full-doctor.png</code>
+                      <img id="bannerThumbImg" src="images/hero-banner-full-doctor.png" alt="Thumbnail"
+                        style="height: 34px; width: 60px; object-fit: cover; border-radius: 6px; border: 1.5px solid #cbd5e1; display: inline-block; vertical-align: middle;"
+                        onerror="this.style.display='none';">
                     </div>
                     <input type="hidden" id="bImageUrl" required value="images/hero-banner-full-doctor.png">
                   </div>
