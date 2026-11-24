@@ -22,7 +22,12 @@ app.use('/admin/images', express.static(path.join(__dirname, 'public', 'images')
 
 // Gắn API routes
 const apiRoutes = require('./api');
-app.use('/api', apiRoutes);
+app.use('/api', (req, res, next) => {
+  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+  next();
+}, apiRoutes);
 
 // Định tuyến thân thiện
 app.get('/admin', (req, res) => {

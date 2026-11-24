@@ -145,7 +145,7 @@
   <!-- SCRIPT KẾT NỐI REALTIME VỚI SQLITE DATABASE -->
   <script>
     document.addEventListener('DOMContentLoaded', () => {
-      fetch('/api/services')
+      fetch('/api/services?t=' + Date.now(), { cache: 'no-store' })
         .then(res => res.json())
         .then(data => {
           const grid = document.getElementById('servicesGrid');

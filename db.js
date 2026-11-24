@@ -23,7 +23,12 @@ let PgPool = null;
 try {
   PgPool = require('pg').Pool;
 } catch (e) {
-  console.warn('Gói pg chưa được nạp:', e.message);
+  try {
+    const pg = require('pg');
+    PgPool = pg.Pool || pg;
+  } catch (e2) {
+    console.warn('Gói pg chưa được nạp:', e2.message);
+  }
 }
 
 const FALLBACK_PATH = path.join(__dirname, 'db_fallback_data.json');
@@ -52,6 +57,7 @@ const mssqlConfig = {
 
 let pgPool = null;
 let usePg = false;
+let lastPgError = null;
 let mssqlPool = null;
 let useMssql = false;
 let useFallback = false;
@@ -142,22 +148,35 @@ function transformSql(rawSql) {
 async function initDatabase() {
   loadFallbackData();
 
-  // 1. Thử kết nối Cloud PostgreSQL (Neon) ưu tiên hàng đầu (khi có PG_URL)
-  if (PgPool && PG_URL) {
-    try {
-      pgPool = new PgPool({
-        connectionString: PG_URL,
-        ssl: { rejectUnauthorized: false },
-        connectionTimeoutMillis: 10000,
-        max: 10
-      });
-      await pgPool.query('SELECT 1');
-      usePg = true;
-      console.log('✅ Đã kết nối thành công tới Cloud PostgreSQL (Neon)! Dữ liệu sẽ được lưu vĩnh viễn trên Live.');
-      return;
-    } catch (pgErr) {
-      console.warn('⚠️ Chưa thể kết nối Cloud PostgreSQL, chuyển sang SQL Server:', pgErr.message);
-      usePg = false;
+  // 1. Thử kết nối Cloud PostgreSQL (Neon) ưu tiên hàng đầu
+  if (PgPool) {
+    const candidateUrls = [
+      process.env.DATABASE_URL,
+      'postgresql://neondb_owner:npg_wlXSR8aoEQN5@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require'
+    ].filter(Boolean);
+
+    for (const connUrl of candidateUrls) {
+      try {
+        pgPool = new PgPool({
+          connectionString: connUrl,
+          ssl: { rejectUnauthorized: false },
+          connectionTimeoutMillis: 8000,
+          max: 10
+        });
+        await pgPool.query('SELECT 1');
+        usePg = true;
+        lastPgError = null;
+        console.log('✅ Đã kết nối thành công tới Cloud PostgreSQL (Neon)! Dữ liệu sẽ được lưu vĩnh viễn trên Live.');
+        return;
+      } catch (pgErr) {
+        lastPgError = pgErr.message;
+        console.warn('⚠️ Lỗi thử kết nối PostgreSQL:', pgErr.message);
+        if (pgPool) {
+          try { await pgPool.end(); } catch (_) {}
+          pgPool = null;
+        }
+        usePg = false;
+      }
     }
   }
 
@@ -418,7 +437,8 @@ const db = {
   saveStore: () => saveFallbackData(),
   isUsingFallback: () => useFallback,
   isSqlServer: () => useMssql,
-  isPostgres: () => usePg
+  isPostgres: () => usePg,
+  getDebugInfo: () => ({ usePg, useMssql, useFallback, lastPgError, hasPgPool: Boolean(PgPool) })
 };
 
 // Khởi chạy kết nối

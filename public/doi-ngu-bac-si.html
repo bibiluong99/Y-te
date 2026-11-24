@@ -267,7 +267,7 @@
     // Tự động đồng bộ danh sách Bác sĩ từ cơ sở dữ liệu SQL Server (Quản trị Admin)
     document.addEventListener('DOMContentLoaded', async () => {
       try {
-        const res = await fetch('/api/doctors?t=' + Date.now());
+        const res = await fetch('/api/doctors?t=' + Date.now(), { cache: 'no-store' });
         if (res.ok) {
           const docs = await res.json();
           const grid = document.querySelector('.doctors-grid-3');
@@ -276,16 +276,19 @@
             if (activeDocs.length === 0) {
               grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748b; font-size: 1.05rem;"><i class="fas fa-user-md" style="font-size: 2.4rem; display: block; margin-bottom: 14px; opacity: 0.35;"></i>Hiện chưa có bác sĩ nào được công bố.</div>';
             } else {
-              grid.innerHTML = activeDocs.map(d => `
+              grid.innerHTML = activeDocs.map(d => {
+                const displayName = (d.degree && !d.name.includes(d.degree)) ? `${d.degree} ${d.name}` : d.name;
+                return `
                 <div class="doctor-profile-card">
                   <div class="doctor-avatar-circle">
                     <img src="${d.avatar || 'images/doc-1.png'}" alt="${d.name}" onerror="this.src='images/doc-1.png'">
                   </div>
-                  <h3>${d.name}</h3>
+                  <h3>${displayName}</h3>
                   <div class="specialty-name">${d.department || ''}</div>
                   <div class="exp-text">${d.experience || ''}</div>
                 </div>
-              `).join('');
+              `;
+              }).join('');
             }
           }
         }
