@@ -2939,6 +2939,10 @@ async function openDoctorModal(d = null) {
 }
 
 function updateDocShowStatus(checked) {
+  const statusSelect = document.getElementById('docStatus');
+  if (statusSelect) {
+    statusSelect.value = checked ? 'active' : 'inactive';
+  }
   const textEl = document.getElementById('docShowStatusText');
   if (!textEl) return;
   if (checked) {
@@ -2947,6 +2951,22 @@ function updateDocShowStatus(checked) {
   } else {
     textEl.textContent = 'Tắt (Ẩn khỏi trang Bác sĩ)';
     textEl.style.color = '#dc2626';
+  }
+}
+
+function handleDocStatusChange(val) {
+  const isAct = (val === 'active');
+  const toggleEl = document.getElementById('docShowOnPage');
+  if (toggleEl) toggleEl.checked = isAct;
+  const textEl = document.getElementById('docShowStatusText');
+  if (textEl) {
+    if (isAct) {
+      textEl.textContent = 'Bật (Đang hiển thị)';
+      textEl.style.color = '#104936';
+    } else {
+      textEl.textContent = 'Tắt (Ẩn khỏi trang Bác sĩ)';
+      textEl.style.color = '#dc2626';
+    }
   }
 }
 
@@ -3040,8 +3060,10 @@ function editDoctor(id) {
 async function handleSaveDoctor(e) {
   e.preventDefault();
   const id = document.getElementById('doctorId').value;
-  const isShown = document.getElementById('docShowOnPage')?.checked ?? true;
-  const statusVal = isShown ? (document.getElementById('docStatus')?.value || 'active') : 'inactive';
+  const toggleEl = document.getElementById('docShowOnPage');
+  const statusSelect = document.getElementById('docStatus');
+  const isShown = toggleEl ? toggleEl.checked : (statusSelect?.value === 'active');
+  const statusVal = isShown ? 'active' : 'inactive';
 
   const data = {
     name: document.getElementById('docName').value.trim(),

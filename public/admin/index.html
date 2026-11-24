@@ -1373,7 +1373,7 @@
           <div class="form-row">
             <div class="form-group" style="flex: 1;">
               <label>Trạng thái công tác</label>
-              <select id="docStatus">
+              <select id="docStatus" onchange="handleDocStatusChange(this.value)">
                 <option value="active">Đang công tác</option>
                 <option value="inactive">Tạm ngưng tiếp nhận</option>
               </select>
