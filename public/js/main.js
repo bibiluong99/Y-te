@@ -271,20 +271,6 @@ document.addEventListener('DOMContentLoaded', function() {
       .catch(err => {
         console.warn('Không thể tải banner từ API:', err);
       });
-
-    // 3. Tiền tải (preload) toàn bộ banner vào cache để khi chuyển trang là hiển thị ngay lập tức
-    setTimeout(() => {
-      fetch(`/api/banners?t=${Date.now()}`, { cache: 'no-store' })
-        .then(r => r.json())
-        .then(allBanners => {
-          if (Array.isArray(allBanners)) {
-            allBanners.forEach(item => {
-              if (item && item.page_key) safeCacheBanner(item.page_key, item);
-            });
-          }
-        })
-        .catch(() => {});
-    }, 500);
   }
 
   // Dynamic Logo & Company Settings Sync from SQLite Settings

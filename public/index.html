@@ -799,42 +799,6 @@
             });
         });
       }
-
-      // 3. Tải Banner cấu hình từ SQL Server
-      fetch('/api/banners/home')
-        .then(res => res.json())
-        .then(b => {
-          if (b && b.image_url) {
-            const heroSection = document.getElementById('homeHeroSection');
-            if (heroSection) {
-              let cleanImgUrl = b.image_url.trim();
-              if (!cleanImgUrl.startsWith('http') && !cleanImgUrl.startsWith('/') && !cleanImgUrl.startsWith('data:')) {
-                cleanImgUrl = `/${cleanImgUrl}`;
-              }
-              heroSection.style.backgroundImage = `url("${cleanImgUrl}")`;
-            }
-            if (b.tagline) {
-              const tag = document.getElementById('homeHeroTag');
-              if (tag) tag.textContent = b.tagline;
-            }
-            if (b.title) {
-              const title = document.getElementById('homeHeroTitle');
-              if (title) title.innerHTML = b.title;
-            }
-            if (b.subtitle) {
-              const desc = document.getElementById('homeHeroDesc');
-              if (desc) desc.innerHTML = b.subtitle;
-            }
-            if (b.btn_text && b.btn_link) {
-              const btn = document.getElementById('homeHeroBtn');
-              if (btn) {
-                btn.innerHTML = `<i class="far fa-calendar-alt"></i> ${b.btn_text}`;
-                btn.setAttribute('href', b.btn_link);
-              }
-            }
-          }
-        })
-        .catch(() => { });
     }
 
     if (document.readyState === 'loading') {
