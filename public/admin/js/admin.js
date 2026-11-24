@@ -2080,7 +2080,7 @@ async function deleteAppointment(id) {
 // 9. CẤU HÌNH BANNER WEBSITE (LƯU VÀO SQL Server)
 async function loadBanners() {
   try {
-    const res = await fetch(`${API_BASE}/banners`);
+    const res = await fetch(`${API_BASE}/banners?t=${Date.now()}`, { cache: 'no-store' });
     const data = await res.json();
     bannersData = {};
     if (Array.isArray(data)) {
@@ -2323,7 +2323,8 @@ async function handleSaveBanner(e) {
     subtitle: document.getElementById('bSubtitle').value,
     image_url: document.getElementById('bImageUrl').value,
     btn_text: document.getElementById('bBtnText').value,
-    btn_link: document.getElementById('bBtnLink').value
+    btn_link: document.getElementById('bBtnLink').value,
+    page_name: document.getElementById('bPageName')?.value || ''
   };
 
   try {
@@ -2332,15 +2333,16 @@ async function handleSaveBanner(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    const result = await res.json();
-    if (result.success) {
-      showToast('Đã lưu thành công', 'success');
+    const result = await res.json().catch(() => ({}));
+    if (res.ok && result.success) {
+      showToast('Đã lưu banner thành công!', 'success');
       bannersData[pageKey] = { ...bannersData[pageKey], ...payload };
+      selectBannerPage(pageKey);
     } else {
-      showToast(result.error || 'Lỗi lưu banner', 'error');
+      showToast(result.error || result.message || 'Lỗi lưu banner', 'error');
     }
   } catch (err) {
-    showToast('Lỗi kết nối khi lưu banner SQL Server', 'error');
+    showToast('Lỗi kết nối khi lưu banner: ' + err.message, 'error');
   }
 }
 

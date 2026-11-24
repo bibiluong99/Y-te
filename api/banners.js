@@ -101,7 +101,18 @@ async function ensureBannerTable() {
       )
     `);
 
-    // Tuyệt đối không tự động nạp lại dữ liệu mẫu khi danh sách rỗng (tránh ghi đè khi người dùng xóa hết)
+    // Tự động kiểm tra và khởi tạo bản ghi mặc định cho các trang còn thiếu
+    for (const b of defaultBanners) {
+      try {
+        const exist = await db.get("SELECT id FROM banners WHERE page_key = ?", [b.page_key]);
+        if (!exist) {
+          await db.run(
+            "INSERT INTO banners (page_key, page_name, tagline, title, subtitle, image_url, btn_text, btn_link) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            [b.page_key, b.page_name, b.tagline, b.title, b.subtitle, b.image_url, b.btn_text, b.btn_link]
+          );
+        }
+      } catch (_) {}
+    }
   } catch (err) {
     console.warn('⚠️ Ghi chú tạo bảng banners:', err.message);
   }
@@ -206,24 +217,40 @@ router.get('/:page_key', async (req, res) => {
   }
 });
 
-// PUT /api/banners/:page_key - Cập nhật banner cho 1 trang
+// PUT /api/banners/:page_key - Cập nhật banner cho 1 trang (UPSERT)
 router.put('/:page_key', async (req, res) => {
   try {
     const key = req.params.page_key.toLowerCase();
-    const { tagline, title, subtitle, image_url, btn_text, btn_link } = req.body;
+    const { tagline, title, subtitle, image_url, btn_text, btn_link, page_name } = req.body;
 
     if (!title || !image_url) {
       return res.status(400).json({ error: 'Tiêu đề và đường dẫn ảnh banner là bắt buộc' });
     }
 
     try {
-      await db.run(`
-        UPDATE banners 
-        SET tagline = ?, title = ?, subtitle = ?, image_url = ?, btn_text = ?, btn_link = ?, updated_at = CURRENT_TIMESTAMP
-        WHERE page_key = ?
-      `, [tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '', key]);
+      const existing = await db.get("SELECT id FROM banners WHERE page_key = ?", [key]);
+      if (existing) {
+        await db.run(`
+          UPDATE banners 
+          SET tagline = ?, title = ?, subtitle = ?, image_url = ?, btn_text = ?, btn_link = ?, updated_at = CURRENT_TIMESTAMP
+          WHERE page_key = ?
+        `, [tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '', key]);
+      } else {
+        const pageName = page_name || defaultBanners.find(b => b.page_key === key)?.page_name || key;
+        await db.run(`
+          INSERT INTO banners (page_key, page_name, tagline, title, subtitle, image_url, btn_text, btn_link)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        `, [key, pageName, tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '']);
+      }
     } catch (err) {
-      console.warn('Fallback update banner:', err.message);
+      console.error('Lỗi lưu banner trong DB:', err.message);
+      const store = db.getStore();
+      if (!store.banners) store.banners = [];
+      const idx = store.banners.findIndex(b => b.page_key === key);
+      const bObj = { page_key: key, page_name: page_name || key, tagline, title, subtitle, image_url, btn_text, btn_link };
+      if (idx !== -1) store.banners[idx] = bObj;
+      else store.banners.push(bObj);
+      db.saveStore();
     }
 
     res.json({
