@@ -179,6 +179,14 @@ function switchSection(targetId) {
   document.getElementById('currentSectionTitle').textContent = titleText;
   const breadcrumbEl = document.getElementById('sectionBreadcrumb');
   if (breadcrumbEl) breadcrumbEl.textContent = titleText;
+  const parentBreadcrumbEl = document.getElementById('sectionParentBreadcrumb');
+  if (parentBreadcrumbEl) {
+    if (targetId === 'section-banners' || targetId === 'section-schedule' || targetId === 'section-company') {
+      parentBreadcrumbEl.textContent = 'Cấu hình';
+    } else {
+      parentBreadcrumbEl.textContent = 'Quản lý';
+    }
+  }
 
   // Xử lý mở submenu và active mục Cấu hình
   const configGroup = document.getElementById('configNavGroup');

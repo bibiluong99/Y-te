@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 <head>
   <meta charset="UTF-8">
@@ -149,12 +149,13 @@
         .then(res => res.json())
         .then(data => {
           const grid = document.getElementById('servicesGrid');
-          if (!data || data.length === 0) {
+          const activeServices = Array.isArray(data) ? data.filter(s => s.status !== 'inactive') : [];
+          if (!activeServices || activeServices.length === 0) {
             grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #64748b; font-size: 1.05rem;"><i class="fas fa-stethoscope" style="font-size: 2.4rem; display: block; margin-bottom: 14px; opacity: 0.35;"></i>Hiện chưa có dịch vụ nào được công bố.</div>';
             return;
           }
 
-          grid.innerHTML = data.map(s => {
+          grid.innerHTML = activeServices.map(s => {
             const bannerImg = s.banner || (s.icon && (s.icon.includes('/') || s.icon.includes('.')) ? s.icon : '');
             if (bannerImg) {
               return `
