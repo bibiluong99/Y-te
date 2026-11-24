@@ -2335,7 +2335,7 @@ async function handleSaveBanner(e) {
     });
     const result = await res.json().catch(() => ({}));
     if (res.ok && result.success) {
-      showToast('Đã lưu banner thành công!', 'success');
+      showToast('Đã lưu thành công', 'success');
       bannersData[pageKey] = { ...bannersData[pageKey], ...payload };
       selectBannerPage(pageKey);
     } else {
