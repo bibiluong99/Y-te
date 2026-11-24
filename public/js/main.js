@@ -202,13 +202,14 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(res => res.json())
       .then(b => {
         if (!b || !b.image_url) return;
-        const cleanImgUrl = b.image_url.startsWith('http') || b.image_url.startsWith('/') 
-          ? b.image_url 
-          : `/${b.image_url}`;
+        let cleanImgUrl = b.image_url.trim();
+        if (!cleanImgUrl.startsWith('http') && !cleanImgUrl.startsWith('/') && !cleanImgUrl.startsWith('data:')) {
+          cleanImgUrl = `/${cleanImgUrl}`;
+        }
 
         const heroSection = document.getElementById('pageHeroSection') || document.getElementById('homeHeroSection');
         if (heroSection) {
-          heroSection.style.backgroundImage = `url('${cleanImgUrl}')`;
+          heroSection.style.backgroundImage = `url("${cleanImgUrl}")`;
           heroSection.classList.add('full-banner-bg');
         }
 

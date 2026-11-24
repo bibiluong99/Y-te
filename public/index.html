@@ -783,7 +783,11 @@
           if (b && b.image_url) {
             const heroSection = document.getElementById('homeHeroSection');
             if (heroSection) {
-              heroSection.style.backgroundImage = `url('${b.image_url}')`;
+              let cleanImgUrl = b.image_url.trim();
+              if (!cleanImgUrl.startsWith('http') && !cleanImgUrl.startsWith('/') && !cleanImgUrl.startsWith('data:')) {
+                cleanImgUrl = `/${cleanImgUrl}`;
+              }
+              heroSection.style.backgroundImage = `url("${cleanImgUrl}")`;
             }
             if (b.tagline) {
               const tag = document.getElementById('homeHeroTag');
