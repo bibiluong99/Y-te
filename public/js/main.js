@@ -245,15 +245,37 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // 1. Logo Header & Footer
         if (s.header_logo) {
-          const hLogo = s.header_logo.startsWith('http') || s.header_logo.startsWith('/') ? s.header_logo : `/${s.header_logo}`;
-          document.querySelectorAll('.header .logo-link img, .site-header-logo, .header-brand img').forEach(img => {
+          let hLogo = s.header_logo.trim();
+          if (hLogo.startsWith('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB')) {
+            hLogo = 'images/logo.png';
+          }
+          if (!hLogo.startsWith('http') && !hLogo.startsWith('/') && !hLogo.startsWith('data:')) {
+            hLogo = `/${hLogo}`;
+          }
+          document.querySelectorAll('.header .logo-link img, .site-header-logo, .header-brand img, .logo img').forEach(img => {
             img.src = hLogo;
+            img.onerror = function() {
+              if (!this.src.endsWith('images/logo.png')) {
+                this.src = 'images/logo.png';
+              }
+            };
           });
         }
         if (s.footer_logo) {
-          const fLogo = s.footer_logo.startsWith('http') || s.footer_logo.startsWith('/') ? s.footer_logo : `/${s.footer_logo}`;
+          let fLogo = s.footer_logo.trim();
+          if (fLogo.startsWith('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAAB')) {
+            fLogo = 'images/logo-white.png';
+          }
+          if (!fLogo.startsWith('http') && !fLogo.startsWith('/') && !fLogo.startsWith('data:')) {
+            fLogo = `/${fLogo}`;
+          }
           document.querySelectorAll('.footer-brand img, .footer-brand-logo img, .site-footer-logo').forEach(img => {
             img.src = fLogo;
+            img.onerror = function() {
+              if (!this.src.endsWith('images/logo-white.png')) {
+                this.src = 'images/logo-white.png';
+              }
+            };
           });
         }
 
