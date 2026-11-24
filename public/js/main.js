@@ -688,6 +688,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Lưu ý: Thanh 6 dịch vụ trên trang chủ (homeServicesBar) là nội dung mặc định cố định, không phụ thuộc Admin
 
+  function formatNewsDate(dStr) {
+    if (!dStr) return 'Mới cập nhật';
+    const s = String(dStr).trim();
+    if (!s) return 'Mới cập nhật';
+    if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) return s;
+    if (/^\d{4}-\d{1,2}-\d{1,2}/.test(s)) {
+      const datePart = s.split('T')[0];
+      const parts = datePart.split('-');
+      if (parts.length === 3) {
+        return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
+      }
+    }
+    try {
+      const d = new Date(s);
+      if (!isNaN(d.getTime())) {
+        const day = String(d.getDate()).padStart(2, '0');
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const year = d.getFullYear();
+        return `${day}/${month}/${year}`;
+      }
+    } catch (_) {}
+    return s.split('T')[0] || s;
+  }
+
   // Khối tin tức trên trang chủ (homeNewsGrid) đồng bộ động từ SQL Server
   function loadDynamicHomeNews() {
     const grid = document.getElementById('homeNewsGrid');
@@ -704,7 +728,7 @@ document.addEventListener('DOMContentLoaded', function() {
           <article class="news-card-ui">
             <div class="news-thumb-box">
               <img src="${item.image || 'images/news-1.png'}" alt="${item.title || ''}">
-              <span class="news-badge-date">${item.created_at || 'Mới cập nhật'}</span>
+              <span class="news-badge-date">${formatNewsDate(item.created_at)}</span>
             </div>
             <div class="news-body-content">
               <h3>${item.title || ''}</h3>

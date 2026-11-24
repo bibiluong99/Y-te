@@ -508,13 +508,26 @@ function changeNewsPage(page) {
 
 function formatNewsDate(dateStr) {
   if (!dateStr) return '20/05/2025';
-  try {
-    const d = new Date(dateStr);
-    if (!isNaN(d.getTime())) {
-      return d.toLocaleDateString('vi-VN');
+  const s = String(dateStr).trim();
+  if (!s) return '20/05/2025';
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) return s;
+  if (/^\d{4}-\d{1,2}-\d{1,2}/.test(s)) {
+    const datePart = s.split('T')[0];
+    const parts = datePart.split('-');
+    if (parts.length === 3) {
+      return `${parts[2].padStart(2, '0')}/${parts[1].padStart(2, '0')}/${parts[0]}`;
     }
-  } catch (e) {}
-  return String(dateStr).split('T')[0] || dateStr;
+  }
+  try {
+    const d = new Date(s);
+    if (!isNaN(d.getTime())) {
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const year = d.getFullYear();
+      return `${day}/${month}/${year}`;
+    }
+  } catch (_) {}
+  return s.split('T')[0] || s;
 }
 
 function renderNewsTable(items) {
@@ -1105,7 +1118,7 @@ function renderContactsTable(items) {
           </div>
         </td>
         <td>
-          <div class="cell-time-date">${escapeHtml(c.created_at || '18/11/2026')}</div>
+          <div class="cell-time-date">${escapeHtml(formatNotifDate(c.created_at || '18/11/2026'))}</div>
         </td>
         <td>${statusBadge}</td>
         <td style="text-align: center;">
@@ -1203,7 +1216,7 @@ function applyContactFilters() {
           </div>
         </td>
         <td>
-          <div class="cell-time-date">${escapeHtml(c.created_at || '18/11/2026')}</div>
+          <div class="cell-time-date">${escapeHtml(formatNotifDate(c.created_at || '18/11/2026'))}</div>
         </td>
         <td>${statusBadge}</td>
         <td style="text-align: center;">
