@@ -175,6 +175,60 @@ document.addEventListener('DOMContentLoaded', function() {
     input.setAttribute('min', today);
   });
 
+  function safeCacheBanner(key, data) {
+    if (!key || !data) return;
+    try {
+      sessionStorage.setItem('banner_' + key, JSON.stringify(data));
+    } catch (_) {
+      try {
+        sessionStorage.clear();
+        sessionStorage.setItem('banner_' + key, JSON.stringify(data));
+      } catch (_) {}
+    }
+    try {
+      localStorage.setItem('banner_' + key, JSON.stringify(data));
+    } catch (_) {
+      try {
+        for (let k in localStorage) {
+          if (k.startsWith('banner_')) localStorage.removeItem(k);
+        }
+        localStorage.setItem('banner_' + key, JSON.stringify(data));
+      } catch (_) {}
+    }
+  }
+
+  function applyBannerData(b) {
+    if (!b) return;
+    const heroSection = document.getElementById('pageHeroSection') || document.getElementById('homeHeroSection');
+    if (heroSection && b.image_url) {
+      let cleanImgUrl = b.image_url.trim();
+      if (!cleanImgUrl.startsWith('http') && !cleanImgUrl.startsWith('/') && !cleanImgUrl.startsWith('data:')) {
+        cleanImgUrl = `/${cleanImgUrl}`;
+      }
+      heroSection.style.backgroundImage = `url("${cleanImgUrl}")`;
+      heroSection.classList.add('full-banner-bg');
+    }
+
+    const tag = document.getElementById('pageHeroTag') || document.getElementById('homeHeroTag');
+    if (tag && b.tagline) {
+      let cleanTag = b.tagline.replace(/^Trang\s*chủ\s*>\s*/i, '').trim();
+      cleanTag = cleanTag.replace(/^(?:Dịch\s*vụ\s*>\s*)+/i, '').trim();
+      tag.textContent = cleanTag || b.tagline;
+    }
+
+    const title = document.getElementById('pageHeroTitle') || document.getElementById('homeHeroTitle');
+    if (title && b.title) title.innerHTML = b.title;
+
+    const desc = document.getElementById('pageHeroDesc') || document.getElementById('homeHeroDesc');
+    if (desc && b.subtitle) desc.innerHTML = b.subtitle;
+
+    const btn = document.getElementById('pageHeroBtn') || document.getElementById('homeHeroBtn');
+    if (btn && b.btn_text) {
+      btn.innerHTML = `${b.btn_text}`;
+      if (b.btn_link) btn.setAttribute('href', b.btn_link);
+    }
+  }
+
   // Dynamic Banner Loading from SQLite for All Pages
   function loadDynamicBanner() {
     const rawPath = window.location.pathname.toLowerCase();
@@ -198,43 +252,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!pageKey) return;
 
+    // 1. Áp dụng ngay lập tức từ bộ nhớ cache nếu có để chống nhấp nháy banner cũ
+    try {
+      const cached = sessionStorage.getItem('banner_' + pageKey) || localStorage.getItem('banner_' + pageKey);
+      if (cached) {
+        applyBannerData(JSON.parse(cached));
+      }
+    } catch (_) {}
+
+    // 2. Tải banner mới nhất từ server và đồng bộ cache
     fetch(`/api/banners/${pageKey}?t=${Date.now()}`, { cache: 'no-store' })
       .then(res => res.json())
       .then(b => {
-        if (!b || !b.image_url) return;
-        let cleanImgUrl = b.image_url.trim();
-        if (!cleanImgUrl.startsWith('http') && !cleanImgUrl.startsWith('/') && !cleanImgUrl.startsWith('data:')) {
-          cleanImgUrl = `/${cleanImgUrl}`;
-        }
-
-        const heroSection = document.getElementById('pageHeroSection') || document.getElementById('homeHeroSection');
-        if (heroSection) {
-          heroSection.style.backgroundImage = `url("${cleanImgUrl}")`;
-          heroSection.classList.add('full-banner-bg');
-        }
-
-        const tag = document.getElementById('pageHeroTag') || document.getElementById('homeHeroTag');
-        if (tag && b.tagline) {
-          let cleanTag = b.tagline.replace(/^Trang\s*chủ\s*>\s*/i, '').trim();
-          cleanTag = cleanTag.replace(/^(?:Dịch\s*vụ\s*>\s*)+/i, '').trim();
-          tag.textContent = cleanTag || b.tagline;
-        }
-
-        const title = document.getElementById('pageHeroTitle') || document.getElementById('homeHeroTitle');
-        if (title && b.title) title.innerHTML = b.title;
-
-        const desc = document.getElementById('pageHeroDesc') || document.getElementById('homeHeroDesc');
-        if (desc && b.subtitle) desc.innerHTML = b.subtitle;
-
-        const btn = document.getElementById('pageHeroBtn') || document.getElementById('homeHeroBtn');
-        if (btn && b.btn_text) {
-          btn.innerHTML = `${b.btn_text}`;
-          if (b.btn_link) btn.setAttribute('href', b.btn_link);
-        }
+        if (!b) return;
+        applyBannerData(b);
+        safeCacheBanner(pageKey, b);
       })
       .catch(err => {
-        console.warn('Không thể tải banner từ SQLite:', err);
+        console.warn('Không thể tải banner từ API:', err);
       });
+
+    // 3. Tiền tải (preload) toàn bộ banner vào cache để khi chuyển trang là hiển thị ngay lập tức
+    setTimeout(() => {
+      fetch(`/api/banners?t=${Date.now()}`, { cache: 'no-store' })
+        .then(r => r.json())
+        .then(allBanners => {
+          if (Array.isArray(allBanners)) {
+            allBanners.forEach(item => {
+              if (item && item.page_key) safeCacheBanner(item.page_key, item);
+            });
+          }
+        })
+        .catch(() => {});
+    }, 500);
   }
 
   // Dynamic Logo & Company Settings Sync from SQLite Settings

@@ -2350,6 +2350,11 @@ async function handleSaveBanner(e) {
     if (res.ok && result.success) {
       showToast('Đã lưu thành công', 'success');
       bannersData[pageKey] = { ...bannersData[pageKey], ...payload };
+      try {
+        const cachedObj = { page_key: pageKey, ...bannersData[pageKey], ...payload };
+        sessionStorage.setItem('banner_' + pageKey, JSON.stringify(cachedObj));
+        localStorage.setItem('banner_' + pageKey, JSON.stringify(cachedObj));
+      } catch (_) {}
       selectBannerPage(pageKey);
     } else {
       showToast(result.error || result.message || 'Lỗi lưu banner', 'error');

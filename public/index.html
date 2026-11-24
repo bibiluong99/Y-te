@@ -14,6 +14,31 @@
     rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/styles.css">
+  <!-- Instant Banner Cache Loader (chống nhấp nháy banner cũ khi chuyển trang) -->
+  <script>
+    (function () {
+      try {
+        var raw = window.location.pathname.toLowerCase();
+        var key = 'home';
+        if (raw.includes('chuyen-khoa') || raw.includes('specialty')) key = 'specialty';
+        else if (raw.includes('doi-ngu-bac-si') || raw.includes('doctor')) key = 'doctors';
+        else if (raw.includes('dich-vu') || raw.includes('service')) key = 'services';
+        else if (raw.includes('tin-tuc') || raw.includes('news')) key = 'news';
+        else if (raw.includes('lien-he') || raw.includes('contact')) key = 'contact';
+        else if (raw.includes('dat-lich') || raw.includes('appointment')) key = 'appointment';
+
+        var cached = sessionStorage.getItem('banner_' + key) || localStorage.getItem('banner_' + key);
+        if (cached) {
+          var b = JSON.parse(cached);
+          if (b && b.image_url) {
+            var img = b.image_url.trim();
+            if (!img.startsWith('http') && !img.startsWith('/') && !img.startsWith('data:')) img = '/' + img;
+            document.write('<style>#pageHeroSection, #homeHeroSection { background-image: url("' + img + '") !important; }</style>');
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
   <style>
     /* Bố cục 2 cột cho form đặt lịch nhanh */
     .booking-form-wrapper {
@@ -103,8 +128,7 @@
   </header>
 
   <!-- ===================== HERO BANNER (FULL WIDTH TOÀN MÀN HÌNH NẰM DƯỚI CHỮ) ===================== -->
-  <section class="hero full-banner-bg" id="homeHeroSection"
-    style="background-image: url('images/hero-banner-full-doctor.png');">
+  <section class="hero full-banner-bg" id="homeHeroSection">
     <div class="hero-overlay-gradient"></div>
     <div class="container hero-content-relative">
       <div class="hero-content">
