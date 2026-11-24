@@ -1,7 +1,12 @@
+require('dotenv').config();
 const { Pool } = require('pg');
 const fs = require('fs');
 
-const connStr = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_wlXSR8aoEQN5@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require';
+const connStr = process.env.DATABASE_URL;
+if (!connStr) {
+  console.error('❌ Thiếu biến môi trường DATABASE_URL! Vui lòng cấu hình trong file .env trước khi chạy migrate.');
+  process.exit(1);
+}
 const pool = new Pool({
   connectionString: connStr,
   ssl: { rejectUnauthorized: false }
@@ -97,7 +102,8 @@ async function migrate() {
       content TEXT,
       image TEXT,
       status TEXT DEFAULT 'active',
-      created_at TIMESTAMPTZ DEFAULT NOW()
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS products (
@@ -109,7 +115,8 @@ async function migrate() {
       status TEXT DEFAULT 'active',
       image TEXT,
       description TEXT,
-      created_at TIMESTAMPTZ DEFAULT NOW()
+      created_at TIMESTAMPTZ DEFAULT NOW(),
+      updated_at TIMESTAMPTZ DEFAULT NOW()
     );
 
     CREATE TABLE IF NOT EXISTS banners (

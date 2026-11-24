@@ -149,6 +149,21 @@
       }
     }
   </style>
+  <!-- SEO_STATIC_START -->
+  <meta name="theme-color" content="#104936">
+  <link rel="canonical" href="https://phongkhamanphuc.vn/doi-ngu-bac-si.html">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="vi_VN">
+  <meta property="og:site_name" content="Phòng Khám Đa Khoa An Phúc">
+  <meta property="og:title" content="Đội ngũ bác sĩ - Phòng Khám Đa Khoa An Phúc">
+  <meta property="og:description" content="Đội ngũ bác sĩ chuyên môn cao tại Phòng Khám An Phúc.">
+  <meta property="og:url" content="https://phongkhamanphuc.vn/doi-ngu-bac-si.html">
+  <meta property="og:image" content="https://phongkhamanphuc.vn/images/banners/doctors-hero.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Đội ngũ bác sĩ - Phòng Khám Đa Khoa An Phúc">
+  <meta name="twitter:description" content="Đội ngũ bác sĩ chuyên môn cao tại Phòng Khám An Phúc.">
+  <meta name="twitter:image" content="https://phongkhamanphuc.vn/images/banners/doctors-hero.jpg">
+  <!-- SEO_STATIC_END -->
 </head>
 <body>
 
@@ -306,7 +321,7 @@
                 return `
                 <div class="doctor-profile-card">
                   <div class="doctor-avatar-circle">
-                    <img src="${d.avatar || 'images/doc-1.png'}" alt="${d.name}" onerror="this.src='images/doc-1.png'">
+                    <img src="${d.avatar || 'images/doc-1.png'}" alt="${d.name}" onerror="this.src='images/doc-1.png'" loading="lazy">
                   </div>
                   <h3>${displayName}</h3>
                   <div class="specialty-name">${d.department || ''}</div>

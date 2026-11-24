@@ -5,101 +5,79 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { publicFormLimiter } = require('../middleware/rateLimiter');
 
-// GET /api/contacts
-router.get('/', async (req, res) => {
+const ALLOWED_CONTACT_STATUSES = new Set(['new', 'read', 'replied', 'archived']);
+
+// GET /api/contacts (Admin - bảo vệ dữ liệu cá nhân khách hàng)
+router.get('/', requireAuth, async (req, res) => {
   try {
-    let contacts = [];
-    try {
-      contacts = await db.all("SELECT * FROM contacts ORDER BY id DESC");
-    } catch (e) {
-      const store = db.getStore();
-      contacts = store.contacts || [];
-    }
+    const contacts = await db.all("SELECT * FROM contacts ORDER BY id DESC");
     res.json(contacts);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi GET /api/contacts:', err.message);
+    res.status(500).json({ error: 'Không thể tải danh sách liên hệ' });
   }
 });
 
-// POST /api/contacts
-router.post('/', async (req, res) => {
+// POST /api/contacts (Công khai - giới hạn tần suất chống spam)
+router.post('/', publicFormLimiter, async (req, res) => {
   try {
-    const { name, phone, email, message } = req.body;
-    if (!name || !phone) {
+    const { name, phone, email, message } = req.body || {};
+    if (!name || !String(name).trim() || !phone || !String(phone).trim()) {
       return res.status(400).json({ error: 'Họ tên và số điện thoại là bắt buộc' });
     }
 
     const newContact = {
-      name,
-      phone,
-      email: email || '',
-      message: message || '',
+      name: String(name).trim(),
+      phone: String(phone).trim(),
+      email: email ? String(email).trim() : '',
+      message: message ? String(message).trim() : '',
       status: 'new',
       created_at: new Date().toISOString()
     };
 
-    try {
-      const result = await db.run(
-        "INSERT INTO contacts (name, phone, email, message, status, created_at) VALUES (?, ?, ?, ?, ?, ?)",
-        [newContact.name, newContact.phone, newContact.email, newContact.message, newContact.status, newContact.created_at]
-      );
-      newContact.id = result.lastID;
-    } catch (err) {
-      const store = db.getStore();
-      newContact.id = Date.now();
-      store.contacts.unshift(newContact);
-      db.saveStore();
-    }
+    const result = await db.run(
+      "INSERT INTO contacts (name, phone, email, message, status, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+      [newContact.name, newContact.phone, newContact.email, newContact.message, newContact.status, newContact.created_at]
+    );
+    newContact.id = result.lastID;
 
     res.status(201).json({ success: true, message: 'Gửi tin nhắn liên hệ thành công', contact: newContact });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi POST /api/contacts:', err.message);
+    res.status(500).json({ error: 'Không thể gửi tin nhắn liên hệ' });
   }
 });
 
-// PUT /api/contacts/:id
-router.put('/:id', async (req, res) => {
+// PUT /api/contacts/:id (Admin)
+router.put('/:id', requireAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    const { status } = req.body;
+    const { status } = req.body || {};
     const newStatus = status || 'replied';
 
-    try {
-      await db.run("UPDATE contacts SET status = ? WHERE id = ?", [newStatus, id]);
-    } catch (err) {
-      const store = db.getStore();
-      if (store.contacts) {
-        const item = store.contacts.find(c => c.id == id);
-        if (item) {
-          item.status = newStatus;
-          db.saveStore();
-        }
-      }
+    if (!ALLOWED_CONTACT_STATUSES.has(newStatus)) {
+      return res.status(400).json({ error: 'Trạng thái liên hệ không hợp lệ' });
     }
 
+    await db.run("UPDATE contacts SET status = ? WHERE id = ?", [newStatus, id]);
     res.json({ success: true, message: 'Đã cập nhật trạng thái liên hệ' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi PUT /api/contacts/:id:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật trạng thái liên hệ' });
   }
 });
 
-// DELETE /api/contacts/:id
-router.delete('/:id', async (req, res) => {
+// DELETE /api/contacts/:id (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("DELETE FROM contacts WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      if (store.contacts) {
-        store.contacts = store.contacts.filter(c => c.id != id);
-        db.saveStore();
-      }
-    }
+    await db.run("DELETE FROM contacts WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Đã xóa thư liên hệ' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi DELETE /api/contacts/:id:', err.message);
+    res.status(500).json({ error: 'Không thể xóa thư liên hệ' });
   }
 });
 

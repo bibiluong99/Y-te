@@ -5,9 +5,9 @@
 
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { saveBase64Image } = require('../utils/upload');
 
 const defaultSettings = [
   { key: 'header_logo', value: 'images/logo.png' },
@@ -85,45 +85,16 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/settings/upload-logo - Tải lên logo Header hoặc Footer
-router.post('/upload-logo', async (req, res) => {
+// POST /api/settings/upload-logo - Tải lên logo Header hoặc Footer (Admin)
+router.post('/upload-logo', requireAuth, async (req, res) => {
   try {
-    const { type, fileName, fileData } = req.body;
-
-    if (!fileData) {
-      return res.status(400).json({ error: 'Chưa có dữ liệu file ảnh logo!' });
-    }
+    const { type, fileName, fileData } = req.body || {};
 
     const logoType = (type === 'footer') ? 'footer' : 'header';
     const settingKey = logoType === 'footer' ? 'footer_logo' : 'header_logo';
 
-    // Xử lý base64
-    const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer;
-    if (matches && matches.length === 3) {
-      buffer = Buffer.from(matches[2], 'base64');
-    } else {
-      buffer = Buffer.from(fileData, 'base64');
-    }
+    const { imageUrl: relativeUrl } = saveBase64Image(fileData, fileName, `logo_${logoType}`);
 
-    const cleanOrigName = (fileName || 'logo.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
-    const finalFileName = `logo_${logoType}_${Date.now()}_${cleanOrigName}`;
-
-    let relativeUrl;
-    try {
-      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-      if (!fs.existsSync(uploadDirPublic)) {
-        fs.mkdirSync(uploadDirPublic, { recursive: true });
-      }
-      const publicPath = path.join(uploadDirPublic, finalFileName);
-      fs.writeFileSync(publicPath, buffer);
-      relativeUrl = `images/uploads/${finalFileName}`;
-    } catch (fsErr) {
-      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
-      relativeUrl = fileData;
-    }
-
-    // Cập nhật vào SQLite
     await db.run(
       `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)
        ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = CURRENT_TIMESTAMP`,
@@ -138,15 +109,15 @@ router.post('/upload-logo', async (req, res) => {
       key: settingKey
     });
   } catch (err) {
-    console.error('Lỗi upload logo:', err);
-    res.status(500).json({ error: 'Lỗi tải ảnh logo: ' + err.message });
+    console.error('Lỗi upload logo:', err.message);
+    res.status(err.statusCode || 500).json({ error: 'Lỗi tải ảnh logo: ' + err.message });
   }
 });
 
-// POST /api/settings/schedule - Cập nhật cấu hình thời gian làm việc & khung giờ khám
-router.post('/schedule', async (req, res) => {
+// POST /api/settings/schedule - Cập nhật cấu hình thời gian làm việc & khung giờ khám (Admin)
+router.post('/schedule', requireAuth, async (req, res) => {
   try {
-    const { working_hours_text, working_hours_slots, hotline } = req.body;
+    const { working_hours_text, working_hours_slots, hotline } = req.body || {};
     if (working_hours_text !== undefined) {
       await db.run(
         `INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP)
@@ -171,14 +142,14 @@ router.post('/schedule', async (req, res) => {
     }
     res.json({ success: true, message: 'Đã lưu cấu hình thời gian khám thành công!' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Không thể lưu cấu hình thời gian khám' });
   }
 });
 
-// PUT /api/settings - Cập nhật các thông số cài đặt
-router.put('/', async (req, res) => {
+// PUT /api/settings - Cập nhật các thông số cài đặt (Admin)
+router.put('/', requireAuth, async (req, res) => {
   try {
-    const data = req.body;
+    const data = req.body || {};
     for (const [k, v] of Object.entries(data)) {
       const valStr = (typeof v === 'object' && v !== null) ? JSON.stringify(v) : String(v);
       await db.run(
@@ -189,7 +160,7 @@ router.put('/', async (req, res) => {
     }
     res.json({ success: true, message: 'Đã lưu cấu hình website thành công!' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: 'Không thể lưu cấu hình website' });
   }
 });
 

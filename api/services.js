@@ -5,9 +5,9 @@
 
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { saveBase64Image } = require('../utils/upload');
 
 // Danh sách 6 Dịch vụ Y tế chuẩn, đồng bộ 100% với các trang chi tiết dịch vụ
 const defaultServices = [
@@ -210,8 +210,8 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/services/reset - Xóa sạch và nạp lại toàn bộ 6 dịch vụ chuẩn
-router.post('/reset', async (req, res) => {
+// POST /api/services/reset - Xóa sạch và nạp lại toàn bộ 6 dịch vụ chuẩn (Admin)
+router.post('/reset', requireAuth, async (req, res) => {
   try {
     await clearAndReseedServices();
     res.json({
@@ -224,53 +224,28 @@ router.post('/reset', async (req, res) => {
   }
 });
 
-// POST /api/services/upload-banner - Upload ảnh banner dịch vụ (base64)
-router.post('/upload-banner', async (req, res) => {
+// POST /api/services/upload-banner - Upload ảnh banner dịch vụ (Admin)
+router.post('/upload-banner', requireAuth, async (req, res) => {
   try {
-    const { fileName, fileData } = req.body;
-    if (!fileData) return res.status(400).json({ error: 'Chưa có file ảnh!' });
-
-    const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer;
-    if (matches && matches.length === 3) {
-      buffer = Buffer.from(matches[2], 'base64');
-    } else {
-      buffer = Buffer.from(fileData, 'base64');
-    }
-
-    const cleanOrigName = (fileName || 'service_banner.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
-    const finalFileName = `service_${Date.now()}_${cleanOrigName}`;
-
-    let relativeUrl;
-    try {
-      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-      if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
-
-      const publicPath = path.join(uploadDirPublic, finalFileName);
-      fs.writeFileSync(publicPath, buffer);
-
-      relativeUrl = `images/uploads/${finalFileName}`;
-    } catch (fsErr) {
-      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
-      relativeUrl = fileData;
-    }
-    res.json({ success: true, imageUrl: relativeUrl });
+    const { fileName, fileData } = req.body || {};
+    const { imageUrl } = saveBase64Image(fileData, fileName, 'service');
+    res.json({ success: true, imageUrl });
   } catch (err) {
-    res.status(500).json({ error: 'Lỗi upload ảnh: ' + err.message });
+    res.status(err.statusCode || 500).json({ error: 'Lỗi upload ảnh: ' + err.message });
   }
 });
 
-// POST /api/services
-router.post('/', async (req, res) => {
+// POST /api/services (Admin)
+router.post('/', requireAuth, async (req, res) => {
   try {
-    const { name, category, icon, banner, price, description, duration, intro, checklist, status } = req.body;
-    if (!name) return res.status(400).json({ error: 'Tên dịch vụ là bắt buộc' });
+    const { name, category, icon, banner, price, description, duration, intro, checklist, status } = req.body || {};
+    if (!name || !String(name).trim()) return res.status(400).json({ error: 'Tên dịch vụ là bắt buộc' });
 
     const bannerVal = banner || (icon && (icon.includes('/') || icon.includes('.')) ? icon : '');
     const iconVal = icon || bannerVal || 'fas fa-stethoscope';
 
     const newService = {
-      name,
+      name: String(name).trim(),
       category: category || 'Khám bệnh',
       icon: iconVal,
       banner: bannerVal,
@@ -282,100 +257,49 @@ router.post('/', async (req, res) => {
       status: status || 'active'
     };
 
-    try {
-      const result = await db.run(
-        "INSERT INTO services (name, category, icon, banner, price, description, duration, intro, checklist, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [newService.name, newService.category, newService.icon, newService.banner, newService.price, newService.description, newService.duration, newService.intro, newService.checklist, newService.status]
-      );
-      newService.id = result.lastID;
-    } catch (err) {
-      try {
-        const result = await db.run(
-          "INSERT INTO services (name, category, icon, price, description, duration, intro, checklist, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [newService.name, newService.category, newService.icon, newService.price, newService.description, newService.duration, newService.intro, newService.checklist, newService.status]
-        );
-        newService.id = result.lastID;
-      } catch (err2) {
-        newService.id = Date.now();
-        const store = db.getStore();
-        if (!store.services) store.services = [];
-        store.services.push(newService);
-        db.saveStore();
-      }
-    }
+    const result = await db.run(
+      "INSERT INTO services (name, category, icon, banner, price, description, duration, intro, checklist, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [newService.name, newService.category, newService.icon, newService.banner, newService.price, newService.description, newService.duration, newService.intro, newService.checklist, newService.status]
+    );
+    newService.id = result.lastID;
 
     res.status(201).json({ success: true, message: 'Tạo dịch vụ y tế thành công', service: newService });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi POST /api/services:', err.message);
+    res.status(500).json({ error: 'Không thể tạo dịch vụ y tế' });
   }
 });
 
-// PUT /api/services/:id
-router.put('/:id', async (req, res) => {
+// PUT /api/services/:id (Admin)
+router.put('/:id', requireAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    const { name, category, icon, banner, price, description, duration, intro, checklist, status } = req.body;
+    const { name, category, icon, banner, price, description, duration, intro, checklist, status } = req.body || {};
+    if (!name || !String(name).trim()) return res.status(400).json({ error: 'Tên dịch vụ là bắt buộc' });
+
     const bannerVal = banner || (icon && (icon.includes('/') || icon.includes('.')) ? icon : '');
     const iconVal = icon || bannerVal || 'fas fa-stethoscope';
 
-    try {
-      await db.run(
-        "UPDATE services SET name = ?, category = ?, icon = ?, banner = ?, price = ?, description = ?, duration = ?, intro = ?, checklist = ?, status = ? WHERE id = ?",
-        [name, category, iconVal, bannerVal, parseFloat(price) || 0, description, duration || '', intro || '', checklist || '', status || 'active', id]
-      );
-    } catch (err) {
-      try {
-        await db.run(
-          "UPDATE services SET name = ?, category = ?, icon = ?, price = ?, description = ?, duration = ?, intro = ?, checklist = ?, status = ? WHERE id = ?",
-          [name, category, iconVal, parseFloat(price) || 0, description, duration || '', intro || '', checklist || '', status || 'active', id]
-        );
-      } catch (err2) {}
-
-      const store = db.getStore();
-      if (store.services) {
-        const idx = store.services.findIndex(s => s.id == id);
-        if (idx !== -1) {
-          store.services[idx] = {
-            ...store.services[idx],
-            name,
-            category,
-            icon: iconVal,
-            banner: bannerVal,
-            price: parseFloat(price) || 0,
-            description,
-            duration: duration || '',
-            intro: intro || '',
-            checklist: checklist || '',
-            status: status || 'active'
-          };
-          db.saveStore();
-        }
-      }
-    }
+    await db.run(
+      "UPDATE services SET name = ?, category = ?, icon = ?, banner = ?, price = ?, description = ?, duration = ?, intro = ?, checklist = ?, status = ? WHERE id = ?",
+      [String(name).trim(), category, iconVal, bannerVal, parseFloat(price) || 0, description, duration || '', intro || '', checklist || '', status || 'active', id]
+    );
 
     res.json({ success: true, message: 'Cập nhật dịch vụ thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi PUT /api/services/:id:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật dịch vụ' });
   }
 });
 
-// DELETE /api/services/:id
-router.delete('/:id', async (req, res) => {
+// DELETE /api/services/:id (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("DELETE FROM services WHERE id = ?", [id]);
-    } catch (dbErr) {
-      console.warn("Lỗi xóa services trên DB:", dbErr.message);
-    }
-    const store = db.getStore();
-    if (store && store.services) {
-      store.services = store.services.filter(s => s.id != id);
-      db.saveStore();
-    }
+    await db.run("DELETE FROM services WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Đã xóa dịch vụ' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi DELETE /api/services/:id:', err.message);
+    res.status(500).json({ error: 'Không thể xóa dịch vụ' });
   }
 });
 

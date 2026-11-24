@@ -5,8 +5,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { publicFormLimiter } = require('../middleware/rateLimiter');
 
-// Tự động kiểm tra và thêm các cột mới vào SQLite nếu chưa có
+const ALLOWED_STATUSES = new Set(['pending', 'confirmed', 'completed', 'cancelled']);
+
+// Tự động kiểm tra và thêm các cột mới nếu bảng cũ chưa có
 (async () => {
   try { await db.run("ALTER TABLE appointments ADD COLUMN email TEXT"); } catch (_) {}
   try { await db.run("ALTER TABLE appointments ADD COLUMN appointment_type TEXT"); } catch (_) {}
@@ -14,7 +18,6 @@ const db = require('../db');
   try { await db.run("ALTER TABLE appointments ADD COLUMN created_at TEXT"); } catch (_) {}
 })();
 
-// Chuẩn hóa định dạng ngày sang YYYY-MM-DD
 function normalizeDateStr(d) {
   if (!d) return '';
   d = String(d).trim();
@@ -32,7 +35,6 @@ function normalizeDateStr(d) {
   return d;
 }
 
-// Chuẩn hóa tên bác sĩ để so sánh không phân biệt học vị, viết hoa thường, dấu tiếng Việt
 function normalizeDoctorName(name) {
   if (!name) return '';
   return name
@@ -44,20 +46,17 @@ function normalizeDoctorName(name) {
     .trim();
 }
 
-// Chuẩn hóa khung giờ để so sánh (bỏ khoảng trắng)
 function normalizeTimeSlot(t) {
   if (!t) return '';
   return String(t).replace(/\s+/g, '').toLowerCase().trim();
 }
 
-// Kiểm tra lịch hẹn có bị hủy hay không
 function isAppointmentCancelled(st) {
   if (!st) return false;
   const s = String(st).toLowerCase().trim();
-  return s === 'cancelled' || s === 'canceled' || s === 'hủy' || s === 'huy' || s === 'hủy lịch' || s === 'huy lich' || s === 'đã hủy' || s === 'da huy' || s === 'rejected';
+  return ['cancelled', 'canceled', 'hủy', 'huy', 'hủy lịch', 'huy lich', 'đã hủy', 'da huy', 'rejected'].includes(s);
 }
 
-// Định dạng ngày hiển thị dd/mm/yyyy
 function formatDisplayDate(dateStr) {
   if (!dateStr) return '';
   const dNorm = normalizeDateStr(dateStr);
@@ -68,7 +67,6 @@ function formatDisplayDate(dateStr) {
   return dateStr;
 }
 
-// Kiểm tra bác sĩ đã có lịch hẹn trong khung giờ và ngày đó chưa (tất cả các trạng thái trừ khi đã hủy)
 function isDoctorBusy(appointments, doctor, date, time) {
   if (!doctor || !date || !time) return false;
   const docNorm = normalizeDoctorName(doctor);
@@ -76,11 +74,7 @@ function isDoctorBusy(appointments, doctor, date, time) {
   const timeNorm = normalizeTimeSlot(time);
 
   return (appointments || []).some(a => {
-    if (!a) return false;
-
-    // Bỏ qua nếu lịch hẹn đã bị hủy
-    if (isAppointmentCancelled(a.status)) return false;
-
+    if (!a || isAppointmentCancelled(a.status)) return false;
     const aDoc = a.doctor || '';
     const aDocNorm = normalizeDoctorName(aDoc);
     const aDateNorm = normalizeDateStr(a.appointment_date);
@@ -92,55 +86,40 @@ function isDoctorBusy(appointments, doctor, date, time) {
   });
 }
 
-// GET /api/appointments/check-busy?doctor=...&date=...&time=...
+// GET /api/appointments/check-busy?doctor=...&date=...&time=... (Công khai cho form đặt lịch)
 router.get('/check-busy', async (req, res) => {
   try {
     const { doctor, date, time } = req.query;
-    if (!doctor || !date || !time || doctor === 'Theo sắp xếp của phòng khám' || doctor.toLowerCase().includes('tuỳ chọn')) {
+    if (!doctor || !date || !time || doctor === 'Theo sắp xếp của phòng khám' || String(doctor).toLowerCase().includes('tuỳ chọn')) {
       return res.json({ busy: false });
     }
 
-    let list = [];
-    try {
-      list = await db.all("SELECT * FROM appointments");
-    } catch (e) {
-      const store = db.getStore();
-      list = (store && store.appointments) || [];
-    }
-
+    const list = await db.all("SELECT doctor, appointment_date, appointment_time, status FROM appointments");
     const busy = isDoctorBusy(list, doctor, date, time);
     res.json({ busy });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi check-busy:', err.message);
+    res.status(500).json({ error: 'Không thể kiểm tra lịch bác sĩ' });
   }
 });
 
-// GET /api/appointments
-router.get('/', async (req, res) => {
+// GET /api/appointments (Admin - bảo vệ dữ liệu bệnh nhân)
+router.get('/', requireAuth, async (req, res) => {
   try {
-    let list = [];
-    try {
-      list = await db.all("SELECT * FROM appointments ORDER BY id DESC");
-    } catch (e) {
-      const store = db.getStore();
-      list = store.appointments || [];
-    }
-    // Đảm bảo định dạng created_at cho lịch hẹn
-    list = (list || []).map(a => {
-      let createdAt = a.created_at;
-      if (!createdAt) {
-        createdAt = new Date().toISOString();
-      }
-      return { ...a, created_at: createdAt };
-    });
+    let list = await db.all("SELECT * FROM appointments ORDER BY id DESC");
+    list = (list || []).map(a => ({
+      ...a,
+      created_at: a.created_at || new Date().toISOString()
+    }));
     res.json(list);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi GET /api/appointments:', err.message);
+    res.status(500).json({ error: 'Không thể tải danh sách lịch hẹn' });
   }
 });
 
-// POST /api/appointments
-router.post('/', async (req, res) => {
+// POST /api/appointments (Công khai - giới hạn tần suất chống spam)
+router.post('/', publicFormLimiter, async (req, res) => {
   try {
     const {
       patient_name,
@@ -154,10 +133,10 @@ router.post('/', async (req, res) => {
       appointment_date,
       appointment_time,
       notes
-    } = req.body;
-    const patient = patient_name || name || 'Khách hàng';
+    } = req.body || {};
+    const patient = String(patient_name || name || 'Khách hàng').trim();
 
-    if (!phone) {
+    if (!phone || !String(phone).trim()) {
       return res.status(400).json({ error: 'Số điện thoại là bắt buộc' });
     }
 
@@ -169,21 +148,13 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ error: 'Vui lòng chọn ngày khám' });
     }
 
-    const chosenDoctor = (doctor || '').trim();
-    const chosenDate = appointment_date.trim();
-    const chosenTime = appointment_time || '08:00 - 09:00';
+    const chosenDoctor = String(doctor).trim();
+    const chosenDate = String(appointment_date).trim();
+    const chosenTime = appointment_time ? String(appointment_time).trim() : '08:00 - 09:00';
     const createdAtIso = new Date().toISOString();
 
-    // Rule: Kiểm tra nếu bác sĩ tại khung giờ và ngày đó đã có lịch hẹn (chưa bị hủy)
     if (chosenDoctor && chosenDoctor !== 'Theo sắp xếp của phòng khám' && !chosenDoctor.toLowerCase().includes('tuỳ chọn')) {
-      let list = [];
-      try {
-        list = await db.all("SELECT * FROM appointments");
-      } catch (e) {
-        const store = db.getStore();
-        list = (store && store.appointments) || [];
-      }
-
+      const list = await db.all("SELECT doctor, appointment_date, appointment_time, status FROM appointments");
       if (isDoctorBusy(list, chosenDoctor, chosenDate, chosenTime)) {
         return res.status(400).json({
           success: false,
@@ -193,150 +164,92 @@ router.post('/', async (req, res) => {
       }
     }
 
-    const app = {
+    const appData = {
       patient_name: patient,
-      phone,
-      email: email || '',
+      phone: String(phone).trim(),
+      email: email ? String(email).trim() : '',
       appointment_type: appointment_type || 'Khám mới',
       has_insurance: has_insurance || 'Không có BHYT',
       specialty: specialty || 'Nội tổng quát',
       doctor: chosenDoctor || 'Theo sắp xếp của phòng khám',
       appointment_date: chosenDate,
       appointment_time: chosenTime,
-      notes: notes || '',
+      notes: notes ? String(notes).trim() : '',
       status: 'pending',
       created_at: createdAtIso
     };
 
-    try {
-      const result = await db.run(
-        "INSERT INTO appointments (patient_name, phone, email, appointment_type, has_insurance, specialty, doctor, appointment_date, appointment_time, notes, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-        [
-          app.patient_name,
-          app.phone,
-          app.email,
-          app.appointment_type,
-          app.has_insurance,
-          app.specialty,
-          app.doctor,
-          app.appointment_date,
-          app.appointment_time,
-          app.notes,
-          app.status,
-          app.created_at
-        ]
-      );
-      app.id = result.lastID;
-    } catch (err) {
-      // Fallback nếu schema bảng chưa có cột created_at
-      try {
-        const result = await db.run(
-          "INSERT INTO appointments (patient_name, phone, email, appointment_type, has_insurance, specialty, doctor, appointment_date, appointment_time, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-          [
-            app.patient_name,
-            app.phone,
-            app.email,
-            app.appointment_type,
-            app.has_insurance,
-            app.specialty,
-            app.doctor,
-            app.appointment_date,
-            app.appointment_time,
-            app.notes,
-            app.status
-          ]
-        );
-        app.id = result.lastID;
-      } catch (e2) {
-        const store = db.getStore();
-        app.id = Date.now();
-        store.appointments = store.appointments || [];
-        store.appointments.unshift(app);
-        db.saveStore();
-      }
-    }
+    const result = await db.run(
+      "INSERT INTO appointments (patient_name, phone, email, appointment_type, has_insurance, specialty, doctor, appointment_date, appointment_time, notes, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+      [
+        appData.patient_name,
+        appData.phone,
+        appData.email,
+        appData.appointment_type,
+        appData.has_insurance,
+        appData.specialty,
+        appData.doctor,
+        appData.appointment_date,
+        appData.appointment_time,
+        appData.notes,
+        appData.status,
+        appData.created_at
+      ]
+    );
+    appData.id = result.lastID;
 
-    res.status(201).json({ success: true, message: 'Đặt lịch khám thành công', appointment: app });
+    res.status(201).json({ success: true, message: 'Đặt lịch khám thành công', appointment: appData });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi POST /api/appointments:', err.message);
+    res.status(500).json({ error: 'Không thể đặt lịch khám' });
   }
 });
 
-// PUT /api/appointments/:id/confirm
-router.put('/:id/confirm', async (req, res) => {
+// PUT /api/appointments/:id/confirm (Admin)
+router.put('/:id/confirm', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("UPDATE appointments SET status = 'confirmed' WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      const a = (store.appointments || []).find(item => item.id == id);
-      if (a) {
-        a.status = 'confirmed';
-        db.saveStore();
-      }
-    }
+    await db.run("UPDATE appointments SET status = 'confirmed' WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Xác nhận lịch hẹn thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi confirm appointment:', err.message);
+    res.status(500).json({ error: 'Không thể xác nhận lịch hẹn' });
   }
 });
 
-// PUT /api/appointments/:id/cancel
-router.put('/:id/cancel', async (req, res) => {
+// PUT /api/appointments/:id/cancel (Admin)
+router.put('/:id/cancel', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("UPDATE appointments SET status = 'cancelled' WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      const a = (store.appointments || []).find(item => item.id == id);
-      if (a) {
-        a.status = 'cancelled';
-        db.saveStore();
-      }
-    }
+    await db.run("UPDATE appointments SET status = 'cancelled' WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Hủy lịch hẹn thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi cancel appointment:', err.message);
+    res.status(500).json({ error: 'Không thể hủy lịch hẹn' });
   }
 });
 
-// PUT /api/appointments/:id/status
-router.put('/:id/status', async (req, res) => {
+// PUT /api/appointments/:id/status (Admin)
+router.put('/:id/status', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    const { status } = req.body;
-    try {
-      await db.run("UPDATE appointments SET status = ? WHERE id = ?", [status, id]);
-    } catch (err) {
-      const store = db.getStore();
-      const a = (store.appointments || []).find(item => item.id == id);
-      if (a) {
-        a.status = status;
-        db.saveStore();
-      }
+    const { status } = req.body || {};
+    if (!status || !ALLOWED_STATUSES.has(status)) {
+      return res.status(400).json({ error: 'Trạng thái lịch hẹn không hợp lệ' });
     }
+    await db.run("UPDATE appointments SET status = ? WHERE id = ?", [status, req.params.id]);
     res.json({ success: true, message: 'Cập nhật trạng thái thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi update appointment status:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật trạng thái lịch hẹn' });
   }
 });
 
-// DELETE /api/appointments/:id
-router.delete('/:id', async (req, res) => {
+// DELETE /api/appointments/:id (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("DELETE FROM appointments WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      store.appointments = (store.appointments || []).filter(a => a.id != id);
-      db.saveStore();
-    }
+    await db.run("DELETE FROM appointments WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Đã xóa lịch hẹn thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi DELETE /api/appointments/:id:', err.message);
+    res.status(500).json({ error: 'Không thể xóa lịch hẹn' });
   }
 });
 

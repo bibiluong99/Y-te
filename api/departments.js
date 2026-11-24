@@ -5,9 +5,9 @@
 
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { saveBase64Image } = require('../utils/upload');
 
 // Danh sách chuyên khoa ban đầu
 const initialDepartments = [
@@ -210,99 +210,69 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/departments - Tạo mới chuyên khoa
-router.post('/', async (req, res) => {
+// POST /api/departments - Tạo mới chuyên khoa (Admin)
+router.post('/', requireAuth, async (req, res) => {
   try {
-    const { name, code, icon, image, head_doctor, description, status, sort_order } = req.body;
-    if (!name) return res.status(400).json({ error: 'Tên chuyên khoa không được để trống' });
+    const { name, code, icon, image, head_doctor, description, status, sort_order } = req.body || {};
+    if (!name || !String(name).trim()) return res.status(400).json({ error: 'Tên chuyên khoa không được để trống' });
 
     const finalCode = code || ('KHOA_' + Date.now());
     const finalIcon = icon || 'fas fa-stethoscope';
     const finalStatus = status || 'active';
-    const finalSort = parseInt(sort_order) || 0;
+    const finalSort = parseInt(sort_order, 10) || 0;
 
     const result = await db.run(`
       INSERT INTO departments (name, code, icon, image, head_doctor, description, status, sort_order)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-    `, [name, finalCode, finalIcon, image || '', head_doctor || '', description || '', finalStatus, finalSort]);
+    `, [String(name).trim(), finalCode, finalIcon, image || '', head_doctor || '', description || '', finalStatus, finalSort]);
 
     const created = await db.get("SELECT * FROM departments WHERE id = ?", [result.lastID]);
     res.status(201).json(created);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi POST /api/departments:', err.message);
+    res.status(500).json({ error: 'Không thể tạo chuyên khoa' });
   }
 });
 
-// PUT /api/departments/:id - Cập nhật chuyên khoa
-router.put('/:id', async (req, res) => {
+// PUT /api/departments/:id - Cập nhật chuyên khoa (Admin)
+router.put('/:id', requireAuth, async (req, res) => {
   try {
-    const { name, code, icon, image, head_doctor, description, status, sort_order } = req.body;
-    if (!name) return res.status(400).json({ error: 'Tên chuyên khoa không được để trống' });
+    const { name, code, icon, image, head_doctor, description, status, sort_order } = req.body || {};
+    if (!name || !String(name).trim()) return res.status(400).json({ error: 'Tên chuyên khoa không được để trống' });
 
     await db.run(`
       UPDATE departments
       SET name = ?, code = ?, icon = ?, image = ?, head_doctor = ?, description = ?, status = ?, sort_order = ?
       WHERE id = ?
-    `, [name, code, icon, image || '', head_doctor || '', description || '', status || 'active', parseInt(sort_order) || 0, req.params.id]);
+    `, [String(name).trim(), code, icon, image || '', head_doctor || '', description || '', status || 'active', parseInt(sort_order, 10) || 0, req.params.id]);
 
     const updated = await db.get("SELECT * FROM departments WHERE id = ?", [req.params.id]);
     res.json(updated);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi PUT /api/departments/:id:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật chuyên khoa' });
   }
 });
 
-// DELETE /api/departments/:id - Xóa chuyên khoa
-router.delete('/:id', async (req, res) => {
+// DELETE /api/departments/:id - Xóa chuyên khoa (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("DELETE FROM departments WHERE id = ?", [id]);
-    } catch (e) {}
-    const store = db.getStore();
-    if (store && store.departments) {
-      store.departments = store.departments.filter(d => d.id != id);
-      db.saveStore();
-    }
+    await db.run("DELETE FROM departments WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Đã xóa chuyên khoa thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi DELETE /api/departments/:id:', err.message);
+    res.status(500).json({ error: 'Không thể xóa chuyên khoa' });
   }
 });
 
-// POST /api/departments/upload-image - Upload ảnh chuyên khoa (base64)
-router.post('/upload-image', async (req, res) => {
+// POST /api/departments/upload-image - Upload ảnh chuyên khoa (Admin)
+router.post('/upload-image', requireAuth, async (req, res) => {
   try {
-    const { fileName, fileData } = req.body;
-    if (!fileData) return res.status(400).json({ error: 'Chưa có file ảnh!' });
-
-    const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer;
-    if (matches && matches.length === 3) {
-      buffer = Buffer.from(matches[2], 'base64');
-    } else {
-      buffer = Buffer.from(fileData, 'base64');
-    }
-
-    const cleanOrigName = (fileName || 'dept.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
-    const finalFileName = `dept_${Date.now()}_${cleanOrigName}`;
-
-    let relativeUrl;
-    try {
-      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-      if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
-
-      const publicPath = path.join(uploadDirPublic, finalFileName);
-      fs.writeFileSync(publicPath, buffer);
-
-      relativeUrl = `images/uploads/${finalFileName}`;
-    } catch (fsErr) {
-      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
-      relativeUrl = fileData;
-    }
-    res.json({ success: true, imageUrl: relativeUrl });
+    const { fileName, fileData } = req.body || {};
+    const { imageUrl } = saveBase64Image(fileData, fileName, 'dept');
+    res.json({ success: true, imageUrl });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(err.statusCode || 500).json({ error: err.message });
   }
 });
 

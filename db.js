@@ -16,6 +16,8 @@ if (!Promise.withResolvers) {
   };
 }
 
+require('dotenv').config();
+
 const fs = require('fs');
 const path = require('path');
 const sql = require('mssql');
@@ -33,13 +35,10 @@ try {
 
 const FALLBACK_PATH = path.join(__dirname, 'db_fallback_data.json');
 
-// Chuỗi kết nối Cloud PostgreSQL (Neon.tech)
-const PG_URL = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_wlXSR8aoEQN5@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require';
-
-// Cấu hình Microsoft SQL Server (Hệ thống nội bộ SQLEXPRESS)
+// Cấu hình Microsoft SQL Server (chỉ kích hoạt khi có DB_USER và DB_PASSWORD trong .env)
 const mssqlConfig = {
-  user: process.env.DB_USER || 'anphuc',
-  password: process.env.DB_PASSWORD || 'AnPhuc@2026Password!',
+  user: process.env.DB_USER || '',
+  password: process.env.DB_PASSWORD || '',
   server: process.env.DB_SERVER || 'localhost',
   database: process.env.DB_DATABASE || 'PhongKhamAnPhuc',
   port: parseInt(process.env.DB_PORT, 10) || 1433,
@@ -148,40 +147,39 @@ function transformSql(rawSql) {
 async function initDatabase() {
   loadFallbackData();
 
-  // 1. Thử kết nối Cloud PostgreSQL (Neon) ưu tiên hàng đầu
-  if (PgPool) {
-    const candidateUrls = [
-      process.env.DATABASE_URL,
-      'postgresql://neondb_owner:npg_wlXSR8aoEQN5@ep-little-leaf-beh8ekid-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require'
-    ].filter(Boolean);
+  if (process.env.DB_MODE === 'fallback' || process.env.NODE_ENV === 'test') {
+    console.log('⚡ Đang chạy chế độ JSON Fallback (DB_MODE=fallback / test)');
+    useFallback = true;
+    return;
+  }
 
-    for (const connUrl of candidateUrls) {
-      try {
-        pgPool = new PgPool({
-          connectionString: connUrl,
-          ssl: { rejectUnauthorized: false },
-          connectionTimeoutMillis: 8000,
-          max: 10
-        });
-        await pgPool.query('SELECT 1');
-        usePg = true;
-        lastPgError = null;
-        console.log('✅ Đã kết nối thành công tới Cloud PostgreSQL (Neon)! Dữ liệu sẽ được lưu vĩnh viễn trên Live.');
-        return;
-      } catch (pgErr) {
-        lastPgError = pgErr.message;
-        console.warn('⚠️ Lỗi thử kết nối PostgreSQL:', pgErr.message);
-        if (pgPool) {
-          try { await pgPool.end(); } catch (_) {}
-          pgPool = null;
-        }
-        usePg = false;
+  // 1. Thử kết nối Cloud PostgreSQL (khi có DATABASE_URL trong .env)
+  if (PgPool && process.env.DATABASE_URL) {
+    try {
+      pgPool = new PgPool({
+        connectionString: process.env.DATABASE_URL,
+        ssl: { rejectUnauthorized: false },
+        connectionTimeoutMillis: 8000,
+        max: 10
+      });
+      await pgPool.query('SELECT 1');
+      usePg = true;
+      lastPgError = null;
+      console.log('✅ Đã kết nối thành công tới Cloud PostgreSQL!');
+      return;
+    } catch (pgErr) {
+      lastPgError = pgErr.message;
+      console.warn('⚠️ Lỗi thử kết nối PostgreSQL:', pgErr.message);
+      if (pgPool) {
+        try { await pgPool.end(); } catch (_) {}
+        pgPool = null;
       }
+      usePg = false;
     }
   }
 
-  // 2. Thử kết nối Microsoft SQL Server nếu không phải Vercel
-  if (!process.env.VERCEL) {
+  // 2. Thử kết nối Microsoft SQL Server nếu có DB_USER & DB_PASSWORD và không phải Vercel
+  if (!process.env.VERCEL && mssqlConfig.user && mssqlConfig.password) {
     try {
       mssqlPool = await sql.connect(mssqlConfig);
       useMssql = true;
@@ -194,7 +192,7 @@ async function initDatabase() {
   }
 
   // 3. Fallback sang JSON Store
-  console.log('⚡ Sử dụng chế độ JSON Fallback dự phòng');
+  console.log('⚡ Sử dụng chế độ JSON Fallback dự phòng (db_fallback_data.json)');
   useFallback = true;
 }
 

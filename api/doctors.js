@@ -6,46 +6,16 @@
 
 const express = require('express');
 const router = express.Router();
-const path = require('path');
-const fs = require('fs');
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { saveBase64Image } = require('../utils/upload');
 
-// Helper: Lưu ảnh Base64 thành file tĩnh trên đĩa để không làm tràn SQL Server
+// Helper: Lưu ảnh Base64 an toàn nếu dữ liệu là Data URL, giữ nguyên nếu là đường dẫn URL
 function saveBase64Avatar(fileData, fileName) {
-  if (!fileData) return null;
-  if (typeof fileData !== 'string') return null;
-  // Nếu đã là đường dẫn URL thông thường, giữ nguyên
+  if (!fileData || typeof fileData !== 'string') return null;
   if (!fileData.startsWith('data:image/')) return fileData;
-
-  const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-  let buffer;
-  let ext = '.png';
-  if (matches && matches.length === 3) {
-    const mime = matches[1].toLowerCase();
-    if (mime.includes('jpeg') || mime.includes('jpg')) ext = '.jpg';
-    else if (mime.includes('webp')) ext = '.webp';
-    else if (mime.includes('gif')) ext = '.gif';
-    buffer = Buffer.from(matches[2], 'base64');
-  } else {
-    buffer = Buffer.from(fileData.replace(/^data:image\/[a-z]+;base64,/, ''), 'base64');
-  }
-
-  const cleanOrigName = (fileName || 'doctor.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
-  const baseName = cleanOrigName.endsWith(ext) ? cleanOrigName : `${cleanOrigName}${ext}`;
-  const finalFileName = `doc_${Date.now()}_${Math.random().toString(36).substring(2, 7)}_${baseName}`;
-
-  try {
-    const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-    if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
-
-    const publicPath = path.join(uploadDirPublic, finalFileName);
-    fs.writeFileSync(publicPath, buffer);
-
-    return `images/uploads/${finalFileName}`;
-  } catch (fsErr) {
-    console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
-    return fileData;
-  }
+  const { imageUrl } = saveBase64Image(fileData, fileName, 'doc');
+  return imageUrl;
 }
 
 // Danh sách 6 bác sĩ ban đầu
@@ -174,38 +144,33 @@ router.get('/:id', async (req, res) => {
   }
 });
 
-// POST /api/doctors/upload-image - Upload ảnh đại diện bác sĩ (base64)
-router.post('/upload-image', async (req, res) => {
+// POST /api/doctors/upload-image - Upload ảnh đại diện bác sĩ (Admin)
+router.post('/upload-image', requireAuth, async (req, res) => {
   try {
-    const { fileName, fileData } = req.body;
-    if (!fileData) return res.status(400).json({ error: 'Chưa có file ảnh!' });
-
-    const relativeUrl = saveBase64Avatar(fileData, fileName);
-    if (!relativeUrl) return res.status(400).json({ error: 'Không thể xử lý file ảnh!' });
-
-    res.json({ success: true, imageUrl: relativeUrl });
+    const { fileName, fileData } = req.body || {};
+    const { imageUrl } = saveBase64Image(fileData, fileName, 'doc');
+    res.json({ success: true, imageUrl });
   } catch (err) {
     console.error('Lỗi upload ảnh bác sĩ:', err);
-    res.status(500).json({ error: 'Lỗi tải ảnh lên máy chủ', details: err.message });
+    res.status(err.statusCode || 500).json({ error: err.message });
   }
 });
 
-// 3. POST /api/doctors - Thêm bác sĩ mới
-router.post('/', async (req, res) => {
+// 3. POST /api/doctors - Thêm bác sĩ mới (Admin)
+router.post('/', requireAuth, async (req, res) => {
   try {
-    const { name, degree, department, experience, avatar, description, status, sort_order } = req.body;
-    if (!name || !name.trim()) {
+    const { name, degree, department, experience, avatar, description, status, sort_order } = req.body || {};
+    if (!name || !String(name).trim()) {
       return res.status(400).json({ error: 'Họ và tên bác sĩ là bắt buộc' });
     }
 
-    // Tự động chuyển đổi base64 (nếu có) thành file tĩnh lưu trên máy chủ
-    const cleanAvatar = saveBase64Avatar(avatar, `${name.trim()}.png`) || avatar || 'images/doc-1.png';
+    const cleanAvatar = saveBase64Avatar(avatar, `${String(name).trim()}.png`) || avatar || 'images/doc-1.png';
 
     const result = await db.run(`
       INSERT INTO doctors (name, degree, department, experience, avatar, description, status, sort_order)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `, [
-      name.trim(),
+      String(name).trim(),
       degree || 'Bác sĩ',
       department || 'Chuyên khoa Nội',
       experience || 'Nhiều năm kinh nghiệm',
@@ -222,27 +187,26 @@ router.post('/', async (req, res) => {
     });
   } catch (err) {
     console.error('Lỗi thêm bác sĩ:', err);
-    res.status(500).json({ error: 'Không thể thêm bác sĩ', details: err.message });
+    res.status(err.statusCode || 500).json({ error: err.statusCode ? err.message : 'Không thể thêm bác sĩ' });
   }
 });
 
-// 4. PUT /api/doctors/:id - Cập nhật thông tin bác sĩ
-router.put('/:id', async (req, res) => {
+// 4. PUT /api/doctors/:id - Cập nhật thông tin bác sĩ (Admin)
+router.put('/:id', requireAuth, async (req, res) => {
   try {
-    const { name, degree, department, experience, avatar, description, status, sort_order } = req.body;
-    if (!name || !name.trim()) {
+    const { name, degree, department, experience, avatar, description, status, sort_order } = req.body || {};
+    if (!name || !String(name).trim()) {
       return res.status(400).json({ error: 'Họ và tên bác sĩ là bắt buộc' });
     }
 
-    // Tự động chuyển đổi base64 (nếu có) thành file tĩnh lưu trên máy chủ
-    const cleanAvatar = saveBase64Avatar(avatar, `${name.trim()}.png`) || avatar || 'images/doc-1.png';
+    const cleanAvatar = saveBase64Avatar(avatar, `${String(name).trim()}.png`) || avatar || 'images/doc-1.png';
 
     await db.run(`
       UPDATE doctors
       SET name = ?, degree = ?, department = ?, experience = ?, avatar = ?, description = ?, status = ?, sort_order = ?
       WHERE id = ?
     `, [
-      name.trim(),
+      String(name).trim(),
       degree || 'Bác sĩ',
       department || 'Chuyên khoa Nội',
       experience || '',
@@ -256,18 +220,18 @@ router.put('/:id', async (req, res) => {
     res.json({ success: true, message: 'Cập nhật thông tin bác sĩ thành công' });
   } catch (err) {
     console.error('Lỗi cập nhật bác sĩ:', err);
-    res.status(500).json({ error: 'Không thể cập nhật bác sĩ', details: err.message });
+    res.status(err.statusCode || 500).json({ error: err.statusCode ? err.message : 'Không thể cập nhật bác sĩ' });
   }
 });
 
-// 5. DELETE /api/doctors/:id - Xóa bác sĩ
-router.delete('/:id', async (req, res) => {
+// 5. DELETE /api/doctors/:id - Xóa bác sĩ (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
     await db.run('DELETE FROM doctors WHERE id = ?', [req.params.id]);
     res.json({ success: true, message: 'Đã xóa bác sĩ khỏi hệ thống' });
   } catch (err) {
     console.error('Lỗi xóa bác sĩ:', err);
-    res.status(500).json({ error: 'Không thể xóa bác sĩ', details: err.message });
+    res.status(500).json({ error: 'Không thể xóa bác sĩ' });
   }
 });
 

@@ -5,132 +5,133 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
 
-// GET /api/products - Lấy danh sách sản phẩm
+// Đảm bảo bảng products có cột updated_at trên DB cũ
+(async () => {
+  try { await db.run("ALTER TABLE products ADD COLUMN updated_at TEXT"); } catch (_) {}
+})();
+
+// GET /api/products - Lấy danh sách sản phẩm (hỗ trợ filter + phân trang tùy chọn)
 router.get('/', async (req, res) => {
   try {
-    let products = [];
-    try {
-      products = await db.all("SELECT * FROM products ORDER BY id DESC");
-    } catch (err) {
-      const store = db.getStore();
-      products = store.products || [];
-    }
+    let products = await db.all("SELECT * FROM products ORDER BY id DESC");
 
-    // Filter theo category nếu có
-    const { category, search } = req.query;
+    const { category, search, page, limit } = req.query;
     if (category) {
       products = products.filter(p => p.category === category);
     }
     if (search) {
-      const q = search.toLowerCase();
-      products = products.filter(p => p.name.toLowerCase().includes(q));
+      const q = String(search).toLowerCase().trim();
+      products = products.filter(p => (p.name || '').toLowerCase().includes(q));
+    }
+
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
+      const start = (pageNum - 1) * limitNum;
+      products = products.slice(start, start + limitNum);
     }
 
     res.json(products);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi GET /api/products:', err.message);
+    res.status(500).json({ error: 'Không thể tải danh sách sản phẩm' });
   }
 });
 
 // GET /api/products/:id - Chi tiết sản phẩm
 router.get('/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    let product = null;
-    try {
-      product = await db.get("SELECT * FROM products WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      product = store.products.find(p => p.id == id);
-    }
-
+    const product = await db.get("SELECT * FROM products WHERE id = ?", [req.params.id]);
     if (!product) {
       return res.status(404).json({ error: 'Không tìm thấy sản phẩm' });
     }
     res.json(product);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi GET /api/products/:id:', err.message);
+    res.status(500).json({ error: 'Không thể tải chi tiết sản phẩm' });
   }
 });
 
-// POST /api/products - Tạo sản phẩm mới
-router.post('/', async (req, res) => {
+// POST /api/products - Tạo sản phẩm mới (Admin)
+router.post('/', requireAuth, async (req, res) => {
   try {
-    const { name, category, price, stock, status, image, description } = req.body;
-    if (!name || price === undefined) {
+    const { name, category, price, stock, status, image, description } = req.body || {};
+    if (!name || !String(name).trim() || price === undefined) {
       return res.status(400).json({ error: 'Tên sản phẩm và giá là bắt buộc' });
     }
 
+    const parsedPrice = parseFloat(price);
+    const parsedStock = parseInt(stock, 10);
+    if (Number.isNaN(parsedPrice) || parsedPrice < 0) {
+      return res.status(400).json({ error: 'Giá sản phẩm không hợp lệ' });
+    }
+
     const newProd = {
-      name,
+      name: String(name).trim(),
       category: category || 'Thiết bị y tế gia đình',
-      price: parseFloat(price) || 0,
-      stock: parseInt(stock) || 50,
+      price: parsedPrice,
+      stock: Number.isNaN(parsedStock) ? 50 : Math.max(0, parsedStock),
       status: status || 'active',
       image: image || 'https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=300',
       description: description || ''
     };
 
-    try {
-      const result = await db.run(
-        "INSERT INTO products (name, category, price, stock, status, image, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
-        [newProd.name, newProd.category, newProd.price, newProd.stock, newProd.status, newProd.image, newProd.description]
-      );
-      newProd.id = result.lastID;
-    } catch (err) {
-      const store = db.getStore();
-      newProd.id = Date.now();
-      store.products.unshift(newProd);
-      db.saveStore();
-    }
+    const result = await db.run(
+      "INSERT INTO products (name, category, price, stock, status, image, description) VALUES (?, ?, ?, ?, ?, ?, ?)",
+      [newProd.name, newProd.category, newProd.price, newProd.stock, newProd.status, newProd.image, newProd.description]
+    );
+    newProd.id = result.lastID;
 
     res.status(201).json({ success: true, message: 'Tạo sản phẩm thành công', product: newProd });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi POST /api/products:', err.message);
+    res.status(500).json({ error: 'Không thể tạo sản phẩm' });
   }
 });
 
-// PUT /api/products/:id - Cập nhật sản phẩm
-router.put('/:id', async (req, res) => {
+// PUT /api/products/:id - Cập nhật sản phẩm (Admin)
+router.put('/:id', requireAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    const { name, category, price, stock, status, image, description } = req.body;
-
-    try {
-      await db.run(
-        "UPDATE products SET name = ?, category = ?, price = ?, stock = ?, status = ?, image = ?, description = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        [name, category, parseFloat(price), parseInt(stock), status, image, description, id]
-      );
-    } catch (err) {
-      const store = db.getStore();
-      const idx = store.products.findIndex(p => p.id == id);
-      if (idx !== -1) {
-        store.products[idx] = { ...store.products[idx], name, category, price, stock, status, image, description };
-        db.saveStore();
-      }
+    const { name, category, price, stock, status, image, description } = req.body || {};
+    if (!name || !String(name).trim()) {
+      return res.status(400).json({ error: 'Tên sản phẩm là bắt buộc' });
     }
+
+    const parsedPrice = parseFloat(price);
+    const parsedStock = parseInt(stock, 10);
+
+    await db.run(
+      "UPDATE products SET name = ?, category = ?, price = ?, stock = ?, status = ?, image = ?, description = ? WHERE id = ?",
+      [
+        String(name).trim(),
+        category || 'Thiết bị y tế gia đình',
+        Number.isNaN(parsedPrice) ? 0 : Math.max(0, parsedPrice),
+        Number.isNaN(parsedStock) ? 0 : Math.max(0, parsedStock),
+        status || 'active',
+        image || '',
+        description || '',
+        id
+      ]
+    );
 
     res.json({ success: true, message: 'Cập nhật sản phẩm thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi PUT /api/products/:id:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật sản phẩm' });
   }
 });
 
-// DELETE /api/products/:id - Xóa sản phẩm
-router.delete('/:id', async (req, res) => {
+// DELETE /api/products/:id - Xóa sản phẩm (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("DELETE FROM products WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      store.products = store.products.filter(p => p.id != id);
-      db.saveStore();
-    }
+    await db.run("DELETE FROM products WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Đã xóa sản phẩm' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi DELETE /api/products/:id:', err.message);
+    res.status(500).json({ error: 'Không thể xóa sản phẩm' });
   }
 });
 

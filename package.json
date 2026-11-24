@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js",
-    "watch": "node --watch server.js"
+    "watch": "node --watch server.js",
+    "test": "node --test tests/*.test.js"
   },
   "keywords": [
     "medical",
@@ -18,8 +19,14 @@
   "author": "An Phuc Clinic",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "compression": "^1.8.2",
     "cors": "^2.8.5",
+    "dotenv": "^18.0.10",
     "express": "^4.19.2",
+    "express-rate-limit": "^8.7.5",
+    "helmet": "^8.3.0",
+    "jsonwebtoken": "^9.0.3",
     "mssql": "^12.7.15",
     "pg": "^8.23.1",
     "tedious": "^18.2.0"

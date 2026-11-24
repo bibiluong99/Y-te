@@ -5,9 +5,9 @@
 
 const express = require('express');
 const router = express.Router();
-const fs = require('fs');
-const path = require('path');
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { saveBase64Image } = require('../utils/upload');
 
 // Khởi tạo bảng banners nếu chưa có và nạp dữ liệu ban đầu
 const defaultBanners = [
@@ -121,60 +121,22 @@ async function ensureBannerTable() {
 // Khởi chạy khi tải file
 ensureBannerTable();
 
-// POST /api/banners/upload - Upload file ảnh banner từ máy tính
-router.post('/upload', async (req, res) => {
+// POST /api/banners/upload - Upload file ảnh banner (Admin)
+router.post('/upload', requireAuth, async (req, res) => {
   try {
-    const { fileName, fileData, pageKey } = req.body;
-
-    if (!fileData) {
-      return res.status(400).json({ error: 'Chưa có dữ liệu file ảnh!' });
-    }
-
-    // Tách base64 data
-    const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer;
-    let ext = 'png';
-
-    if (matches && matches.length === 3) {
-      const mime = matches[1];
-      if (mime.includes('jpeg') || mime.includes('jpg')) ext = 'jpg';
-      else if (mime.includes('png')) ext = 'png';
-      else if (mime.includes('webp')) ext = 'webp';
-      else if (mime.includes('svg')) ext = 'svg';
-      buffer = Buffer.from(matches[2], 'base64');
-    } else {
-      buffer = Buffer.from(fileData, 'base64');
-    }
-
-    // Tên file lưu trữ
-    const safePageKey = (pageKey || 'banner').replace(/[^a-zA-Z0-9_-]/g, '');
-    const cleanOrigName = (fileName || 'image').replace(/[^a-zA-Z0-9_.-]/g, '_');
-    const timestamp = Date.now();
-    const finalFileName = `banner_${safePageKey}_${timestamp}_${cleanOrigName}`;
-
-    let relativeUrl;
-    try {
-      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-      if (!fs.existsSync(uploadDirPublic)) {
-        fs.mkdirSync(uploadDirPublic, { recursive: true });
-      }
-      const publicPath = path.join(uploadDirPublic, finalFileName);
-      fs.writeFileSync(publicPath, buffer);
-      relativeUrl = `images/uploads/${finalFileName}`;
-    } catch (fsErr) {
-      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
-      relativeUrl = fileData;
-    }
+    const { fileName, fileData, pageKey } = req.body || {};
+    const safePageKey = String(pageKey || 'banner').replace(/[^a-zA-Z0-9_-]/g, '');
+    const { imageUrl, fileName: finalFileName } = saveBase64Image(fileData, fileName, `banner_${safePageKey}`);
 
     res.json({
       success: true,
       message: 'Tải file ảnh banner lên máy chủ thành công!',
-      imageUrl: relativeUrl,
+      imageUrl,
       fileName: finalFileName
     });
   } catch (err) {
-    console.error('Lỗi upload banner:', err);
-    res.status(500).json({ error: 'Lỗi upload ảnh: ' + err.message });
+    console.error('Lỗi upload banner:', err.message);
+    res.status(err.statusCode || 500).json({ error: 'Lỗi upload ảnh: ' + err.message });
   }
 });
 
@@ -217,40 +179,29 @@ router.get('/:page_key', async (req, res) => {
   }
 });
 
-// PUT /api/banners/:page_key - Cập nhật banner cho 1 trang (UPSERT)
-router.put('/:page_key', async (req, res) => {
+// PUT /api/banners/:page_key - Cập nhật banner cho 1 trang (Admin)
+router.put('/:page_key', requireAuth, async (req, res) => {
   try {
     const key = req.params.page_key.toLowerCase();
-    const { tagline, title, subtitle, image_url, btn_text, btn_link, page_name } = req.body;
+    const { tagline, title, subtitle, image_url, btn_text, btn_link, page_name } = req.body || {};
 
     if (!title || !image_url) {
       return res.status(400).json({ error: 'Tiêu đề và đường dẫn ảnh banner là bắt buộc' });
     }
 
-    try {
-      const existing = await db.get("SELECT id FROM banners WHERE page_key = ?", [key]);
-      if (existing) {
-        await db.run(`
-          UPDATE banners 
-          SET tagline = ?, title = ?, subtitle = ?, image_url = ?, btn_text = ?, btn_link = ?, updated_at = CURRENT_TIMESTAMP
-          WHERE page_key = ?
-        `, [tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '', key]);
-      } else {
-        const pageName = page_name || defaultBanners.find(b => b.page_key === key)?.page_name || key;
-        await db.run(`
-          INSERT INTO banners (page_key, page_name, tagline, title, subtitle, image_url, btn_text, btn_link)
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-        `, [key, pageName, tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '']);
-      }
-    } catch (err) {
-      console.error('Lỗi lưu banner trong DB:', err.message);
-      const store = db.getStore();
-      if (!store.banners) store.banners = [];
-      const idx = store.banners.findIndex(b => b.page_key === key);
-      const bObj = { page_key: key, page_name: page_name || key, tagline, title, subtitle, image_url, btn_text, btn_link };
-      if (idx !== -1) store.banners[idx] = bObj;
-      else store.banners.push(bObj);
-      db.saveStore();
+    const existing = await db.get("SELECT id FROM banners WHERE page_key = ?", [key]);
+    if (existing) {
+      await db.run(`
+        UPDATE banners 
+        SET tagline = ?, title = ?, subtitle = ?, image_url = ?, btn_text = ?, btn_link = ?, updated_at = CURRENT_TIMESTAMP
+        WHERE page_key = ?
+      `, [tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '', key]);
+    } else {
+      const pageName = page_name || defaultBanners.find(b => b.page_key === key)?.page_name || key;
+      await db.run(`
+        INSERT INTO banners (page_key, page_name, tagline, title, subtitle, image_url, btn_text, btn_link)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+      `, [key, pageName, tagline || '', title, subtitle || '', image_url, btn_text || '', btn_link || '']);
     }
 
     res.json({
@@ -259,7 +210,8 @@ router.put('/:page_key', async (req, res) => {
       banner: { page_key: key, tagline, title, subtitle, image_url, btn_text, btn_link }
     });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi PUT /api/banners/:page_key:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật banner' });
   }
 });
 

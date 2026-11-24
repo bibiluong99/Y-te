@@ -5,155 +5,117 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { requireAuth } = require('../middleware/auth');
+const { saveBase64Image } = require('../utils/upload');
+
+// Đảm bảo bảng news có cột updated_at trên DB cũ
+(async () => {
+  try { await db.run("ALTER TABLE news ADD COLUMN updated_at TEXT"); } catch (_) {}
+})();
 
 // GET /api/news
 router.get('/', async (req, res) => {
   try {
-    let news = [];
-    try {
-      news = await db.all("SELECT * FROM news ORDER BY id DESC");
-    } catch (err) {
-      const store = db.getStore();
-      news = store.news || [];
+    let news = await db.all("SELECT * FROM news ORDER BY id DESC");
+    const { page, limit } = req.query;
+    if (page !== undefined || limit !== undefined) {
+      const pageNum = Math.max(1, parseInt(page, 10) || 1);
+      const limitNum = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
+      const start = (pageNum - 1) * limitNum;
+      news = news.slice(start, start + limitNum);
     }
     res.json(news);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi GET /api/news:', err.message);
+    res.status(500).json({ error: 'Không thể tải danh sách tin tức' });
   }
 });
 
 // GET /api/news/:id
 router.get('/:id', async (req, res) => {
   try {
-    const id = req.params.id;
-    let item = null;
-    try {
-      item = await db.get("SELECT * FROM news WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      item = store.news.find(n => n.id == id);
-    }
+    const item = await db.get("SELECT * FROM news WHERE id = ?", [req.params.id]);
     if (!item) return res.status(404).json({ error: 'Bài viết không tồn tại' });
     res.json(item);
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi GET /api/news/:id:', err.message);
+    res.status(500).json({ error: 'Không thể tải chi tiết bài viết' });
   }
 });
 
-// POST /api/news
-router.post('/', async (req, res) => {
+// POST /api/news/upload-image - Tải ảnh bài viết (Admin, xác thực định dạng an toàn)
+router.post('/upload-image', requireAuth, async (req, res) => {
   try {
-    const { title, category, author, summary, content, image, status } = req.body;
-    if (!title || !title.trim()) return res.status(400).json({ error: 'Tiêu đề bài viết là bắt buộc' });
+    const { fileName, fileData } = req.body || {};
+    const { imageUrl } = saveBase64Image(fileData, fileName, 'news_body');
+    res.json({ success: true, imageUrl });
+  } catch (err) {
+    const status = err.statusCode || 500;
+    res.status(status).json({ error: err.message });
+  }
+});
+
+// POST /api/news (Admin)
+router.post('/', requireAuth, async (req, res) => {
+  try {
+    const { title, category, author, summary, content, image, status } = req.body || {};
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ error: 'Tiêu đề bài viết là bắt buộc' });
+    }
 
     const newPost = {
-      title: title.trim(),
+      title: String(title).trim(),
       category: category || 'Kiến thức y khoa',
-      author: author ? author.trim() : 'BS. An Phúc',
-      summary: summary ? summary.trim() : '',
-      content: content ? content.trim() : '',
-      image: image ? image.trim() : 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400',
+      author: author ? String(author).trim() : 'BS. An Phúc',
+      summary: summary ? String(summary).trim() : '',
+      content: content ? String(content).trim() : '',
+      image: image ? String(image).trim() : 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400',
       created_at: new Date().toISOString(),
       status: status || 'active'
     };
 
-    try {
-      const result = await db.run(
-        "INSERT INTO news (title, category, author, summary, content, image, created_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-        [newPost.title, newPost.category, newPost.author, newPost.summary, newPost.content, newPost.image, newPost.created_at, newPost.status]
-      );
-      newPost.id = result.lastID;
-    } catch (err) {
-      console.error('Lỗi khi INSERT news vào DB:', err.message);
-      const store = db.getStore();
-      newPost.id = Date.now();
-      if (!store.news) store.news = [];
-      store.news.unshift(newPost);
-      db.saveStore();
-    }
+    const result = await db.run(
+      "INSERT INTO news (title, category, author, summary, content, image, created_at, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      [newPost.title, newPost.category, newPost.author, newPost.summary, newPost.content, newPost.image, newPost.created_at, newPost.status]
+    );
+    newPost.id = result.lastID;
 
     res.status(201).json({ success: true, message: 'Đăng tin tức thành công', news: newPost });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi POST /api/news:', err.message);
+    res.status(500).json({ error: 'Không thể đăng bài viết' });
   }
 });
 
-// PUT /api/news/:id
-router.put('/:id', async (req, res) => {
+// PUT /api/news/:id (Admin)
+router.put('/:id', requireAuth, async (req, res) => {
   try {
     const id = req.params.id;
-    const { title, category, author, summary, content, image } = req.body;
-
-    try {
-      await db.run(
-        "UPDATE news SET title = ?, category = ?, author = ?, summary = ?, content = ?, image = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
-        [title, category, author, summary, content, image, id]
-      );
-    } catch (err) {
-      const store = db.getStore();
-      const idx = store.news.findIndex(n => n.id == id);
-      if (idx !== -1) {
-        store.news[idx] = { ...store.news[idx], title, category, author, summary, content, image };
-        db.saveStore();
-      }
+    const { title, category, author, summary, content, image } = req.body || {};
+    if (!title || !String(title).trim()) {
+      return res.status(400).json({ error: 'Tiêu đề bài viết là bắt buộc' });
     }
+
+    await db.run(
+      "UPDATE news SET title = ?, category = ?, author = ?, summary = ?, content = ?, image = ? WHERE id = ?",
+      [String(title).trim(), category || 'Kiến thức y khoa', author || 'BS. An Phúc', summary || '', content || '', image || '', id]
+    );
 
     res.json({ success: true, message: 'Cập nhật tin tức thành công' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi PUT /api/news/:id:', err.message);
+    res.status(500).json({ error: 'Không thể cập nhật bài viết' });
   }
 });
 
-// DELETE /api/news/:id
-router.delete('/:id', async (req, res) => {
+// DELETE /api/news/:id (Admin)
+router.delete('/:id', requireAuth, async (req, res) => {
   try {
-    const id = req.params.id;
-    try {
-      await db.run("DELETE FROM news WHERE id = ?", [id]);
-    } catch (err) {
-      const store = db.getStore();
-      store.news = store.news.filter(n => n.id != id);
-      db.saveStore();
-    }
+    await db.run("DELETE FROM news WHERE id = ?", [req.params.id]);
     res.json({ success: true, message: 'Đã xóa bài viết' });
   } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// POST /api/news/upload-image - Tải ảnh bài viết chèn vào nội dung (base64)
-router.post('/upload-image', async (req, res) => {
-  try {
-    const { fileName, fileData } = req.body;
-    if (!fileData) return res.status(400).json({ error: 'Chưa có file ảnh!' });
-
-    const matches = fileData.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-    let buffer;
-    if (matches && matches.length === 3) {
-      buffer = Buffer.from(matches[2], 'base64');
-    } else {
-      buffer = Buffer.from(fileData, 'base64');
-    }
-
-    const cleanOrigName = (fileName || 'news_img.png').replace(/[^a-zA-Z0-9_.-]/g, '_');
-    const finalFileName = `news_body_${Date.now()}_${cleanOrigName}`;
-
-    let relativeUrl;
-    try {
-      const uploadDirPublic = path.join(__dirname, '../public/images/uploads');
-      if (!fs.existsSync(uploadDirPublic)) fs.mkdirSync(uploadDirPublic, { recursive: true });
-
-      const publicPath = path.join(uploadDirPublic, finalFileName);
-      fs.writeFileSync(publicPath, buffer);
-
-      relativeUrl = `images/uploads/${finalFileName}`;
-    } catch (fsErr) {
-      console.warn('⚡ Read-only filesystem (Vercel), sử dụng Base64 Data URL:', fsErr.message);
-      relativeUrl = fileData;
-    }
-    res.json({ success: true, imageUrl: relativeUrl });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
+    console.error('Lỗi DELETE /api/news/:id:', err.message);
+    res.status(500).json({ error: 'Không thể xóa bài viết' });
   }
 });
 
