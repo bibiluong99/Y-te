@@ -699,11 +699,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         grid.innerHTML = activeItems.map(d => {
-          const imgSrc = d.image && d.image.trim() ? d.image : 'images/spec-noi-tong-quat.png';
+          const imgSrc = d.image && d.image.trim() ? d.image : 'images/departments/noi-tong-quat.jpg';
           return `
             <div class="specialty-card-item">
               <div class="specialty-card-thumb">
-                <img src="${imgSrc}" alt="${d.name}" onerror="this.onerror=null; this.src='images/spec-noi-tong-quat.png';">
+                <img src="${imgSrc}" alt="${d.name}" onerror="this.onerror=null; this.src='images/departments/noi-tong-quat.jpg';">
               </div>
               <div class="specialty-card-info">
                 <h3>${d.name}</h3>
@@ -840,34 +840,34 @@ function renderHomeDepartmentCarousel() {
   }
 
   const defaultImages = {
-    'Ung bướu': 'images/spec-ung-buou.png',
-    'Phục hồi chức năng': 'images/spec-co-xuong-khop.png',
-    'Sản phụ khoa': 'images/spec-san-phu-khoa.png',
-    'Sản khoa': 'images/spec-san-phu-khoa.png',
-    'Nội tổng quát': 'images/spec-noi-tong-quat.png',
-    'Khám nội tổng quát': 'images/spec-noi-tong-quat.png',
-    'Tim mạch': 'images/spec-tim-mach.png',
-    'Nhi khoa': 'images/spec-nhi-khoa.png',
-    'Hô hấp': 'images/spec-ho-hap.png',
-    'Tiêu hóa': 'images/spec-tieu-hoa.png',
-    'Tiêm chủng': 'images/spec-tiem-chung.png',
-    'Da liễu': 'images/spec-da-lieu.png',
-    'Cơ xương khớp': 'images/spec-co-xuong-khop.png',
-    'Mắt': 'images/spec-mat.png',
-    'Tai - Mũi - Họng': 'images/spec-tai-mui-hong.png',
-    'Thần kinh': 'images/spec-than-kinh.png',
-    'Nội tiết': 'images/spec-noi-tiet.png',
-    'Tiết niệu': 'images/spec-tiet-nieu.png'
+    'Ung bướu': 'images/dept-oncology.png',
+    'Phục hồi chức năng': 'images/departments/co-xuong-khop.jpg',
+    'Sản phụ khoa': 'images/departments/san-phu-khoa.jpg',
+    'Sản khoa': 'images/departments/san-phu-khoa.jpg',
+    'Nội tổng quát': 'images/departments/noi-tong-quat.jpg',
+    'Khám nội tổng quát': 'images/departments/noi-tong-quat.jpg',
+    'Tim mạch': 'images/departments/tim-mach.jpg',
+    'Nhi khoa': 'images/departments/nhi-khoa.jpg',
+    'Hô hấp': 'images/departments/ho-hap.jpg',
+    'Tiêu hóa': 'images/departments/tieu-hoa.jpg',
+    'Tiêm chủng': 'images/departments/tiem-chung.jpg',
+    'Da liễu': 'images/departments/da-lieu.jpg',
+    'Cơ xương khớp': 'images/departments/co-xuong-khop.jpg',
+    'Mắt': 'images/departments/noi-tong-quat.jpg',
+    'Tai - Mũi - Họng': 'images/departments/ho-hap.jpg',
+    'Thần kinh': 'images/departments/noi-tong-quat.jpg',
+    'Nội tiết': 'images/departments/noi-tong-quat.jpg',
+    'Tiết niệu': 'images/departments/tieu-hoa.jpg'
   };
 
   track.style.opacity = '0.3';
   setTimeout(() => {
     track.innerHTML = visibleItems.map(d => {
-      let imgSrc = d.image && d.image.trim() ? d.image : (defaultImages[d.name] || 'images/dept-oncology.png');
+      let imgSrc = d.image && d.image.trim() ? d.image : (defaultImages[d.name] || 'images/departments/noi-tong-quat.jpg');
       const safeName = d.name || 'Chuyên khoa';
       return `
         <a href="chuyen-khoa.html" class="dept-image-card" title="Chuyên khoa ${safeName}">
-          <img src="${imgSrc}" alt="${safeName}" onerror="this.onerror=null; this.src='images/dept-oncology.png';">
+          <img src="${imgSrc}" alt="${safeName}" onerror="this.onerror=null; this.src='images/departments/noi-tong-quat.jpg';">
           <div class="dept-overlay-gradient"></div>
           <div class="dept-card-text">
             <h3>${safeName}</h3>

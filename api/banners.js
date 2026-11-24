@@ -27,7 +27,7 @@ const defaultBanners = [
     tagline: 'Trang chủ > Dịch vụ',
     title: 'Dịch vụ y tế<br>chuyên nghiệp',
     subtitle: 'Chăm sóc sức khỏe toàn diện với đội ngũ bác sĩ giỏi và trang thiết bị hiện đại.',
-    image_url: 'images/service-hero.png',
+    image_url: 'images/banners/services-hero.jpg',
     btn_text: 'Đặt lịch khám ngay →',
     btn_link: 'dat-lich-kham.html'
   },
@@ -37,7 +37,7 @@ const defaultBanners = [
     tagline: 'Dịch vụ > Chuyên khoa',
     title: 'Chuyên khoa<br>đa dạng & chuyên sâu',
     subtitle: 'Được thăm khám và điều trị bởi đội ngũ bác sĩ chuyên khoa hàng đầu, với quy trình chuyên nghiệp, nhanh chóng và tận tâm.',
-    image_url: 'images/chuyen-khoa-hero-doctors.png',
+    image_url: 'images/banners/specialty-hero.jpg',
     btn_text: 'Đặt lịch khám ngay →',
     btn_link: 'dat-lich-kham.html'
   },
@@ -47,7 +47,7 @@ const defaultBanners = [
     tagline: 'Trang chủ > Đội ngũ bác sĩ',
     title: 'Đội ngũ bác sĩ<br>chuyên môn cao',
     subtitle: 'Tận tâm – Chuyên nghiệp – Đồng hành cùng bạn trên mọi hành trình sức khỏe.',
-    image_url: 'images/doctors-hero.png',
+    image_url: 'images/banners/doctors-hero.jpg',
     btn_text: 'Đặt lịch khám ngay →',
     btn_link: 'dat-lich-kham.html'
   },
@@ -57,7 +57,7 @@ const defaultBanners = [
     tagline: 'Trang chủ > Tin tức',
     title: 'Tin tức &<br>Kiến thức sức khỏe',
     subtitle: 'Cập nhật những thông tin y khoa bổ ích, cẩm nang chăm sóc sức khỏe thường thức cho cả gia đình.',
-    image_url: 'images/news-hero.png',
+    image_url: 'images/banners/news-hero.jpg',
     btn_text: 'Khám phá ngay →',
     btn_link: '#featuredNews'
   },
@@ -67,7 +67,7 @@ const defaultBanners = [
     tagline: 'Trang chủ > Liên hệ',
     title: 'Liên hệ với chúng tôi',
     subtitle: 'Chúng tôi luôn sẵn sàng hỗ trợ, tư vấn và giải đáp mọi thắc mắc của bạn và gia đình.',
-    image_url: 'images/contact-hero.png',
+    image_url: 'images/banners/contact-hero.jpg',
     btn_text: 'Liên hệ ngay →',
     btn_link: '#contactSection'
   },
@@ -77,7 +77,7 @@ const defaultBanners = [
     tagline: 'Trang chủ > Đặt lịch khám',
     title: 'Đặt lịch khám<br>nhanh chóng',
     subtitle: 'Chỉ với vài thao tác đơn giản, bạn đã có thể chủ động đặt lịch khám tại Phòng khám An Phúc.',
-    image_url: 'images/booking-hero.png',
+    image_url: 'images/banners/appointment-hero.jpg',
     btn_text: 'Đặt lịch ngay →',
     btn_link: '#appointmentFormSection'
   }

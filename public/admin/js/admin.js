@@ -17,9 +17,9 @@ let bannersData = {};
 let currentBannerPage = 'home';
 
 // ============================================================
-// CLIENT-SIDE IMAGE COMPRESSION (Tự động nén ảnh chống lỗi 413 Payload Too Large trên Vercel)
+// CLIENT-SIDE IMAGE COMPRESSION (Tối ưu độ sắc nét chuẩn Full HD / Retina, an toàn dưới giới hạn Vercel)
 // ============================================================
-function compressImageClient(file, maxWidth = 1400, maxHeight = 900, quality = 0.82) {
+function compressImageClient(file, maxWidth = 1920, maxHeight = 1080, quality = 0.88) {
   return new Promise((resolve) => {
     if (!file || !file.type || file.type === 'image/svg+xml') {
       const r = new FileReader();
@@ -38,7 +38,7 @@ function compressImageClient(file, maxWidth = 1400, maxHeight = 900, quality = 0
   });
 }
 
-function compressBase64String(base64Str, maxWidth = 1400, maxHeight = 900, quality = 0.82) {
+function compressBase64String(base64Str, maxWidth = 1920, maxHeight = 1080, quality = 0.88) {
   return new Promise((resolve) => {
     if (!base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:image/')) {
       return resolve(base64Str);
@@ -57,7 +57,7 @@ function compressBase64String(base64Str, maxWidth = 1400, maxHeight = 900, quali
       canvas.height = height;
       const ctx = canvas.getContext('2d');
       ctx.drawImage(img, 0, 0, width, height);
-      // Nén sang JPEG chất lượng cao, dung lượng siêu nhẹ (< 300KB)
+      // Nén sang JPEG chất lượng cao sắc nét Full HD, dung lượng gọn (< 350KB)
       const outData = canvas.toDataURL('image/jpeg', quality);
       resolve(outData);
     };
@@ -1379,7 +1379,7 @@ async function handleServiceBannerUpload(input) {
 
   try {
     showToast('Đang tối ưu dung lượng và xử lý ảnh...', 'info');
-    const base64Data = await compressImageClient(file, 1400, 900, 0.82);
+    const base64Data = await compressImageClient(file, 1920, 1080, 0.88);
     const bannerInput = document.getElementById('sBanner');
     if (bannerInput) bannerInput.value = base64Data;
 
@@ -1593,7 +1593,7 @@ async function handleDepartmentImageUpload(input) {
 
   try {
     showToast('Đang tối ưu dung lượng và xử lý ảnh chuyên khoa...', 'info');
-    const base64Data = await compressImageClient(file, 900, 900, 0.82);
+    const base64Data = await compressImageClient(file, 1200, 800, 0.88);
     document.getElementById('dImage').value = base64Data;
     const prevBox = document.getElementById('dImagePreviewBox');
     if (prevBox) {
@@ -1889,7 +1889,7 @@ async function handleNewsCoverUpload(input) {
 
   try {
     showToast('Đang tối ưu dung lượng và xử lý ảnh bìa...', 'info');
-    const base64Data = await compressImageClient(file, 1200, 800, 0.82);
+    const base64Data = await compressImageClient(file, 1200, 800, 0.88);
     document.getElementById('nImage').value = base64Data;
 
     const res = await fetch(`${API_BASE}/news/upload-image`, {
@@ -2284,7 +2284,7 @@ async function uploadBannerFile(file) {
   }
 
   try {
-    const base64Data = await compressImageClient(file, 1600, 900, 0.85);
+    const base64Data = await compressImageClient(file, 1920, 1080, 0.88);
 
     fetch(`${API_BASE}/banners/upload`, {
       method: 'POST',
@@ -2697,7 +2697,7 @@ async function uploadLogoFile(file, type) {
   }
 
   try {
-    const base64Data = await compressImageClient(file, 600, 300, 0.90);
+    const base64Data = await compressImageClient(file, 800, 400, 0.95);
 
     const res = await fetch(`${API_BASE}/settings/upload-logo`, {
       method: 'POST',
@@ -3108,7 +3108,7 @@ async function handleDoctorAvatarUpload(input) {
 
   try {
     showToast('Đang tối ưu dung lượng và xử lý ảnh bác sĩ...', 'info');
-    const base64Data = await compressImageClient(file, 600, 600, 0.82);
+    const base64Data = await compressImageClient(file, 800, 800, 0.90);
     const avInput = document.getElementById('docAvatar');
     if (avInput) avInput.value = base64Data;
     updateDocAvatarPreview();
