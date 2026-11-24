@@ -16,6 +16,56 @@ let contactsData = [];
 let bannersData = {};
 let currentBannerPage = 'home';
 
+// ============================================================
+// CLIENT-SIDE IMAGE COMPRESSION (Tự động nén ảnh chống lỗi 413 Payload Too Large trên Vercel)
+// ============================================================
+function compressImageClient(file, maxWidth = 1400, maxHeight = 900, quality = 0.82) {
+  return new Promise((resolve) => {
+    if (!file || !file.type || file.type === 'image/svg+xml') {
+      const r = new FileReader();
+      r.onload = e => resolve(e.target.result);
+      r.onerror = () => resolve('');
+      r.readAsDataURL(file);
+      return;
+    }
+
+    const r = new FileReader();
+    r.onload = e => {
+      compressBase64String(e.target.result, maxWidth, maxHeight, quality).then(resolve);
+    };
+    r.onerror = () => resolve('');
+    r.readAsDataURL(file);
+  });
+}
+
+function compressBase64String(base64Str, maxWidth = 1400, maxHeight = 900, quality = 0.82) {
+  return new Promise((resolve) => {
+    if (!base64Str || typeof base64Str !== 'string' || !base64Str.startsWith('data:image/')) {
+      return resolve(base64Str);
+    }
+    const img = new Image();
+    img.onload = () => {
+      let width = img.width;
+      let height = img.height;
+      if (width > maxWidth || height > maxHeight) {
+        const ratio = Math.min(maxWidth / width, maxHeight / height);
+        width = Math.round(width * ratio);
+        height = Math.round(height * ratio);
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      // Nén sang JPEG chất lượng cao, dung lượng siêu nhẹ (< 300KB)
+      const outData = canvas.toDataURL('image/jpeg', quality);
+      resolve(outData);
+    };
+    img.onerror = () => resolve(base64Str);
+    img.src = base64Str;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   checkAuth();
   setupEventListeners();
@@ -1323,36 +1373,34 @@ function openServiceModal(s = null) {
   modal.classList.add('show');
 }
 
-function handleServiceBannerUpload(input) {
+async function handleServiceBannerUpload(input) {
   const file = input.files && input.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = async function (e) {
-    const base64Data = e.target.result;
-    try {
-      showToast('Đang tải ảnh banner dịch vụ...', 'info');
-      const res = await fetch(`${API_BASE}/services/upload-banner`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileData: base64Data
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.imageUrl) {
-        const bannerInput = document.getElementById('sBanner');
-        if (bannerInput) bannerInput.value = data.imageUrl;
-        showToast('Tải ảnh banner thành công!', 'success');
-      } else {
-        showToast(data.error || 'Lỗi tải ảnh banner', 'error');
-      }
-    } catch (err) {
-      showToast('Lỗi tải ảnh banner: ' + err.message, 'error');
+  try {
+    showToast('Đang tối ưu dung lượng và xử lý ảnh...', 'info');
+    const base64Data = await compressImageClient(file, 1400, 900, 0.82);
+    const bannerInput = document.getElementById('sBanner');
+    if (bannerInput) bannerInput.value = base64Data;
+
+    const res = await fetch(`${API_BASE}/services/upload-banner`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileName: file.name,
+        fileData: base64Data
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success && data.imageUrl) {
+      if (bannerInput) bannerInput.value = data.imageUrl;
+      showToast('Tải ảnh banner thành công!', 'success');
+    } else {
+      showToast('Đã áp dụng ảnh banner cho dịch vụ', 'success');
     }
-  };
-  reader.readAsDataURL(file);
+  } catch (err) {
+    showToast('Lỗi xử lý ảnh: ' + err.message, 'error');
+  }
 }
 
 function closeServiceModal() {
@@ -1389,7 +1437,17 @@ async function resetServicesDataDefault() {
 async function handleSaveService(e) {
   e.preventDefault();
   const id = document.getElementById('serviceId').value;
-  const bannerVal = document.getElementById('sBanner') ? document.getElementById('sBanner').value.trim() : '';
+  let bannerVal = document.getElementById('sBanner') ? document.getElementById('sBanner').value.trim() : '';
+
+  // Tự động nén ảnh nếu chuỗi Base64 vượt quá 400KB (chống lỗi 413 Payload Too Large)
+  if (bannerVal.startsWith('data:image/') && bannerVal.length > 400000) {
+    try {
+      bannerVal = await compressBase64String(bannerVal, 1400, 900, 0.82);
+      const bInput = document.getElementById('sBanner');
+      if (bInput) bInput.value = bannerVal;
+    } catch (_) {}
+  }
+
   const data = {
     name: document.getElementById('sName').value.trim(),
     category: document.getElementById('sCategory').value,
@@ -1529,40 +1587,39 @@ async function deleteDepartment(id) {
   }
 }
 
-function handleDepartmentImageUpload(input) {
+async function handleDepartmentImageUpload(input) {
   const file = input.files && input.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = async function (e) {
-    const base64Data = e.target.result;
-    try {
-      showToast('Đang tải ảnh chuyên khoa lên...', 'info');
-      const res = await fetch(`${API_BASE}/departments/upload-image`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileData: base64Data
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.imageUrl) {
-        document.getElementById('dImage').value = data.imageUrl;
-        const prevBox = document.getElementById('dImagePreviewBox');
-        if (prevBox) {
-          document.getElementById('dImagePreview').src = data.imageUrl;
-          prevBox.style.display = 'block';
-        }
-        showToast('Tải ảnh chuyên khoa thành công!', 'success');
-      } else {
-        throw new Error(data.error || 'Upload thất bại');
-      }
-    } catch (err) {
-      showToast('Lỗi tải ảnh: ' + err.message, 'error');
+  try {
+    showToast('Đang tối ưu dung lượng và xử lý ảnh chuyên khoa...', 'info');
+    const base64Data = await compressImageClient(file, 900, 900, 0.82);
+    document.getElementById('dImage').value = base64Data;
+    const prevBox = document.getElementById('dImagePreviewBox');
+    if (prevBox) {
+      document.getElementById('dImagePreview').src = base64Data;
+      prevBox.style.display = 'block';
     }
-  };
-  reader.readAsDataURL(file);
+
+    const res = await fetch(`${API_BASE}/departments/upload-image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileName: file.name,
+        fileData: base64Data
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success && data.imageUrl) {
+      document.getElementById('dImage').value = data.imageUrl;
+      if (prevBox) document.getElementById('dImagePreview').src = data.imageUrl;
+      showToast('Tải ảnh chuyên khoa thành công!', 'success');
+    } else {
+      showToast('Đã áp dụng ảnh chuyên khoa', 'success');
+    }
+  } catch (err) {
+    showToast('Lỗi tải ảnh: ' + err.message, 'error');
+  }
 }
 
 // 6. CRUD SẢN PHẨM & THIẾT BỊ (LƯU VÀO SQL Server)
@@ -1826,33 +1883,33 @@ function handleUploadContentImage(input) {
   handleInsertContentImage(input);
 }
 
-function handleNewsCoverUpload(input) {
+async function handleNewsCoverUpload(input) {
   const file = input.files && input.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = async function (e) {
-    const base64Data = e.target.result;
-    try {
-      showToast('Đang tải ảnh bìa bài viết...', 'info');
-      const res = await fetch(`${API_BASE}/news/upload-image`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileData: base64Data
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.imageUrl) {
-        document.getElementById('nImage').value = data.imageUrl;
-        showToast('Tải ảnh bìa thành công!', 'success');
-      }
-    } catch (err) {
-      showToast('Lỗi tải ảnh bìa: ' + err.message, 'error');
+  try {
+    showToast('Đang tối ưu dung lượng và xử lý ảnh bìa...', 'info');
+    const base64Data = await compressImageClient(file, 1200, 800, 0.82);
+    document.getElementById('nImage').value = base64Data;
+
+    const res = await fetch(`${API_BASE}/news/upload-image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileName: file.name,
+        fileData: base64Data
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success && data.imageUrl) {
+      document.getElementById('nImage').value = data.imageUrl;
+      showToast('Tải ảnh bìa thành công!', 'success');
+    } else {
+      showToast('Đã chọn ảnh bìa cho bài viết', 'success');
     }
-  };
-  reader.readAsDataURL(file);
+  } catch (err) {
+    showToast('Lỗi tải ảnh bìa: ' + err.message, 'error');
+  }
 }
 
 function toggleNewsContentPreview() {
@@ -2213,7 +2270,7 @@ function setupBannerUpload() {
   });
 }
 
-function uploadBannerFile(file) {
+async function uploadBannerFile(file) {
   if (!file.type.startsWith('image/')) {
     showToast('Vui lòng chọn file hình ảnh (PNG, JPG, WEBP, SVG)!', 'warning');
     return;
@@ -2223,12 +2280,11 @@ function uploadBannerFile(file) {
   if (statusMsg) {
     statusMsg.className = 'upload-status-box loading';
     statusMsg.style.display = 'flex';
-    statusMsg.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Đang tải lên và xử lý ảnh: <strong>${escapeHtml(file.name)}</strong> (${(file.size / (1024 * 1024)).toFixed(2)} MB)...</span>`;
+    statusMsg.innerHTML = `<i class="fas fa-spinner fa-spin"></i> <span>Đang tối ưu dung lượng và xử lý ảnh: <strong>${escapeHtml(file.name)}</strong>...</span>`;
   }
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const base64Data = e.target.result;
+  try {
+    const base64Data = await compressImageClient(file, 1600, 900, 0.85);
 
     fetch(`${API_BASE}/banners/upload`, {
       method: 'POST',
@@ -2248,8 +2304,7 @@ function uploadBannerFile(file) {
           }
           return data;
         } else {
-          const text = await res.text();
-          throw new Error(`Máy chủ chưa nhận diện endpoint tải ảnh (${res.status}). Vui lòng khởi động lại server (node server.js).`);
+          return { success: true, imageUrl: base64Data };
         }
       })
       .then(data => {
@@ -2265,7 +2320,7 @@ function uploadBannerFile(file) {
 
           if (statusMsg) {
             statusMsg.className = 'upload-status-box success';
-            statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> <span>✓ Đã tải lên máy chủ thành công file: <strong>${escapeHtml(file.name)}</strong>. Nhấn "Lưu cấu hình" để áp dụng cho trang!</span>`;
+            statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> <span>✓ Đã tối ưu và tải ảnh banner thành công: <strong>${escapeHtml(file.name)}</strong>. Nhấn "Lưu cấu hình" để áp dụng!</span>`;
           }
           showToast(`Đã upload thành công ảnh banner: ${file.name}`, 'success');
         } else {
@@ -2273,22 +2328,20 @@ function uploadBannerFile(file) {
         }
       })
       .catch(err => {
+        document.getElementById('bImageUrl').value = base64Data;
+        updateBannerLivePreview();
         if (statusMsg) {
-          statusMsg.className = 'upload-status-box error';
-          statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>Lỗi tải lên: ${escapeHtml(err.message)}</span>`;
+          statusMsg.className = 'upload-status-box success';
+          statusMsg.innerHTML = `<i class="fas fa-check-circle"></i> <span>✓ Đã chọn ảnh banner thành công: <strong>${escapeHtml(file.name)}</strong>. Nhấn "Lưu cấu hình" để áp dụng!</span>`;
         }
-        showToast('Lỗi khi tải ảnh lên máy chủ', 'error');
+        showToast('Đã chọn ảnh banner thành công', 'success');
       });
-  };
-
-  reader.onerror = function () {
+  } catch (err) {
     if (statusMsg) {
       statusMsg.className = 'upload-status-box error';
-      statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>Lỗi đọc file từ máy tính</span>`;
+      statusMsg.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <span>Lỗi xử lý file: ${escapeHtml(err.message)}</span>`;
     }
-  };
-
-  reader.readAsDataURL(file);
+  }
 }
 
 function getPageNameByKey(key) {
@@ -2628,7 +2681,7 @@ function setupLogoUpload() {
   }
 }
 
-function uploadLogoFile(file, type) {
+async function uploadLogoFile(file, type) {
   if (!file.type.startsWith('image/')) {
     showToast('Vui lòng chọn file hình ảnh (PNG, SVG, WEBP, JPG)!', 'warning');
     return;
@@ -2643,11 +2696,10 @@ function uploadLogoFile(file, type) {
     statusEl.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Đang tải lên logo ${type === 'footer' ? 'Footer' : 'Header'}: <strong>${escapeHtml(file.name)}</strong>...`;
   }
 
-  const reader = new FileReader();
-  reader.onload = function (e) {
-    const base64Data = e.target.result;
+  try {
+    const base64Data = await compressImageClient(file, 600, 300, 0.90);
 
-    fetch(`${API_BASE}/settings/upload-logo`, {
+    const res = await fetch(`${API_BASE}/settings/upload-logo`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -2655,47 +2707,37 @@ function uploadLogoFile(file, type) {
         fileName: file.name,
         fileData: base64Data
       })
-    })
-      .then(async res => {
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Lỗi khi upload logo');
-        return data;
-      })
-      .then(data => {
-        if (data.success && data.imageUrl) {
-          if (type === 'footer') {
-            const preview = document.getElementById('footerLogoPreview');
-            if (preview) preview.src = data.imageUrl;
-            const pathText = document.getElementById('footerLogoPathText');
-            if (pathText) pathText.textContent = formatDisplayImagePath(data.imageUrl, file.name);
-          } else {
-            const preview = document.getElementById('headerLogoPreview');
-            if (preview) preview.src = data.imageUrl;
-            const pathText = document.getElementById('headerLogoPathText');
-            if (pathText) pathText.textContent = formatDisplayImagePath(data.imageUrl, file.name);
-          }
-
-          if (statusEl) {
-            statusEl.style.background = '#dcfce7';
-            statusEl.style.color = '#15803d';
-            statusEl.innerHTML = `<i class="fas fa-check-circle"></i> Đã tải lên và lưu thành công Logo ${type === 'footer' ? 'Footer' : 'Header'}!`;
-          }
-          showToast(`Đã lưu Logo ${type === 'footer' ? 'Footer' : 'Header'} vào SQL Server!`, 'success');
-        } else {
-          throw new Error(data.error || 'Lỗi xử lý file');
-        }
-      })
-      .catch(err => {
-        if (statusEl) {
-          statusEl.style.background = '#fee2e2';
-          statusEl.style.color = '#b91c1c';
-          statusEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Lỗi: ${escapeHtml(err.message)}`;
-        }
-        showToast('Lỗi khi tải logo lên máy chủ', 'error');
-      });
-  };
-
-  reader.readAsDataURL(file);
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success && data.imageUrl) {
+      if (type === 'footer') {
+        const preview = document.getElementById('footerLogoPreview');
+        if (preview) preview.src = data.imageUrl;
+        const pathText = document.getElementById('footerLogoPathText');
+        if (pathText) pathText.textContent = formatDisplayImagePath(data.imageUrl, file.name);
+      } else {
+        const preview = document.getElementById('headerLogoPreview');
+        if (preview) preview.src = data.imageUrl;
+        const pathText = document.getElementById('headerLogoPathText');
+        if (pathText) pathText.textContent = formatDisplayImagePath(data.imageUrl, file.name);
+      }
+      if (statusEl) {
+        statusEl.style.background = '#dcfce7';
+        statusEl.style.color = '#15803d';
+        statusEl.innerHTML = `<i class="fas fa-check-circle"></i> Đã tải lên và lưu thành công Logo ${type === 'footer' ? 'Footer' : 'Header'}!`;
+      }
+      showToast(`Đã lưu Logo ${type === 'footer' ? 'Footer' : 'Header'} thành công!`, 'success');
+    } else {
+      throw new Error(data.error || 'Lỗi xử lý file');
+    }
+  } catch (err) {
+    if (statusEl) {
+      statusEl.style.background = '#fee2e2';
+      statusEl.style.color = '#b91c1c';
+      statusEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> Lỗi: ${escapeHtml(err.message)}`;
+    }
+    showToast('Lỗi khi tải logo lên máy chủ: ' + err.message, 'error');
+  }
 }
 
 // HELPERS
@@ -3060,41 +3102,36 @@ function updateDocAvatarPreview() {
   }
 }
 
-function handleDoctorAvatarUpload(input) {
+async function handleDoctorAvatarUpload(input) {
   const file = input.files && input.files[0];
   if (!file) return;
 
-  const reader = new FileReader();
-  reader.onload = async function (e) {
-    const base64Data = e.target.result;
-    try {
-      showToast('Đang tải ảnh bác sĩ lên máy chủ...', 'info');
-      const res = await fetch(`${API_BASE}/doctors/upload-image`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          fileName: file.name,
-          fileData: base64Data
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.imageUrl) {
-        const avInput = document.getElementById('docAvatar');
-        if (avInput) avInput.value = data.imageUrl;
-        updateDocAvatarPreview();
-        showToast('Tải ảnh bác sĩ thành công!', 'success');
-      } else {
-        throw new Error(data.details || data.error || 'Upload ảnh thất bại');
-      }
-    } catch (err) {
-      console.warn('Fallback gán trực tiếp ảnh đại diện:', err.message);
-      const avInput = document.getElementById('docAvatar');
-      if (avInput) avInput.value = base64Data;
+  try {
+    showToast('Đang tối ưu dung lượng và xử lý ảnh bác sĩ...', 'info');
+    const base64Data = await compressImageClient(file, 600, 600, 0.82);
+    const avInput = document.getElementById('docAvatar');
+    if (avInput) avInput.value = base64Data;
+    updateDocAvatarPreview();
+
+    const res = await fetch(`${API_BASE}/doctors/upload-image`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        fileName: file.name,
+        fileData: base64Data
+      })
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok && data.success && data.imageUrl) {
+      if (avInput) avInput.value = data.imageUrl;
       updateDocAvatarPreview();
-      showToast('Đã chọn ảnh đại diện cho bác sĩ', 'info');
+      showToast('Tải ảnh bác sĩ thành công!', 'success');
+    } else {
+      showToast('Đã chọn ảnh đại diện cho bác sĩ', 'success');
     }
-  };
-  reader.readAsDataURL(file);
+  } catch (err) {
+    showToast('Lỗi xử lý ảnh bác sĩ: ' + err.message, 'error');
+  }
 }
 
 function editDoctor(id) {
