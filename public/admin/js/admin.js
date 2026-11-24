@@ -396,7 +396,7 @@ function renderServicesTable(items) {
   tbody.innerHTML = pageItems.map(s => {
     const bannerImg = s.banner || (s.icon && (s.icon.includes('/') || s.icon.includes('.')) ? s.icon : '');
     const imgOrIcon = bannerImg
-      ? `<img src="${bannerImg}" alt="${escapeHtml(s.name)}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover; display: block;" onerror="this.onerror=null; this.src='images/service-hero.png';">`
+      ? `<img src="${bannerImg}" alt="${escapeHtml(s.name)}" style="width: 36px; height: 36px; border-radius: 6px; object-fit: cover; display: block;" onerror="this.onerror=null; this.src='images/banners/services-hero.jpg';">`
       : `<i class="${s.icon || 'fas fa-stethoscope'}"></i>`;
     return `
     <tr>
@@ -466,7 +466,7 @@ function renderDepartmentsTable(items) {
     const hasImg = d.image && d.image.trim() !== '';
     const imgHtml = hasImg
       ? `<div style="width: 80px; height: 54px; border-radius: 8px; overflow: hidden; border: 1px solid #e2e8f0; background: #f8fafc; display: flex; align-items: center; justify-content: center; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
-          <img src="${escapeHtml(d.image)}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.onerror=null; this.src='images/spec-noi-tong-quat.png';">
+          <img src="${escapeHtml(d.image)}" style="width: 100%; height: 100%; object-fit: cover; display: block;" onerror="this.onerror=null; this.src='images/departments/noi-tong-quat.jpg';">
         </div>`
       : `<div style="width: 80px; height: 54px; border-radius: 8px; border: 1px dashed #cbd5e1; background: #f8fafc; display: flex; align-items: center; justify-content: center; color: #104936; font-size: 1.3rem;">
           <i class="${d.icon || 'fas fa-stethoscope'}"></i>
