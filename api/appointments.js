@@ -129,7 +129,7 @@ router.get('/', async (req, res) => {
     list = (list || []).map(a => {
       let createdAt = a.created_at;
       if (!createdAt) {
-        createdAt = new Date().toLocaleDateString('vi-VN');
+        createdAt = new Date().toISOString();
       }
       return { ...a, created_at: createdAt };
     });
@@ -172,7 +172,7 @@ router.post('/', async (req, res) => {
     const chosenDoctor = (doctor || '').trim();
     const chosenDate = appointment_date.trim();
     const chosenTime = appointment_time || '08:00 - 09:00';
-    const createdAtVi = new Date().toLocaleDateString('vi-VN');
+    const createdAtIso = new Date().toISOString();
 
     // Rule: Kiểm tra nếu bác sĩ tại khung giờ và ngày đó đã có lịch hẹn (chưa bị hủy)
     if (chosenDoctor && chosenDoctor !== 'Theo sắp xếp của phòng khám' && !chosenDoctor.toLowerCase().includes('tuỳ chọn')) {
@@ -205,7 +205,7 @@ router.post('/', async (req, res) => {
       appointment_time: chosenTime,
       notes: notes || '',
       status: 'pending',
-      created_at: createdAtVi
+      created_at: createdAtIso
     };
 
     try {

@@ -36,7 +36,7 @@ router.post('/', async (req, res) => {
       email: email || '',
       message: message || '',
       status: 'new',
-      created_at: new Date().toLocaleDateString('vi-VN')
+      created_at: new Date().toISOString()
     };
 
     try {
