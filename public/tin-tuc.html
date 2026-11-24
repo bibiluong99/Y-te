@@ -248,6 +248,15 @@
     let allNews = [];
     let currentCategory = 'all';
 
+    function formatNewsDate(dStr) {
+      if (!dStr) return 'Mới cập nhật';
+      try {
+        const d = new Date(dStr);
+        if (!isNaN(d.getTime())) return d.toLocaleDateString('vi-VN');
+      } catch (e) {}
+      return String(dStr).split('T')[0] || dStr;
+    }
+
     function renderNewsList(items) {
       const container = document.getElementById('newsGridContainer');
       if (!container) return;
@@ -266,7 +275,7 @@
         <article class="news-item-card" data-category="${item.category || ''}">
           <div class="news-item-thumb">
             <img src="${item.image || 'images/news-1.png'}" alt="${item.title || ''}">
-            <span class="news-date-badge">${item.created_at || 'Mới cập nhật'}</span>
+            <span class="news-date-badge">${formatNewsDate(item.created_at)}</span>
           </div>
           <div class="news-item-content">
             ${item.category ? `<span class="news-cat-pill">${item.category}</span>` : ''}

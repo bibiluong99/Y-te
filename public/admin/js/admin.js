@@ -506,6 +506,17 @@ function changeNewsPage(page) {
   renderNewsTable(currentNewsData);
 }
 
+function formatNewsDate(dateStr) {
+  if (!dateStr) return '20/05/2025';
+  try {
+    const d = new Date(dateStr);
+    if (!isNaN(d.getTime())) {
+      return d.toLocaleDateString('vi-VN');
+    }
+  } catch (e) {}
+  return String(dateStr).split('T')[0] || dateStr;
+}
+
 function renderNewsTable(items) {
   currentNewsData = items || [];
   const tbody = document.getElementById('newsTableBody');
@@ -534,7 +545,7 @@ function renderNewsTable(items) {
       <td><img class="thumb-preview" src="${n.image || 'images/news-1.png'}" alt=""></td>
       <td><strong>${escapeHtml(n.title)}</strong></td>
       <td><span class="badge active">${escapeHtml(n.category || 'Y tế')}</span></td>
-      <td>${n.created_at || '20/05/2025'}</td>
+      <td>${formatNewsDate(n.created_at)}</td>
       <td>
         <div class="action-btns">
           <button title="Sửa" onclick="editNews(${n.id})"><i class="fas fa-edit"></i></button>
@@ -1870,20 +1881,26 @@ async function handleSaveNews(e) {
     image: document.getElementById('nImage').value.trim(),
     summary: document.getElementById('nSummary').value.trim(),
     content: document.getElementById('nContent').value.trim(),
-    created_at: new Date().toLocaleDateString('vi-VN')
+    created_at: new Date().toISOString()
   };
 
   try {
     const url = id ? `${API_BASE}/news/${id}` : `${API_BASE}/news`;
     const method = id ? 'PUT' : 'POST';
-    await fetch(url, {
+    const res = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data)
     });
-    showToast('Đã lưu thành công', 'success');
+    const result = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      showToast(result.error || result.message || 'Lỗi khi lưu bài viết', 'error');
+      return;
+    }
+    showToast('Đã lưu bài viết thành công!', 'success');
   } catch (err) {
-    showToast('Lỗi lưu SQL Server', 'error');
+    showToast('Lỗi lưu tin tức: ' + err.message, 'error');
+    return;
   }
 
   closeNewsModal();

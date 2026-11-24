@@ -299,6 +299,15 @@
     }
 
     // TẢI DỮ LIỆU ĐỘNG TỪ SQLITE (Bao gồm cả ID 1 khi sửa trong Admin)
+    function formatNewsDate(dStr) {
+      if (!dStr) return 'Mới cập nhật';
+      try {
+        const d = new Date(dStr);
+        if (!isNaN(d.getTime())) return d.toLocaleDateString('vi-VN');
+      } catch (e) {}
+      return String(dStr).split('T')[0] || dStr;
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const articleId = urlParams.get('id') || '1';
@@ -316,7 +325,7 @@
           if (titleEl) titleEl.textContent = item.title;
 
           const dateEl = document.getElementById('articleDate');
-          if (dateEl) dateEl.textContent = item.created_at || 'Mới cập nhật';
+          if (dateEl) dateEl.textContent = formatNewsDate(item.created_at);
 
           const authEl = document.getElementById('articleAuthor');
           if (authEl) authEl.textContent = '';
@@ -381,7 +390,7 @@
               </div>
               <div class="sidebar-item-info">
                 <div class="sidebar-item-title">${n.title || ''}</div>
-                <div class="sidebar-item-date"><i class="far fa-calendar-alt"></i> ${n.created_at || 'Mới cập nhật'}</div>
+                <div class="sidebar-item-date"><i class="far fa-calendar-alt"></i> ${formatNewsDate(n.created_at)}</div>
               </div>
             </a>
           `).join('');

@@ -43,18 +43,18 @@ router.get('/:id', async (req, res) => {
 // POST /api/news
 router.post('/', async (req, res) => {
   try {
-    const { title, category, author, summary, content, image } = req.body;
-    if (!title) return res.status(400).json({ error: 'Tiêu đề bài viết là bắt buộc' });
+    const { title, category, author, summary, content, image, status } = req.body;
+    if (!title || !title.trim()) return res.status(400).json({ error: 'Tiêu đề bài viết là bắt buộc' });
 
     const newPost = {
-      title,
+      title: title.trim(),
       category: category || 'Kiến thức y khoa',
-      author: author || 'BS. An Phúc',
-      summary: summary || '',
-      content: content || '',
-      image: image || 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400',
-      created_at: new Date().toLocaleDateString('vi-VN'),
-      status: 'published'
+      author: author ? author.trim() : 'BS. An Phúc',
+      summary: summary ? summary.trim() : '',
+      content: content ? content.trim() : '',
+      image: image ? image.trim() : 'https://images.unsplash.com/photo-1505751172876-fa1923c5c528?w=400',
+      created_at: new Date().toISOString(),
+      status: status || 'active'
     };
 
     try {
@@ -64,8 +64,10 @@ router.post('/', async (req, res) => {
       );
       newPost.id = result.lastID;
     } catch (err) {
+      console.error('Lỗi khi INSERT news vào DB:', err.message);
       const store = db.getStore();
       newPost.id = Date.now();
+      if (!store.news) store.news = [];
       store.news.unshift(newPost);
       db.saveStore();
     }
