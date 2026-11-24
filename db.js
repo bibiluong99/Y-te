@@ -301,6 +301,11 @@ const db = {
           query = query.replace(/\bAUTOINCREMENT\b/gi, '');
           query = query.replace(/\[key\]/gi, 'key');
           query = query.replace(/CURRENT_TIMESTAMP/gi, 'NOW()');
+
+          // Thêm IF NOT EXISTS cho PostgreSQL khi ADD COLUMN để tránh báo lỗi khi cột đã có sẵn
+          if (/ADD\s+COLUMN\s+(?!IF\s+NOT\s+EXISTS)/i.test(query)) {
+            query = query.replace(/ADD\s+COLUMN\s+/gi, 'ADD COLUMN IF NOT EXISTS ');
+          }
         }
 
         const result = await pgPool.query(query, params);
@@ -310,6 +315,10 @@ const db = {
           changes: result.rowCount || 1
         };
       } catch (err) {
+        // Bỏ qua log nếu là lỗi cột/bảng đã tồn tại khi chạy ALTER TABLE ADD COLUMN
+        if (err.code === '42701' || /already exists/i.test(err.message)) {
+          return { lastID: 0, changes: 0 };
+        }
         console.error('Lỗi thực thi PostgreSQL (run):', err.message, 'SQL:', sqlQuery);
         throw err;
       }
@@ -339,6 +348,9 @@ const db = {
           changes: result.rowsAffected && result.rowsAffected[0] ? result.rowsAffected[0] : 1
         };
       } catch (err) {
+        if (/already exists/i.test(err.message) || /Column names in each table must be unique/i.test(err.message)) {
+          return { lastID: 0, changes: 0 };
+        }
         console.error('Lỗi thực thi SQL Server (run):', err.message, 'SQL:', sqlQuery);
         throw err;
       }
